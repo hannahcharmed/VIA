@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Stays — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.explore-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+.explore-header {
+  padding: calc(var(--nav-h) + 20px) 20px 0;
+  background: var(--warm-white);
+}
+.explore-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 300;
+  margin-bottom: 6px;
+}
+.explore-title em { font-style: italic; color: var(--accent); }
+.explore-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+/* Results meta bar */
+.results-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: calc(var(--nav-h) + 44px);
+  z-index: 90;
+}
+.results-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.sort-select {
+  background: none;
+  border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  width: auto;
+}
+
+/* View toggle */
+.view-toggle {
+  display: flex;
+  gap: 6px;
+}
+.view-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.view-btn.active { background: var(--ink); border-color: var(--ink); color: white; }
+.view-btn svg { width: 13px; height: 13px; }
+
+/* Grid */
+.stays-grid {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Active filters strip */
+.active-filters {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px 10px;
+  flex-wrap: wrap;
+  display: none;
+}
+.active-filters.visible { display: flex; }
+.active-filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ink);
+  color: var(--warm-white);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+.active-filter-tag button {
+  background: none;
+  border: none;
+  color: var(--warm-white);
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* No results */
+.no-results {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px 20px;
+}
+.no-results h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+.no-results p { color: var(--muted); font-size: 14px; }
+
+/* Creator filter section */
+.creator-filter-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 14px 20px;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.creator-filter-row::-webkit-scrollbar { display: none; }
+.creator-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--warm-white);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+  color: var(--muted);
+}
+.creator-chip:hover { border-color: var(--ink); color: var(--ink); }
+.creator-chip.active { background: var(--ink); border-color: var(--ink); color: white; }
+.creator-chip img {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .explore-header { padding: calc(var(--nav-h) + 24px) 40px 0; }
+  .stays-grid { padding: 24px 40px; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .results-meta { padding: 12px 40px; top: calc(var(--nav-h) + 48px); }
+  .active-filters { padding: 0 40px 12px; }
+  .creator-filter-row { padding: 14px 40px; }
+}
+@media (min-width: 1024px) {
+  .explore-header { padding: calc(var(--nav-h) + 28px) 80px 0; }
+  .stays-grid { padding: 28px 80px; grid-template-columns: repeat(3, 1fr); }
+  .results-meta { padding: 12px 80px; }
+  .active-filters { padding: 0 80px 12px; }
+  .creator-filter-row { padding: 14px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html" style="color:var(--ink)">Explore</a>
+    <a href="index.html#creators">Creators</a>
+    <a href="index.html#how">How it works</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <a href="dashboard.html" class="nav-dashboard" style="display:none">Dashboard</a>
+    <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="index.html#creators">Creators</a>
+  <a href="index.html#how">How it works</a>
+  <a href="auth.html">Sign in</a>
+</div>
+
+<div class="explore-layout page-top">
+  <!-- Header -->
+  <div class="explore-header">
+    <h1 class="explore-title">Explore <em>curated</em> stays</h1>
+    <p class="explore-subtitle">Every property handpicked by creators whose taste you already follow.</p>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar" style="position:sticky;top:var(--nav-h);z-index:101">
+    <div class="search-input-wrap">
+      <span class="search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="text" id="search-input" placeholder="Search destinations, stays, creators..." autocomplete="off">
+      <button class="search-clear" id="search-clear">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Creator filter row -->
+  <div class="creator-filter-row" id="creator-filter-row"></div>
+
+  <!-- Category filters -->
+  <div class="filter-bar">
+    <button class="filter-chip active" data-group="cat" data-filter="all">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      All stays
+    </button>
+    <button class="filter-chip" data-group="cat" data-filter="Boutique Hotel">Boutique Hotel</button>
+    <button class="filter-chip" data-group="cat" data-filter="Private Villa">Private Villa</button>
+    <button class="filter-chip" data-group="cat" data-filter="Ryokan">Ryokan</button>
+    <button class="filter-chip" data-group="cat" data-filter="Riad">Riad</button>
+    <button class="filter-chip" data-group="cat" data-filter="Resort">Resort</button>
+    <button class="filter-chip" data-group="cat" data-filter="Luxury Hotel">Luxury Hotel</button>
+    <button class="filter-chip" data-group="cat" data-filter="Guesthouse">Guesthouse</button>
+  </div>
+
+  <!-- Results meta -->
+  <div class="results-meta">
+    <div class="results-count" id="results-count">12 stays</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <select class="sort-select" id="sort-select" onchange="applyFilters()">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low to high</option>
+        <option value="price-desc">Price: High to low</option>
+        <option value="rating">Highest rated</option>
+        <option value="reviews">Most reviewed</option>
+      </select>
+      <div class="view-toggle">
+        <button class="view-btn active" id="view-grid" onclick="setView('grid')" aria-label="Grid view">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="view-btn" id="view-list" onclick="setView('list')" aria-label="List view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active filters -->
+  <div class="active-filters" id="active-filters"></div>
+
+  <!-- Results grid -->
+  <div class="stays-grid" id="stays-grid"></div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div>
+    <div class="footer-logo">V<span>.</span>ia</div>
+    <div class="footer-tagline">Travel by way of trust.</div>
+  </div>
+  <div class="footer-links">
+    <a href="index.html#waitlist">For Creators</a>
+    <a href="index.html#waitlist">For Owners</a>
+    <a href="index.html">About</a>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+let currentView = 'grid';
+let activeCreator = null;
+
+// Render creator filter chips
+function renderCreatorChips() {
+  const row = document.getElementById('creator-filter-row');
+  row.innerHTML = `<button class="creator-chip active" data-creator="all" onclick="filterByCreator('all',this)">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" style="border-radius:50%;padding:2px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    All creators
+  </button>` +
+  VIA_DATA.creators.map(c => `
+    <button class="creator-chip" data-creator="${c.id}" onclick="filterByCreator('${c.id}',this)">
+      <img src="${c.avatar}" alt="${c.name}">
+      ${c.name.split(' ')[0]}
+    </button>
+  `).join('');
+}
+
+function filterByCreator(id, btn) {
+  activeCreator = id === 'all' ? null : id;
+  document.querySelectorAll('.creator-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
+  const activeCatChip = document.querySelector('.filter-chip[data-group="cat"].active');
+  const catFilter = activeCatChip ? activeCatChip.dataset.filter : 'all';
+  const sortVal  = document.getElementById('sort-select').value;
+
+  let results = [...VIA_DATA.stays];
+
+  // Search
+  if (searchVal) {
+    results = results.filter(s =>
+      s.name.toLowerCase().includes(searchVal) ||
+      s.location.toLowerCase().includes(searchVal) ||
+      s.country.toLowerCase().includes(searchVal) ||
+      s.tags.some(t => t.toLowerCase().includes(searchVal)) ||
+      (getCreator(s.creatorId) && getCreator(s.creatorId).name.toLowerCase().includes(searchVal))
+    );
+  }
+
+  // Category
+  if (catFilter && catFilter !== 'all') {
+    results = results.filter(s => s.category === catFilter);
+  }
+
+  // Creator
+  if (activeCreator) {
+    results = results.filter(s => s.creatorId === activeCreator);
+  }
+
+  // Sort
+  if (sortVal === 'price-asc') results.sort((a,b) => a.price - b.price);
+  else if (sortVal === 'price-desc') results.sort((a,b) => b.price - a.price);
+  else if (sortVal === 'rating') results.sort((a,b) => b.rating - a.rating);
+  else if (sortVal === 'reviews') results.sort((a,b) => b.reviews - a.reviews);
+
+  renderResults(results);
+
+  // Update count
+  document.getElementById('results-count').textContent = `${results.length} stay${results.length !== 1 ? 's' : ''}`;
+
+  // Update active filters display
+  updateActiveFiltersDisplay(catFilter, searchVal);
+}
+
+function updateActiveFiltersDisplay(catFilter, searchVal) {
+  const container = document.getElementById('active-filters');
+  let tags = [];
+  if (catFilter && catFilter !== 'all') tags.push({ label: catFilter, clear: () => { document.querySelector('.filter-chip[data-filter="all"]').click(); }});
+  if (activeCreator) {
+    const c = getCreator(activeCreator);
+    if (c) tags.push({ label: c.name, clear: () => { filterByCreator('all', document.querySelector('.creator-chip[data-creator="all"]')); }});
+  }
+  if (tags.length) {
+    container.classList.add('visible');
+    container.innerHTML = '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;padding:5px 0">Filters:</span>' +
+      tags.map(t => `<span class="active-filter-tag">${t.label}<button onclick="(${t.clear.toString()})()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:12px;padding:0;margin-left:2px">×</button></span>`).join('');
+  } else {
+    container.classList.remove('visible');
+    container.innerHTML = '';
+  }
+}
+
+function renderResults(stays) {
+  const grid = document.getElementById('stays-grid');
+  if (!stays.length) {
+    grid.innerHTML = `<div class="no-results">
+      <div style="font-size:48px;margin-bottom:16px;opacity:.3">🔍</div>
+      <h3>No stays found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>`;
+    return;
+  }
+
+  if (currentView === 'list') {
+    grid.style.gridTemplateColumns = '1fr';
+    grid.innerHTML = stays.map(stay => {
+      const creator = getCreator(stay.creatorId);
+      return `<div class="stay-card" style="display:flex;gap:0" onclick="window.location='stay.html?id=${stay.id}'">
+        <div class="stay-card-img" style="background-image:url('${stay.images[0]}');flex-shrink:0;width:140px;aspect-ratio:auto;height:auto;min-height:100px"></div>
+        <div class="stay-card-body" style="flex:1;padding:14px 16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+            <div class="stay-card-name" style="font-size:18px">${stay.name}</div>
+            <div class="stay-card-rating"><span class="star">★</span> ${stay.rating}</div>
+          </div>
+          <div class="stay-card-location">${stay.location}</div>
+          ${creator ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">via ${creator.handle}</div>` : ''}
+          <div class="stay-card-price">
+            <span class="price-amount">${stay.currency}${stay.price.toLocaleString()}</span>
+            <span class="price-unit">/ night</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    grid.innerHTML = stays.map(stay => renderStayCard(stay, getCreator(stay.creatorId))).join('');
+  }
+  initWishlistButtons();
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('view-grid').classList.toggle('active', v === 'grid');
+  document.getElementById('view-list').classList.toggle('active', v === 'list');
+  applyFilters();
+}
+
+// Search
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+searchInput.addEventListener('input', () => {
+  searchClear.classList.toggle('visible', searchInput.value.length > 0);
+  applyFilters();
+});
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClear.classList.remove('visible');
+  applyFilters();
+});
+
+// Category filter chips
+document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    applyFilters();
+  });
+});
+
+// Init
+renderCreatorChips();
+applyFilters();
+
+// Handle pre-selected creator from URL
+const creatorParam = getParam('creator');
+if (creatorParam) {
+  setTimeout(() => {
+    const chip = document.querySelector(`.creator-chip[data-creator="${creatorParam}"]`);
+    if (chip) chip.click();
+  }, 0);
+}
+
+// Responsive grid reflow
+window.addEventListener('resize', () => { if (currentView === 'grid') applyFilters(); });
+</script>
+</body>
+</html>

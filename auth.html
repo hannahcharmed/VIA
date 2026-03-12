@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.auth-wrap {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.auth-visual { display: none; }
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  min-height: 100svh;
+}
+.auth-box {
+  width: 100%;
+  max-width: 400px;
+}
+.auth-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.auth-logo span { color: var(--accent); }
+.auth-tagline {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 36px;
+}
+.auth-tabs { margin-bottom: 28px; }
+.form-block { display: flex; flex-direction: column; gap: 14px; }
+
+/* Social buttons */
+.social-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--warm-white);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: 'Geist', sans-serif;
+  font-weight: 300;
+}
+.social-btn:hover { border-color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.social-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* OR divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.or-divider::before, .or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.or-divider span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+/* Password toggle */
+.pw-wrap { position: relative; }
+.pw-toggle {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px;
+  display: flex;
+}
+.pw-toggle svg { width: 16px; height: 16px; }
+.pw-wrap input { padding-right: 44px; }
+
+/* Role selector */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.role-btn {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.role-btn:hover { border-color: var(--ink); }
+.role-btn.active { border-color: var(--ink); background: var(--ink); color: var(--warm-white); }
+.role-icon { font-size: 20px; margin-bottom: 4px; }
+.role-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Strength meter */
+.strength-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  margin-top: 6px;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s, background 0.3s;
+  width: 0%;
+}
+
+/* Links */
+.auth-link { color: var(--accent); text-decoration: underline; }
+.terms-text {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* Visual side */
+@media (min-width: 1024px) {
+  .auth-wrap { grid-template-columns: 1fr 1fr; }
+  .auth-visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 48px;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-visual-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&q=80');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.35;
+  }
+  .auth-visual-content { position: relative; z-index: 1; }
+  .auth-visual-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: white;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+  .auth-visual-quote em { font-style: italic; color: var(--accent-light); }
+  .auth-visual-attr {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.4);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <!-- Visual side (desktop only) -->
+  <div class="auth-visual">
+    <div class="auth-visual-bg"></div>
+    <div class="auth-visual-content">
+      <div class="auth-visual-quote">Travel via people<br>you already <em>trust.</em></div>
+      <div class="auth-visual-attr">Join the Via community — creators, owners & travelers.</div>
+    </div>
+  </div>
+
+  <!-- Form side -->
+  <div class="auth-form-side">
+    <div class="auth-box">
+      <a href="index.html" class="auth-logo">V<span>.</span>ia</a>
+      <div class="auth-tagline">Travel by way of trust.</div>
+
+      <!-- Tabs -->
+      <div class="tabs auth-tabs">
+        <button class="tab-btn active" id="tab-signin" onclick="switchAuth('signin',this)">Sign in</button>
+        <button class="tab-btn" id="tab-signup" onclick="switchAuth('signup',this)">Create account</button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <div id="form-signin">
+        <!-- Social -->
+        <div class="social-btns">
+          <button class="social-btn" onclick="socialLogin('google')">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <button class="social-btn" onclick="socialLogin('apple')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Continue with Apple
+          </button>
+        </div>
+
+        <div class="or-divider"><span>or</span></div>
+
+        <form class="form-block" onsubmit="handleSignIn(event)">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="si-email" placeholder="camille@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="pw-wrap">
+              <input type="password" id="si-password" placeholder="••••••••" required autocomplete="current-password">
+              <button type="button" class="pw-toggle" onclick="togglePw('si-password',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:-6px">
+            <a href="#" class="auth-link" style="font-size:12px;color:var(--accent)" onclick="forgotPassword(event)">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-primary btn-full" id="signin-btn" style="padding:14px">Sign in →</button>
+          <div class="terms-text">
+            New to Via? <a href="#" class="auth-link" onclick="switchAuth('signup',document.getElementById('tab-signup'))">Create a free account</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- SIGN UP FORM -->
+      <div id="form-signup" style="display:none">
+        <div style="margin-bottom:20px">
+          <label style="margin-bottom:10px;display:block">I am a...</label>
+          <div class="role-grid" id="role-grid">
+            <button type="button" class="role-btn active" data-role="traveler" onclick="selectRole('traveler',this)">
+              <div class="role-icon">✈️</div>
+              <div class="role-label">Traveler</div>
+            </button>
+            <button type="button" class="role-btn" data-role="creator" onclick="selectRole('creator',this)">
+              <div class="role-icon">✨</div>
+              <div class="role-label">Creator</div>
+            </button>
+            <button type="button" class="role-btn" data-role="owner" onclick="selectRole('owner',this)">
+              <div class="role-icon">🏨</div>
+              <div class="role-label">Owner</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Social -->
+        <div class="social-btns">
+          <button class="social-btn" onclick="socialSignup('google')">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Sign up with Google
+          </button>
+        </div>
+
+        <div class="or-divider"><span>or</span></div>
+
+        <form class="form-block" onsubmit="handleSignUp(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" id="su-first" placeholder="Camille" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" id="su-last" placeholder="Laurent" required autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="su-email" placeholder="camille@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group" id="su-handle-group" style="display:none">
+            <label>Instagram / TikTok handle</label>
+            <input type="text" id="su-handle" placeholder="@handle">
+          </div>
+          <div class="form-group" id="su-property-group" style="display:none">
+            <label>Property name</label>
+            <input type="text" id="su-property" placeholder="Hôtel de la Paix">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="pw-wrap">
+              <input type="password" id="su-password" placeholder="Min. 8 characters" required autocomplete="new-password" oninput="checkStrength(this.value)">
+              <button type="button" class="pw-toggle" onclick="togglePw('su-password',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="pw-strength"></div></div>
+          </div>
+          <button type="submit" class="btn-primary btn-full" id="signup-btn" style="padding:14px">Create account →</button>
+          <div class="terms-text">
+            By creating an account you agree to Via's <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy</a>.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+let selectedRole = 'traveler';
+const nextUrl = getParam('next');
+const initRole = getParam('role');
+
+function switchAuth(tab, btn) {
+  document.getElementById('form-signin').style.display = tab === 'signin' ? '' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none';
+  document.querySelectorAll('.auth-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function selectRole(role, btn) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('su-handle-group').style.display   = role === 'creator' ? '' : 'none';
+  document.getElementById('su-property-group').style.display = role === 'owner'   ? '' : 'none';
+}
+
+function togglePw(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.querySelector('svg').style.opacity = show ? '0.5' : '1';
+}
+
+function checkStrength(pw) {
+  const fill = document.getElementById('pw-strength');
+  let strength = 0;
+  if (pw.length >= 8)  strength++;
+  if (/[A-Z]/.test(pw)) strength++;
+  if (/\d/.test(pw))    strength++;
+  if (/[^a-zA-Z\d]/.test(pw)) strength++;
+  const colors = ['', '#B94A4A', '#E8A04A', '#4A8C6A', '#4A8C6A'];
+  const widths  = ['0%', '25%', '50%', '75%', '100%'];
+  fill.style.width = widths[strength];
+  fill.style.background = colors[strength];
+}
+
+function simulateLoad(btnId, cb) {
+  const btn = document.getElementById(btnId);
+  const orig = btn.textContent;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0 auto"></div>';
+  btn.disabled = true;
+  setTimeout(() => { cb(); btn.textContent = orig; btn.disabled = false; }, 1200);
+}
+
+function handleSignIn(e) {
+  e.preventDefault();
+  const email = document.getElementById('si-email').value;
+  const pw    = document.getElementById('si-password').value;
+  if (!email || !pw) { showToast('Please fill in all fields'); return; }
+  simulateLoad('signin-btn', () => {
+    // Simulate auth — find creator by email pattern or use demo data
+    const name = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+    VIA_STATE.user = { name, email, role: 'creator', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80' };
+    showToast(`✓ Welcome back, ${name}`);
+    setTimeout(() => { window.location.href = nextUrl || 'dashboard.html'; }, 800);
+  });
+}
+
+function handleSignUp(e) {
+  e.preventDefault();
+  const first = document.getElementById('su-first').value.trim();
+  const last  = document.getElementById('su-last').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pw    = document.getElementById('su-password').value;
+  if (!first || !last || !email || !pw) { showToast('Please fill in all required fields'); return; }
+  if (pw.length < 8) { showToast('Password must be at least 8 characters'); return; }
+  simulateLoad('signup-btn', () => {
+    VIA_STATE.user = { name: `${first} ${last}`, email, role: selectedRole, avatar: '' };
+    showToast(`✓ Welcome to Via, ${first}!`);
+    setTimeout(() => {
+      if (selectedRole === 'creator') window.location.href = 'dashboard.html';
+      else window.location.href = nextUrl || 'explore.html';
+    }, 800);
+  });
+}
+
+function socialLogin(provider) {
+  showToast(`Connecting to ${provider === 'google' ? 'Google' : 'Apple'}...`);
+  setTimeout(() => {
+    VIA_STATE.user = { name: 'Demo User', email: 'demo@via.travel', role: 'traveler', avatar: '' };
+    window.location.href = nextUrl || 'explore.html';
+  }, 1200);
+}
+function socialSignup(provider) { socialLogin(provider); }
+
+function forgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('si-email').value;
+  if (!email) { showToast('Enter your email address first'); return; }
+  showToast('✓ Password reset link sent to ' + email);
+}
+
+// Pre-select role from URL
+if (initRole) {
+  const roleBtn = document.querySelector(`.role-btn[data-role="${initRole}"]`);
+  if (roleBtn) { selectRole(initRole, roleBtn); }
+  switchAuth('signup', document.getElementById('tab-signup'));
+}
+
+// Pre-select signup tab
+if (getParam('tab') === 'signup') {
+  switchAuth('signup', document.getElementById('tab-signup'));
+}
+</script>
+</body>
+</html>
