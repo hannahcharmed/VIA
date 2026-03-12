@@ -1,0 +1,1144 @@
+Hi, can you help me build an app? <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Via — Travel by people you trust</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FAF8F4;
+    --ink: #1A1714;
+    --muted: #7A7168;
+    --accent: #C4754A;
+    --accent-light: #E8C5A8;
+    --border: #E2DDD5;
+    --sand: #EDE8DF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--warm-white);
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+  nav ul {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  nav ul a {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink);
+    color: var(--warm-white) !important;
+    padding: 10px 22px;
+    border-radius: 2px;
+    font-size: 12px !important;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent) !important; color: var(--warm-white) !important; }
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 5vw, 76px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 400px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--warm-white);
+    padding: 14px 32px;
+    border-radius: 2px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover { background: var(--accent); }
+  .btn-ghost {
+    color: var(--muted);
+    font-size: 13px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-ghost::after { content: '→'; }
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+  }
+  .hero-collage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.4s forwards;
+  }
+  .collage-img {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .collage-img:nth-child(1) {
+    background-image: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80');
+    grid-row: span 2;
+  }
+  .collage-img:nth-child(2) {
+    background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80');
+  }
+  .collage-img:nth-child(3) {
+    background-image: url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80');
+  }
+  .creator-badge {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .creator-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-image: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80');
+  }
+  .creator-info { }
+  .creator-name { font-size: 12px; font-weight: 400; color: var(--ink); }
+  .creator-stayed { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .stayed-tag {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--accent);
+    color: white;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    font-family: 'DM Mono', monospace;
+    border-radius: 1px;
+  }
+  /* ── SECTION DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 80px;
+    margin: 20px 0;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* ── HOW IT WORKS ── */
+  .section {
+    padding: 100px 80px;
+  }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 3.5vw, 54px);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 64px;
+    max-width: 600px;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+  .audience-card {
+    background: var(--cream);
+    padding: 48px 40px;
+    position: relative;
+    transition: transform 0.3s;
+    cursor: default;
+  }
+  .audience-card:hover { transform: translateY(-4px); }
+  .audience-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 300;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  .audience-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .audience-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .audience-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .audience-benefit {
+    font-size: 13px;
+    color: var(--ink);
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    line-height: 1.6;
+  }
+  /* ── CREATOR PROFILES ── */
+  .profiles-section {
+    background: var(--cream);
+    padding: 100px 80px;
+  }
+  .profiles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+  }
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .profile-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  .profile-card:hover {
+    box-shadow: 0 12px 48px rgba(26,23,20,0.1);
+    transform: translateY(-3px);
+  }
+  .profile-cover {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .profile-info {
+    padding: 24px;
+  }
+  .profile-avatar-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .profile-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid var(--warm-white);
+    background-size: cover;
+    background-position: center;
+    margin-top: -36px;
+    position: relative;
+  }
+  .verified-badge {
+    background: var(--accent);
+    color: white;
+    font-size: 9px;
+    padding: 4px 9px;
+    border-radius: 1px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .profile-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .profile-handle {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .profile-stays {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .stay-pill {
+    background: var(--sand);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+  .profile-stats {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .stat { }
+  .stat-num { font-size: 18px; font-weight: 400; color: var(--ink); }
+  .stat-label { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+  /* ── STAY PAGE ── */
+  .stay-section {
+    padding: 100px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .stay-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 280px 160px;
+    gap: 4px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .stay-img {
+    background-size: cover;
+    background-position: center;
+  }
+  .stay-img:first-child {
+    grid-column: span 2;
+    background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80');
+  }
+  .stay-img:nth-child(2) {
+    background-image: url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&q=80');
+  }
+  .stay-img:nth-child(3) {
+    background-image: url('https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400&q=80');
+  }
+  .stay-details {}
+  .stayed-by {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: var(--cream);
+    border-left: 2px solid var(--accent);
+  }
+  .stayed-by-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80');
+  }
+  .stayed-by-text { font-size: 13px; color: var(--muted); }
+  .stayed-by-text strong { color: var(--ink); font-weight: 400; }
+  .stay-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .stay-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-bottom: 24px;
+  }
+  .stay-desc {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .pricing-block {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .price { font-size: 32px; font-weight: 400; color: var(--ink); }
+  .price-per { font-size: 14px; color: var(--muted); }
+  .book-btn {
+    width: 100%;
+    background: var(--ink);
+    color: var(--warm-white);
+    padding: 18px;
+    border: none;
+    border-radius: 2px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+    font-family: 'Geist', sans-serif;
+  }
+  .book-btn:hover { background: var(--accent); }
+  .attribution-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .attribution-note span { color: var(--accent); }
+  /* ── MANIFESTO ── */
+  .manifesto {
+    background: var(--ink);
+    padding: 120px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .manifesto::before {
+    content: 'VIA';
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 400px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+  .manifesto-lines {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .manifesto-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .manifesto-line em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+  .manifesto-line.muted {
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 40px;
+  }
+  /* ── WAIT LIST ── */
+  .waitlist-section {
+    padding: 100px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .waitlist-left {}
+  .waitlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  input, select {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: 'Geist', sans-serif;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--accent);
+  }
+  input::placeholder { color: var(--muted); }
+  .waitlist-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: all 0.2s;
+    border-right: 1px solid var(--border);
+  }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: var(--ink); color: var(--warm-white); }
+  /* ── FOOTER ── */
+  footer {
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    padding: 48px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--ink);
+    font-weight: 300;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .footer-links {
+    display: flex;
+    gap: 32px;
+  }
+  .footer-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--ink); }
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,23,20,0.6);
+    z-index: 200;
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 48px;
+    max-width: 540px;
+    width: 90%;
+    position: relative;
+    animation: fadeUp 0.3s forwards;
+  }
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-stayed {
+    background: var(--cream);
+    border-left: 2px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-stayed-av {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    background-size: cover;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 300;
+    margin-bottom: 6px;
+  }
+  .modal-loc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  .modal-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-nights {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .night-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border);
+    background: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .night-btn.selected { border-color: var(--ink); background: var(--ink); color: white; }
+  .modal-book-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 16px;
+    font-family: 'Geist', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 10px;
+  }
+  .modal-book-btn:hover { opacity: 0.88; }
+  .modal-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .modal-note span { color: var(--accent); }
+  /* TOAST */
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--warm-white);
+    padding: 14px 28px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    z-index: 999;
+    animation: fadeUp 0.3s forwards;
+  }
+  .toast.show { display: block; }
+</style>
+</head>
+<body>
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">V<span>.</span>ia</a>
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#creators">Creators</a></li>
+    <li><a href="#stays">Stays</a></li>
+    <li><a href="#waitlist" class="nav-cta">Request Access</a></li>
+  </ul>
+</nav>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Creator-led travel marketplace</div>
+    <h1 class="hero-headline">Travel <em>via</em> people<br>you already trust.</h1>
+    <p class="hero-sub">Via connects travelers with the exact places their favorite creators have stayed — making inspiration instantly bookable.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Request early access</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-collage">
+      <div class="collage-img">
+        <div class="creator-badge">
+          <div class="creator-avatar"></div>
+          <div class="creator-info">
+            <div class="creator-name">Camille Laurent</div>
+            <div class="creator-stayed">stayed here · jan 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="collage-img">
+        <div class="stayed-tag">Stayed here</div>
+      </div>
+      <div class="collage-img"></div>
+    </div>
+  </div>
+</section>
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-text">Built for three kinds of people</div>
+  <div class="divider-line"></div>
+</div>
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label fade-in-section">The model</div>
+  <h2 class="section-title fade-in-section">A marketplace where <em>everyone wins</em> when a booking happens.</h2>
+  <div class="three-col fade-in-section">
+    <div class="audience-card">
+      <div class="audience-num">01</div>
+      <div class="audience-type">Creators</div>
+      <div class="audience-title">Your stays. Your archive. Your income.</div>
+      <div class="audience-desc">One clean profile that links every stay you've ever posted about. Your followers can book the exact place, and you earn every time they do.</div>
+      <div class="audience-benefit">Free & discounted stays · Affiliate commissions · Post once, earn forever</div>
+    </div>
+    <div class="audience-card">
+      <div class="audience-num">02</div>
+      <div class="audience-type">Stay Owners</div>
+      <div class="audience-title">Reach. Content. Bookings.</div>
+      <div class="audience-desc">Get discovered by creator audiences who are already dreaming about your property. Receive authentic UGC. Pay only when bookings happen.</div>
+      <div class="audience-benefit">No upfront fees · Authentic content · Performance-based only</div>
+    </div>
+    <div class="audience-card">
+      <div class="audience-num">03</div>
+      <div class="audience-type">Travelers</div>
+      <div class="audience-title">Book exactly what inspired you.</div>
+      <div class="audience-desc">No guessing. No endless scrolling. See a place on Instagram and book it in one click, guided by someone whose taste you already trust.</div>
+      <div class="audience-benefit">Trust-led discovery · No catfishing · Curated, not algorithmic</div>
+    </div>
+  </div>
+</section>
+<!-- CREATOR PROFILES -->
+<section class="profiles-section" id="creators">
+  <div class="profiles-header fade-in-section">
+    <div>
+      <div class="section-label">Creator profiles</div>
+      <h2 class="section-title" style="margin-bottom:0">A permanent, bookable<br>archive of <em>everywhere they've stayed.</em></h2>
+    </div>
+    <a href="#waitlist" class="btn-primary" style="white-space:nowrap">Apply as creator</a>
+  </div>
+  <div class="profiles-grid fade-in-section">
+    <!-- Profile 1 -->
+    <div class="profile-card" onclick="openModal('Hôtel Richer', 'Paris, France', '€420', '@camille', 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80')">
+      <div class="profile-cover" style="background-image:url('https://images.unsplash.com/photo-1543158181-e6f9f6712055?w=600&q=80')"></div>
+      <div class="profile-info">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" style="background-image:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80')"></div>
+          <div class="verified-badge">Via Creator</div>
+        </div>
+        <div class="profile-name">Camille Laurent</div>
+        <div class="profile-handle">@camille · 287k followers</div>
+        <div class="profile-stays">
+          <span class="stay-pill">Paris</span>
+          <span class="stay-pill">Amalfi</span>
+          <span class="stay-pill">Kyoto</span>
+          <span class="stay-pill">+9 more</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num">12</div><div class="stat-label">Stays</div></div>
+          <div class="stat"><div class="stat-num">€840</div><div class="stat-label">Avg/booking</div></div>
+          <div class="stat"><div class="stat-num">94%</div><div class="stat-label">Match rate</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Profile 2 -->
+    <div class="profile-card" onclick="openModal('Villa Serafina', 'Positano, Italy', '€680', '@marcos', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80')">
+      <div class="profile-cover" style="background-image:url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80')"></div>
+      <div class="profile-info">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80')"></div>
+          <div class="verified-badge">Via Creator</div>
+        </div>
+        <div class="profile-name">Marcos Silva</div>
+        <div class="profile-handle">@marcos · 156k followers</div>
+        <div class="profile-stays">
+          <span class="stay-pill">Positano</span>
+          <span class="stay-pill">Lisbon</span>
+          <span class="stay-pill">Morocco</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num">8</div><div class="stat-label">Stays</div></div>
+          <div class="stat"><div class="stat-num">€1,200</div><div class="stat-label">Avg/booking</div></div>
+          <div class="stat"><div class="stat-num">91%</div><div class="stat-label">Match rate</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Profile 3 -->
+    <div class="profile-card" onclick="openModal('Ryokan Tanuki', 'Kyoto, Japan', '¥85,000', '@yuna', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80')">
+      <div class="profile-cover" style="background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80')"></div>
+      <div class="profile-info">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80')"></div>
+          <div class="verified-badge">Via Creator</div>
+        </div>
+        <div class="profile-name">Yuna Inoue</div>
+        <div class="profile-handle">@yuna · 421k followers</div>
+        <div class="profile-stays">
+          <span class="stay-pill">Kyoto</span>
+          <span class="stay-pill">Seoul</span>
+          <span class="stay-pill">Bali</span>
+          <span class="stay-pill">+6 more</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num">21</div><div class="stat-label">Stays</div></div>
+          <div class="stat"><div class="stat-num">¥92k</div><div class="stat-label">Avg/booking</div></div>
+          <div class="stat"><div class="stat-num">97%</div><div class="stat-label">Match rate</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- STAY PAGE -->
+<section class="stay-section" id="stays">
+  <div class="stay-images fade-in-section">
+    <div class="stay-img"></div>
+    <div class="stay-img"></div>
+    <div class="stay-img"></div>
+  </div>
+  <div class="stay-details fade-in-section">
+    <div class="section-label">Bookable stay page</div>
+    <div class="stayed-by">
+      <div class="stayed-by-avatar"></div>
+      <div class="stayed-by-text">Stayed here by <strong>Camille Laurent</strong> · January 2025</div>
+    </div>
+    <h2 class="stay-name">Hôtel Le Pigonnet</h2>
+    <div class="stay-location">Aix-en-Provence, France</div>
+    <p class="stay-desc">A 19th-century bastide nestled in a private garden, steps from the Cours Mirabeau. Camille spent four days here in January and called it "the most quietly beautiful hotel I've ever stayed in."</p>
+    <div class="pricing-block">
+      <div class="price">€385</div>
+      <div class="price-per">/ night · avg. 3 nights</div>
+    </div>
+    <button class="book-btn" onclick="openModal('Hôtel Le Pigonnet', 'Aix-en-Provence, France', '€385', '@camille', 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80')">Book via Camille</button>
+    <div class="attribution-note">10% goes to <span>Camille</span> · No Airbnb fees</div>
+  </div>
+</section>
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="manifesto-lines">
+    <div class="manifesto-line">Intuition over algorithms.</div>
+    <div class="manifesto-line">Taste over volume.</div>
+    <div class="manifesto-line"><em>Trust over ads.</em></div>
+    <div class="manifesto-line muted" style="margin-top:48px">Travel works best when it's guided<br>by people you already trust.</div>
+  </div>
+</section>
+<!-- WAITLIST -->
+<section class="waitlist-section" id="waitlist">
+  <div class="waitlist-left fade-in-section">
+    <div class="section-label">Early access</div>
+    <h2 class="section-title" style="margin-bottom:16px">Via is invite-only<br>to start. <em>By design.</em></h2>
+    <p style="font-size:15px;line-height:1.8;color:var(--muted)">We're onboarding a hand-selected group of creators and boutique stay owners. Quality over scale — always.</p>
+  </div>
+  <div class="waitlist-right fade-in-section">
+    <div class="waitlist-tabs">
+      <button class="tab active" onclick="switchTab(this, 'creator')">I'm a Creator</button>
+      <button class="tab" onclick="switchTab(this, 'owner')">I'm a Stay Owner</button>
+      <button class="tab" onclick="switchTab(this, 'traveler')">I'm a Traveler</button>
+    </div>
+    <form class="waitlist-form" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" placeholder="Camille" required>
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input type="text" placeholder="Laurent" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="camille@example.com" required>
+      </div>
+      <div class="form-group" id="creator-field">
+        <label>Instagram / TikTok handle</label>
+        <input type="text" placeholder="@handle">
+      </div>
+      <div class="form-group" id="owner-field" style="display:none">
+        <label>Property name</label>
+        <input type="text" placeholder="Hôtel de la Paix">
+      </div>
+      <div class="form-group">
+        <label>Where do you travel / host?</label>
+        <input type="text" placeholder="Europe, Asia, Americas...">
+      </div>
+      <button type="submit" class="btn-primary" style="padding:16px;font-size:13px;letter-spacing:0.1em">Request access →</button>
+    </form>
+  </div>
+</section>
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">V<span>.</span>ia</div>
+    <div class="footer-tagline">Travel by way of trust.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">For Creators</a>
+    <a href="#">For Owners</a>
+    <a href="#">For Travelers</a>
+    <a href="#">Manifesto</a>
+  </div>
+</footer>
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+    <div class="modal-stayed" id="modal-stayed">
+      <div class="modal-stayed-av" id="modal-av" style="background-size:cover;background-position:center"></div>
+      <span>Stayed here by <strong id="modal-creator"></strong></span>
+    </div>
+    <div class="modal-title" id="modal-title">Stay Name</div>
+    <div class="modal-loc" id="modal-loc">Location</div>
+    <div class="modal-price-row">
+      <div class="price" id="modal-price">—</div>
+      <div class="price-per">/ night</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label>Select nights</label>
+      <div class="modal-nights">
+        <button class="night-btn selected" onclick="selectNights(this)">2 nights</button>
+        <button class="night-btn" onclick="selectNights(this)">3 nights</button>
+        <button class="night-btn" onclick="selectNights(this)">5 nights</button>
+        <button class="night-btn" onclick="selectNights(this)">1 week</button>
+      </div>
+    </div>
+    <button class="modal-book-btn" onclick="confirmBooking()">Book this stay →</button>
+    <div class="modal-note">10% commission shared with <span id="modal-creator-note"></span> · No hidden fees</div>
+  </div>
+</div>
+<div class="toast" id="toast">✓ Request sent — we'll be in touch soon.</div>
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
+  // Tab switching
+  function switchTab(btn, type) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('creator-field').style.display = type === 'creator' ? 'flex' : 'none';
+    document.getElementById('owner-field').style.display = type === 'owner' ? 'flex' : 'none';
+  }
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    showToast('✓ You\'re on the list — we\'ll be in touch.');
+    e.target.reset();
+  }
+  // Modal
+  function openModal(name, loc, price, creator, avatar) {
+    document.getElementById('modal-title').textContent = name;
+    document.getElementById('modal-loc').textContent = loc;
+    document.getElementById('modal-price').textContent = price;
+    document.getElementById('modal-creator').textContent = creator;
+    document.getElementById('modal-creator-note').textContent = creator;
+    document.getElementById('modal-av').style.backgroundImage = `url('${avatar}')`;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal')) {
+      document.getElementById('modal').classList.remove('open');
+    }
+  }
+  function selectNights(btn) {
+    document.querySelectorAll('.night-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  function confirmBooking() {
+    document.getElementById('modal').classList.remove('open');
+    showToast('✓ Redirecting to booking — via Via.');
+  }
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
