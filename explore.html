@@ -928,6 +928,7 @@ function renderFeed() {
           Book this stay
           <span>★ ${stay.rating} · ${stay.reviews} reviews</span>
         </a>
+        ${isCreatorUser ? `<button onclick="openExplorePostModal(${stay.id})" style="margin-top:8px;width:100%;padding:10px;border:1px solid var(--border);border-radius:2px;background:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Post this stay</button>` : ''}
       </div>
     </div>`;
   });
@@ -1124,6 +1125,76 @@ if (searchInput) {
 }
 
 /* ================================================================
+   Creator "Post this stay" modal
+   ================================================================ */
+const isCreatorUser = VIA_STATE.user && VIA_STATE.user.role === 'creator';
+let _exploreUploadDataUrl = null;
+
+function openExplorePostModal(stayId) {
+  _exploreUploadDataUrl = null;
+  const stay = getStay(stayId);
+  if (!stay) return;
+  // Pre-fill stay + location
+  const sel = document.getElementById('ep-stay');
+  sel.innerHTML = VIA_DATA.stays.map(s =>
+    `<option value="${s.id}" ${s.id === stayId ? 'selected' : ''}>${s.name} (${s.location})</option>`
+  ).join('');
+  document.getElementById('ep-location').value = stay.location;
+  // Reset image
+  document.getElementById('ep-img-preview').style.display = 'none';
+  document.getElementById('ep-upload-label').style.display = 'flex';
+  document.getElementById('ep-caption').value = '';
+  document.getElementById('ep-image').value = '';
+  openModal('modal-explore-post');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const imgInput = document.getElementById('ep-image');
+  if (imgInput) {
+    imgInput.onchange = () => {
+      const file = imgInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        _exploreUploadDataUrl = e.target.result;
+        const preview = document.getElementById('ep-img-preview');
+        preview.style.backgroundImage = `url('${_exploreUploadDataUrl}')`;
+        preview.style.display = 'block';
+        document.getElementById('ep-upload-label').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  const sel = document.getElementById('ep-stay');
+  if (sel) {
+    sel.onchange = () => {
+      const s = getStay(parseInt(sel.value));
+      if (s) document.getElementById('ep-location').value = s.location;
+    };
+  }
+});
+
+function submitExplorePost(e) {
+  e.preventDefault();
+  if (!_exploreUploadDataUrl) { showToast('Please upload a photo first'); return; }
+  const stayId = parseInt(document.getElementById('ep-stay').value);
+  const stay = getStay(stayId);
+  VIA_DATA.posts.unshift({
+    id: 'pexp-' + Date.now(),
+    creatorId: VIA_STATE.user.role === 'creator' ? 'camille' : 'camille',
+    stayId,
+    image: _exploreUploadDataUrl,
+    caption: document.getElementById('ep-caption').value,
+    location: document.getElementById('ep-location').value || stay.location,
+    postedAt: new Date().toISOString().split('T')[0],
+    stats: { views: 0, saves: 0, bookings: 0, revenue: '€0' }
+  });
+  closeModal('modal-explore-post');
+  showToast('✓ Post published — now live on Explore');
+  if (currentMode === 'feed') renderFeed();
+}
+
+/* ================================================================
    Init
    ================================================================ */
 renderCreatorChips();
@@ -1140,5 +1211,43 @@ if (creatorParam) {
 
 window.addEventListener('resize', () => { if (currentMode === 'grid') renderGrid(); });
 </script>
+
+<!-- CREATOR: Post this stay modal -->
+<div class="modal-overlay" id="modal-explore-post">
+  <div class="modal" style="max-width:480px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400">Post this stay</div>
+      <button class="modal-close" onclick="closeModal('modal-explore-post')" style="position:static">×</button>
+    </div>
+    <form onsubmit="submitExplorePost(event)">
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Photo</label>
+        <label for="ep-image" id="ep-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:2px;padding:24px;cursor:pointer;background:var(--cream);text-align:center">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
+        </label>
+        <input type="file" id="ep-image" accept="image/*" style="display:none" required>
+        <div id="ep-img-preview" style="margin-top:8px;border-radius:2px;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Caption</label>
+        <textarea id="ep-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;font-family:'Geist',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;resize:vertical" placeholder="Share your thoughts…" required></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Stay</label>
+        <select id="ep-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:10px 14px;font-family:'Geist',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer"></select>
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Location shown</label>
+        <input type="text" id="ep-location">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn-outline" style="flex:1;padding:12px" onclick="closeModal('modal-explore-post')">Cancel</button>
+        <button type="submit" class="btn-primary" style="flex:2;padding:12px">Publish</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>

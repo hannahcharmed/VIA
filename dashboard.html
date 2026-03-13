@@ -386,6 +386,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/><rect x="13" y="16" width="8" height="5" rx="1"/></svg>
       Posts
     </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('wishlist',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Wishlist
+    </button>
     <button class="sidebar-nav-item" onclick="switchPanel('profile',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Profile
@@ -521,22 +525,7 @@
         </div>
       </div>
       <div class="section-h" style="margin-top:8px">Payout history</div>
-      ${[
-        { date: 'Mar 1, 2026', amount: '€1,280', status: 'Paid', ref: 'PO-002841' },
-        { date: 'Feb 1, 2026', amount: '€960', status: 'Paid', ref: 'PO-002714' },
-        { date: 'Jan 1, 2026', amount: '€840', status: 'Paid', ref: 'PO-002601' },
-        { date: 'Dec 1, 2025', amount: '€1,440', status: 'Paid', ref: 'PO-002488' },
-      ].map(p => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <div>
-            <div>${p.date}</div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:14px">
-            <span style="font-size:16px;font-weight:400">${p.amount}</span>
-            <span style="background:#E6F4EE;color:var(--success);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:1px">PAID</span>
-          </div>
-        </div>`).join('')}
+      <div id="creator-payout-history"></div>
     </div>
 
     <!-- PROFILE PANEL -->
@@ -589,6 +578,21 @@
       </div>
     </div>
 
+    <!-- WISHLIST PANEL -->
+    <div class="dash-panel" id="panel-wishlist">
+      <div class="dash-header">
+        <div class="dash-greeting">Wishlist</div>
+        <a href="explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Discover more →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px" id="creator-wishlist-grid"></div>
+      <div id="creator-wishlist-empty" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:40px;margin-bottom:16px;opacity:.3">♡</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:8px">Nothing saved yet</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Tap ♡ on any stay in Explore to save it here.</p>
+        <a href="explore.html" class="btn-primary" style="padding:12px 28px;text-decoration:none;display:inline-block">Explore stays</a>
+      </div>
+    </div>
+
     <!-- POSTS PANEL -->
     <div class="dash-panel" id="panel-posts">
       <div class="dash-header">
@@ -626,12 +630,12 @@
 </div><!-- end dash-layout -->
 
 <!-- NEW POST MODAL -->
-<div class="modal" id="modal-new-post">
-  <div class="modal-overlay" onclick="closeModal('modal-new-post')"></div>
-  <div class="modal-box" style="max-width:500px;width:90%">
+<div class="modal-overlay" id="modal-new-post">
+  <div class="modal" style="max-width:500px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400">New post</div>
-      <button style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:0" onclick="closeModal('modal-new-post')">×</button>
+      <button class="modal-close" onclick="closeModal('modal-new-post')" style="position:static">×</button>
     </div>
     <form id="new-post-form" onsubmit="submitNewPost(event)">
       <div class="form-group" style="margin-bottom:14px">
@@ -668,6 +672,7 @@
   </div>
 </div>
 
+
 <!-- Mobile bottom nav -->
 <div class="dash-bottom-nav" id="mobile-bottom-nav">
   <button class="dash-nav-item active" onclick="switchPanel('overview',null);setMobileActive(this)">
@@ -690,6 +695,10 @@
   <button class="dash-nav-item" onclick="switchPanel('posts',null);setMobileActive(this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/><rect x="13" y="16" width="8" height="5" rx="1"/></svg>
     Posts
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('wishlist',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Saved
   </button>
   <button class="dash-nav-item" onclick="switchPanel('profile',null);setMobileActive(this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -792,7 +801,9 @@ function switchPanel(panel, clickedBtn) {
   }
   if (panel === 'bookings') document.getElementById('all-bookings-list').innerHTML = renderRecentBookings();
   if (panel === 'stays') renderMyStays();
+  if (panel === 'earnings') renderCreatorPayoutHistory();
   if (panel === 'posts') renderPostsPanel();
+  if (panel === 'wishlist') renderCreatorWishlist();
 }
 
 function filterBookings(filter, btn) {
@@ -819,6 +830,55 @@ function updatePeriod() {
   const m = multipliers[period] || 1;
   document.getElementById('stat-earned').textContent = `€${Math.round(2840 * m / 1000)}k`;
   document.getElementById('stat-bookings').textContent = Math.round(12 * m);
+}
+
+// ── Payout history ───────────────────────────────────────
+const CREATOR_PAYOUTS = [
+  { date: 'Mar 1, 2026', amount: '€1,280', ref: 'PO-002841' },
+  { date: 'Feb 1, 2026', amount: '€960',   ref: 'PO-002714' },
+  { date: 'Jan 1, 2026', amount: '€840',   ref: 'PO-002601' },
+  { date: 'Dec 1, 2025', amount: '€1,440', ref: 'PO-002488' },
+];
+function renderCreatorPayoutHistory() {
+  const el = document.getElementById('creator-payout-history');
+  if (!el) return;
+  el.innerHTML = CREATOR_PAYOUTS.map(p =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <div>
+        <div>${p.date}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="font-size:16px;font-weight:400">${p.amount}</span>
+        <span style="background:#E6F4EE;color:var(--success);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:1px">PAID</span>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ── Creator wishlist ──────────────────────────────────────
+function renderCreatorWishlist() {
+  const wl = VIA_STATE.wishlist;
+  const grid = document.getElementById('creator-wishlist-grid');
+  const empty = document.getElementById('creator-wishlist-empty');
+  if (!grid) return;
+  if (!wl.length) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  const stays = wl.map(id => getStay(id)).filter(Boolean);
+  grid.innerHTML = stays.map(s => {
+    const creator = getCreator(s.creatorId);
+    return `<div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow=''" onclick="window.location='stay.html?id=${s.id}'">
+      <div style="aspect-ratio:1;background-image:url('${s.images[0]}');background-size:cover;background-position:center"></div>
+      <div style="padding:8px 10px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.06em;margin-top:2px">${s.currency}${s.price.toLocaleString()} · via ${creator ? creator.handle : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── Posts panel ──────────────────────────────────────────
