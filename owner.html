@@ -319,6 +319,37 @@
 .sidebar-user-name { font-size: 13px; font-weight: 400; }
 .sidebar-user-role { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
 
+/* Creator expandable panel */
+.creator-row { cursor: pointer; }
+.creator-row:hover { background: var(--cream); border-radius: 2px; padding-left: 4px; transition: padding .15s; }
+.creator-posts-panel {
+  display: none;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+.creator-posts-panel.open { display: block; }
+.creator-post-strip {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 4px 0 8px;
+}
+.creator-post-strip::-webkit-scrollbar { display: none; }
+.creator-post-thumb {
+  width: 100px; height: 120px; border-radius: 2px; flex-shrink: 0;
+  background-size: cover; background-position: center; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.creator-post-thumb::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55));
+  pointer-events: none;
+}
+.creator-post-thumb-loc {
+  position: absolute; bottom: 5px; left: 6px; right: 6px;
+  font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .06em;
+  color: rgba(255,255,255,.85); pointer-events: none; z-index: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
 @media (min-width: 1024px) {
   .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
   .dash-sidebar {
@@ -706,28 +737,57 @@ function renderCreators() {
   el.innerHTML = CREATOR_PERFORMANCE.map(cp => {
     const c = getCreator(cp.id);
     if (!c) return '';
-    return `<div class="creator-row">
-      <div class="creator-av" style="background-image:url('${c.avatar}')"></div>
-      <div class="creator-info">
-        <div class="creator-name">${c.name}</div>
-        <div class="creator-handle">${c.handle} · ${c.followers} followers</div>
+    // posts this creator made for stays owned by this property (stayId === 1 = Le Pigonnet)
+    const posts = VIA_DATA.posts.filter(p => p.creatorId === cp.id && p.stayId === 1);
+    const postCount = posts.length;
+    const postThumbs = posts.map(p =>
+      `<div class="creator-post-thumb" style="background-image:url('${p.image}')" onclick="event.stopPropagation();window.location='stay.html?id=${p.stayId}'">
+        <div class="creator-post-thumb-loc">${p.location}</div>
+      </div>`
+    ).join('');
+
+    return `
+    <div>
+      <div class="creator-row" onclick="toggleCreatorPosts('posts-${cp.id}', this)">
+        <div class="creator-av" style="background-image:url('${c.avatar}')"></div>
+        <div class="creator-info">
+          <div class="creator-name">${c.name}</div>
+          <div class="creator-handle">${c.handle} · ${c.followers} followers · ${postCount} tagged post${postCount !== 1 ? 's' : ''}</div>
+        </div>
+        <div style="display:flex;gap:16px;flex-shrink:0;align-items:center">
+          <div class="creator-stat">
+            <div class="v">${cp.bookings}</div>
+            <div class="l">bookings</div>
+          </div>
+          <div class="creator-stat">
+            <div class="v">${cp.revenue}</div>
+            <div class="l">revenue</div>
+          </div>
+          <div class="creator-stat">
+            <div class="v">${cp.conversion}</div>
+            <div class="l">match rate</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="chevron-${cp.id}" style="flex-shrink:0;color:var(--muted);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
       </div>
-      <div style="display:flex;gap:16px;flex-shrink:0">
-        <div class="creator-stat">
-          <div class="v">${cp.bookings}</div>
-          <div class="l">bookings</div>
-        </div>
-        <div class="creator-stat">
-          <div class="v">${cp.revenue}</div>
-          <div class="l">revenue</div>
-        </div>
-        <div class="creator-stat">
-          <div class="v">${cp.conversion}</div>
-          <div class="l">match rate</div>
-        </div>
+      <div class="creator-posts-panel" id="posts-${cp.id}">
+        ${postCount ? `
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Tagged posts</div>
+          <div class="creator-post-strip">${postThumbs}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em">${posts.reduce((s,p)=>s+p.stats.views,0).toLocaleString()} total views · ${posts.reduce((s,p)=>s+p.stats.saves,0).toLocaleString()} saves across these posts</div>
+        ` : `<div style="font-size:13px;color:var(--muted);padding:4px 0">No posts tagged to your property yet.</div>`}
       </div>
     </div>`;
   }).join('');
+}
+
+function toggleCreatorPosts(panelId, row) {
+  const panel = document.getElementById(panelId);
+  const creatorId = panelId.replace('posts-', '');
+  const chevron = document.getElementById(`chevron-${creatorId}`);
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 
 function renderTopCreators() {
