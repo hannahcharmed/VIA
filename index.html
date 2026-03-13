@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Via — Travel by people you trust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+/* ── INDEX-SPECIFIC ── */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--nav-h);
+  overflow: hidden;
+}
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 20px 32px;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.2s forwards;
+}
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(44px, 10vw, 76px);
+  font-weight: 300;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.35s forwards;
+}
+.hero-headline em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.5s forwards;
+  max-width: 460px;
+}
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.65s forwards;
+}
+.hero-right {
+  flex: 1;
+  min-height: 320px;
+  background: var(--cream);
+  position: relative;
+  overflow: hidden;
+}
+.hero-collage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+  opacity: 0;
+  animation: fadeIn 1.2s 0.4s forwards;
+}
+.collage-img {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+.collage-img:nth-child(1) {
+  background-image: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80');
+  grid-row: span 2;
+}
+.collage-img:nth-child(2) {
+  background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80');
+}
+.collage-img:nth-child(3) {
+  background-image: url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80');
+}
+.creator-badge {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  background: rgba(250,248,244,0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 12px 7px 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.creator-badge-av {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background-image: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80');
+  background-size: cover;
+  flex-shrink: 0;
+}
+.creator-badge-name { font-size: 11px; font-weight: 400; }
+.creator-badge-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); }
+.stayed-tag {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: var(--accent);
+  color: white;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  font-family: 'DM Mono', monospace;
+  border-radius: 1px;
+}
+
+/* ── HOW IT WORKS ── */
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+.audience-card {
+  background: var(--cream);
+  padding: 36px 28px;
+  position: relative;
+  transition: transform 0.3s;
+  cursor: default;
+}
+.audience-card:hover { transform: translateY(-3px); }
+.audience-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--border);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.audience-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.audience-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+.audience-desc { font-size: 14px; line-height: 1.7; color: var(--muted); margin-bottom: 20px; }
+.audience-benefit {
+  font-size: 13px;
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  line-height: 1.6;
+}
+
+/* ── PROFILES ── */
+.profiles-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+/* ── STAY SECTION ── */
+.stay-showcase {
+  padding: 64px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.stay-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 220px 120px;
+  gap: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.stay-img { background-size: cover; background-position: center; background-color: var(--cream); }
+.stay-img:first-child {
+  grid-column: span 2;
+  background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80');
+}
+.stay-img:nth-child(2) {
+  background-image: url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&q=80');
+}
+.stay-img:nth-child(3) {
+  background-image: url('https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400&q=80');
+}
+.pricing-block {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.price-big { font-size: 34px; font-weight: 400; }
+.price-per { font-size: 13px; color: var(--muted); }
+.attribution-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+}
+.attribution-note span { color: var(--accent); }
+
+/* ── MANIFESTO ── */
+.manifesto {
+  background: var(--ink);
+  padding: 80px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.manifesto::before {
+  content: 'VIA';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(180px, 35vw, 400px);
+  font-weight: 300;
+  color: rgba(255,255,255,0.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.manifesto-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 5vw, 44px);
+  font-weight: 300;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.manifesto-line em { font-style: italic; color: var(--accent-light); }
+.manifesto-sub {
+  font-size: clamp(14px, 2vw, 18px);
+  color: rgba(255,255,255,0.35);
+  margin-top: 40px;
+  line-height: 1.7;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+}
+
+/* ── WAITLIST ── */
+.waitlist-section {
+  padding: 64px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.waitlist-tabs { margin-bottom: 28px; }
+
+/* ── SOCIAL PROOF ── */
+.social-proof {
+  padding: 32px 20px;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+.sp-faces {
+  display: flex;
+  margin-left: -8px;
+}
+.sp-face {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  background-size: cover;
+  background-position: center;
+  margin-left: -8px;
+}
+.sp-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.sp-text strong { color: var(--ink); font-weight: 400; }
+
+/* ── RESPONSIVE ── */
+@media (min-width: 768px) {
+  .hero { flex-direction: row; }
+  .hero-left { flex: 1; padding: 80px 48px 80px 60px; }
+  .hero-right { flex: 1; min-height: auto; }
+  .hero-actions { flex-direction: row; }
+  .three-col { grid-template-columns: 1fr 1fr 1fr; }
+  .profiles-header { flex-direction: row; align-items: flex-end; }
+  .stay-showcase { flex-direction: row; padding: 80px 40px; }
+  .stay-images { flex: 1; }
+  .stay-details { flex: 1; }
+  .stay-images { grid-template-rows: 280px 160px; }
+  .waitlist-section { flex-direction: row; padding: 80px 40px; align-items: flex-start; }
+  .waitlist-left, .waitlist-right { flex: 1; }
+  .social-proof { flex-direction: row; justify-content: center; text-align: left; }
+}
+@media (min-width: 1024px) {
+  .hero-left { padding: 80px 60px 80px 80px; }
+  .stay-showcase { padding: 100px 80px; gap: 80px; }
+  .waitlist-section { padding: 100px 80px; gap: 80px; }
+  .manifesto { padding: 120px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#creators">Creators</a>
+    <a href="#stays">Stays</a>
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <a href="#waitlist" class="btn-primary" style="padding:9px 18px">Request Access</a>
+  </div>
+  <div class="nav-right">
+    <a href="auth.html" class="btn-primary nav-signin" style="padding:9px 18px;font-size:10px">Request Access</a>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Drawer -->
+<div class="nav-drawer" id="nav-drawer">
+  <a href="#how">How it works</a>
+  <a href="#creators">Creators</a>
+  <a href="#stays">Stays</a>
+  <a href="explore.html">Explore stays</a>
+  <a href="auth.html">Sign in</a>
+  <a href="#waitlist" style="color:var(--accent)">Request access →</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Creator-led travel marketplace</div>
+    <h1 class="hero-headline">Travel <em>via</em> people<br>you already trust.</h1>
+    <p class="hero-sub">Via connects travelers with the exact places their favorite creators have stayed — making inspiration instantly bookable.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Request early access</a>
+      <a href="explore.html" class="btn-ghost">Browse stays</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-collage">
+      <div class="collage-img">
+        <div class="creator-badge">
+          <div class="creator-badge-av"></div>
+          <div>
+            <div class="creator-badge-name">Camille Laurent</div>
+            <div class="creator-badge-meta">stayed here · jan 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="collage-img"><div class="stayed-tag">Stayed here</div></div>
+      <div class="collage-img"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOCIAL PROOF ── -->
+<div class="social-proof">
+  <div class="sp-faces">
+    <div class="sp-face" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80')"></div>
+    <div class="sp-face" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80')"></div>
+    <div class="sp-face" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80')"></div>
+    <div class="sp-face" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=80&q=80')"></div>
+  </div>
+  <div class="sp-text">Trusted by <strong>4 verified creators</strong> · <strong>12 boutique stays</strong> · across <strong>9 countries</strong></div>
+</div>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-text">Built for three kinds of people</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section-pad" id="how">
+  <div class="container">
+    <div class="section-label scroll-reveal">The model</div>
+    <h2 class="section-title scroll-reveal">A marketplace where <em>everyone wins</em> when a booking happens.</h2>
+    <div class="three-col scroll-reveal">
+      <div class="audience-card">
+        <div class="audience-num">01</div>
+        <div class="audience-type">Creators</div>
+        <div class="audience-title">Your stays. Your archive. Your income.</div>
+        <div class="audience-desc">One clean profile linking every stay you've ever posted about. Your followers can book the exact place — and you earn every time.</div>
+        <div class="audience-benefit">Free & discounted stays · Affiliate commissions · Post once, earn forever</div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">02</div>
+        <div class="audience-type">Stay Owners</div>
+        <div class="audience-title">Reach. Content. Bookings.</div>
+        <div class="audience-desc">Get discovered by creator audiences already dreaming about your property. Receive authentic UGC. Pay only when bookings happen.</div>
+        <div class="audience-benefit">No upfront fees · Authentic content · Performance-based only</div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">03</div>
+        <div class="audience-type">Travelers</div>
+        <div class="audience-title">Book exactly what inspired you.</div>
+        <div class="audience-desc">No guessing. No endless scrolling. See a place on Instagram and book it in one click, guided by someone whose taste you already trust.</div>
+        <div class="audience-benefit">Trust-led discovery · No catfishing · Curated, not algorithmic</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CREATOR PROFILES ── -->
+<section class="section-pad section-bg" id="creators">
+  <div class="container">
+    <div class="profiles-header scroll-reveal">
+      <div>
+        <div class="section-label">Creator profiles</div>
+        <h2 class="section-title" style="margin-bottom:0">A permanent, bookable<br>archive of <em>everywhere they've stayed.</em></h2>
+      </div>
+      <a href="auth.html?role=creator" class="btn-primary" style="flex-shrink:0">Apply as creator</a>
+    </div>
+    <div class="grid-1 scroll-reveal" id="creators-grid"></div>
+  </div>
+</section>
+
+<!-- ── STAY SHOWCASE ── -->
+<section class="stay-showcase" id="stays">
+  <div class="stay-images scroll-reveal">
+    <div class="stay-img"></div>
+    <div class="stay-img"></div>
+    <div class="stay-img"></div>
+  </div>
+  <div class="stay-details scroll-reveal">
+    <div class="section-label">Bookable stay page</div>
+    <div class="creator-banner">
+      <div class="creator-banner-avatar" style="background-image:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80')"></div>
+      <div class="creator-banner-text">Stayed here by <strong>Camille Laurent</strong> · January 2025</div>
+    </div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,46px);font-weight:300;line-height:1.1;margin-bottom:8px">Hôtel Le Pigonnet</h2>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.12em;margin-bottom:20px">Aix-en-Provence, France</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--muted);margin-bottom:28px">A 19th-century bastide nestled in a private garden, steps from the Cours Mirabeau. Camille spent four days here in January and called it "the most quietly beautiful hotel I've ever stayed in."</p>
+    <div class="pricing-block">
+      <div class="price-big">€385</div>
+      <div class="price-per">/ night · avg. 3 nights</div>
+    </div>
+    <a href="stay.html?id=1" class="btn-primary btn-full" style="display:block;padding:16px;text-align:center;margin-bottom:10px">Book via Camille</a>
+    <div class="attribution-note">10% goes to <span>Camille</span> · No hidden fees</div>
+  </div>
+</section>
+
+<!-- ── MANIFESTO ── -->
+<section class="manifesto">
+  <div class="manifesto-line">Intuition over algorithms.</div>
+  <div class="manifesto-line">Taste over volume.</div>
+  <div class="manifesto-line"><em>Trust over ads.</em></div>
+  <div class="manifesto-sub">Travel works best when it's guided<br>by people you already trust.</div>
+</section>
+
+<!-- ── WAITLIST ── -->
+<section class="waitlist-section" id="waitlist">
+  <div class="waitlist-left scroll-reveal">
+    <div class="section-label">Early access</div>
+    <h2 class="section-title" style="margin-bottom:16px">Via is invite-only<br>to start. <em>By design.</em></h2>
+    <p style="font-size:14px;line-height:1.8;color:var(--muted)">We're onboarding a hand-selected group of creators and boutique stay owners. Quality over scale — always.</p>
+  </div>
+  <div class="waitlist-right scroll-reveal">
+    <div class="tabs waitlist-tabs" id="wl-tabs">
+      <button class="tab-btn active" data-tab="creator" onclick="switchWLTab(this,'creator')">I'm a Creator</button>
+      <button class="tab-btn" data-tab="owner" onclick="switchWLTab(this,'owner')">Stay Owner</button>
+      <button class="tab-btn" data-tab="traveler" onclick="switchWLTab(this,'traveler')">Traveler</button>
+    </div>
+    <form id="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" placeholder="Camille" required>
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" placeholder="Laurent" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="camille@example.com" required>
+        </div>
+        <div class="form-group" id="wl-creator-field">
+          <label>Instagram / TikTok handle</label>
+          <input type="text" placeholder="@handle">
+        </div>
+        <div class="form-group" id="wl-owner-field" style="display:none">
+          <label>Property name</label>
+          <input type="text" placeholder="Hôtel de la Paix">
+        </div>
+        <div class="form-group">
+          <label>Where do you travel / host?</label>
+          <input type="text" placeholder="Europe, Asia, Americas...">
+        </div>
+        <button type="submit" class="btn-primary btn-full" style="padding:15px">Request access →</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div>
+    <div class="footer-logo">V<span>.</span>ia</div>
+    <div class="footer-tagline">Travel by way of trust.</div>
+  </div>
+  <div>
+    <div class="footer-links">
+      <a href="auth.html?role=creator">For Creators</a>
+      <a href="auth.html?role=owner">For Owners</a>
+      <a href="explore.html">Explore</a>
+      <a href="#waitlist">Manifesto</a>
+    </div>
+    <div class="footer-copy" style="margin-top:12px">© 2025 Via Travel, Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Render creators grid
+  const grid = document.getElementById('creators-grid');
+  if (grid) {
+    grid.innerHTML = VIA_DATA.creators.map(c => renderCreatorCard(c)).join('');
+    initWishlistButtons();
+  }
+
+  function switchWLTab(btn, type) {
+    document.querySelectorAll('#wl-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('wl-creator-field').style.display = type === 'creator' ? '' : 'none';
+    document.getElementById('wl-owner-field').style.display  = type === 'owner'   ? '' : 'none';
+  }
+
+  function handleWaitlistSubmit(e) {
+    e.preventDefault();
+    if (!validateForm(e.target)) return;
+    showToast('✓ You\'re on the list — we\'ll be in touch.');
+    e.target.reset();
+  }
+</script>
+</body>
+</html>

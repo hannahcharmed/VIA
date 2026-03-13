@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book your stay — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.booking-page {
+  padding-top: var(--nav-h);
+  min-height: 100svh;
+  background: var(--warm-white);
+}
+.booking-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+/* Stay summary card */
+.stay-summary {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  background: var(--cream);
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.stay-summary:hover { border-color: var(--accent); }
+.stay-summary-img {
+  width: 72px; height: 72px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--sand);
+}
+.stay-summary-info { flex: 1; min-width: 0; }
+.stay-summary-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stay-summary-loc {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+.stay-summary-meta {
+  font-size: 13px;
+  color: var(--ink);
+}
+.stay-summary-change {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+/* Step wrapper */
+.booking-step {
+  display: none;
+}
+.booking-step.active {
+  display: block;
+  animation: fadeUp 0.35s forwards;
+}
+
+/* Form layouts */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.form-2col { grid-template-columns: 1fr 1fr; }
+.form-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+/* Date selection */
+.date-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.date-cell {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.date-cell:hover, .date-cell.selected { border-color: var(--accent); }
+.date-cell .dc-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.date-cell .dc-val {
+  font-size: 16px;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Guest counter */
+.guest-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+.guest-type .g-name { font-size: 14px; color: var(--ink); }
+.guest-type .g-note { font-size: 12px; color: var(--muted); }
+.guest-adj-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.g-adj {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s;
+}
+.g-adj:hover { border-color: var(--ink); }
+.g-adj:disabled { color: var(--border); cursor: default; }
+.g-count { font-size: 16px; min-width: 20px; text-align: center; }
+
+/* Special requests */
+.special-req {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.special-req:focus { border-color: var(--accent); }
+
+/* Payment form */
+.card-input-wrap {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.card-input-wrap input {
+  border: none;
+  background: none;
+  padding: 0;
+  width: 100%;
+  font-size: 14px;
+}
+.card-input-wrap:focus-within { border-color: var(--accent); }
+.card-icons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.card-icon {
+  width: 32px; height: 20px;
+  border-radius: 3px;
+  background: var(--sand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Order summary sidebar */
+.booking-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.order-summary {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 20px;
+  order: -1;
+}
+.order-summary-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+/* Confirmation screen */
+.confirmation {
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeUp 0.5s forwards;
+}
+.confirm-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--success);
+  color: white;
+  font-size: 28px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.confirm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  margin-bottom: 12px;
+}
+.confirm-ref {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 24px;
+}
+.confirm-details {
+  background: var(--cream);
+  border-radius: 3px;
+  padding: 20px;
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto 28px;
+}
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+}
+.confirm-row:last-child { border-bottom: none; }
+.confirm-row strong { color: var(--ink); font-weight: 400; }
+
+/* Trust badges */
+.trust-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.trust-badge svg { width: 14px; height: 14px; color: var(--success); }
+
+/* Nav progress on mobile */
+.booking-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border);
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+}
+
+@media (min-width: 768px) {
+  .booking-container { padding: 32px 40px 80px; }
+  .form-grid.form-2col { grid-template-columns: 1fr 1fr; }
+  .booking-layout { flex-direction: row; align-items: flex-start; }
+  .booking-main { flex: 1; }
+  .order-summary { order: 0; width: 300px; flex-shrink: 0; position: sticky; top: calc(var(--nav-h) + 20px); }
+  .booking-nav { padding: 14px 40px; }
+}
+@media (min-width: 1024px) {
+  .booking-container { padding: 40px 80px 80px; }
+  .order-summary { width: 340px; }
+  .booking-nav { padding: 14px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
+</div>
+
+<div class="booking-page" id="booking-page">
+  <div class="booking-container">
+    <!-- Steps -->
+    <div class="steps" id="steps-bar">
+      <div class="step active" id="step-indicator-1">Dates</div>
+      <div class="step" id="step-indicator-2">Details</div>
+      <div class="step" id="step-indicator-3">Payment</div>
+      <div class="step" id="step-indicator-4">Confirm</div>
+    </div>
+
+    <div class="booking-layout">
+      <div class="booking-main">
+        <!-- Stay summary -->
+        <div class="stay-summary" onclick="window.location='stay.html?id='+stayId" id="stay-summary-bar">
+          <div class="stay-summary-img" id="ss-img"></div>
+          <div class="stay-summary-info">
+            <div class="stay-summary-name" id="ss-name">Loading...</div>
+            <div class="stay-summary-loc" id="ss-loc"></div>
+            <div class="stay-summary-meta" id="ss-meta"></div>
+          </div>
+          <div class="stay-summary-change">Change</div>
+        </div>
+
+        <!-- STEP 1: DATES & GUESTS -->
+        <div class="booking-step active" id="step-1">
+          <div class="form-section-title">When are you going?</div>
+
+          <label style="margin-bottom:8px;display:block">Select dates</label>
+          <div id="step1-calendar" style="margin-bottom:20px"></div>
+
+          <div class="date-pair" id="date-display" style="margin-bottom:20px">
+            <div class="date-cell">
+              <div class="dc-label">Check in</div>
+              <div class="dc-val" id="checkin-display">Select date</div>
+            </div>
+            <div class="date-cell">
+              <div class="dc-label">Check out</div>
+              <div class="dc-val" id="checkout-display">Select date</div>
+            </div>
+          </div>
+
+          <label style="margin-bottom:12px;display:block">Guests</label>
+          <div class="guest-counter">
+            <div class="guest-type">
+              <div class="g-name">Adults</div>
+              <div class="g-note">Ages 13+</div>
+            </div>
+            <div class="guest-adj-row">
+              <button class="g-adj" id="adult-minus" onclick="adjustGuests('adult',-1)" disabled>−</button>
+              <span class="g-count" id="adult-count">2</span>
+              <button class="g-adj" onclick="adjustGuests('adult',1)">+</button>
+            </div>
+          </div>
+          <div class="guest-counter">
+            <div class="guest-type">
+              <div class="g-name">Children</div>
+              <div class="g-note">Ages 2–12</div>
+            </div>
+            <div class="guest-adj-row">
+              <button class="g-adj" id="child-minus" onclick="adjustGuests('child',-1)" disabled>−</button>
+              <span class="g-count" id="child-count">0</span>
+              <button class="g-adj" onclick="adjustGuests('child',1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: GUEST DETAILS -->
+        <div class="booking-step" id="step-2">
+          <div class="form-section-title">Your details</div>
+          <div class="form-grid form-2col">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" id="guest-first" placeholder="Camille" required>
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" id="guest-last" placeholder="Laurent" required>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="guest-email" placeholder="camille@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="guest-phone" placeholder="+33 6 12 34 56 78">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Special requests (optional)</label>
+            <textarea class="special-req" id="special-req" placeholder="Late check-in, dietary requirements, anniversary surprises..."></textarea>
+          </div>
+          <div style="padding:14px;background:var(--cream);border-radius:2px;display:flex;gap:10px;align-items:flex-start">
+            <svg style="flex-shrink:0;color:var(--accent);margin-top:2px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6">Your personal details are shared only with the property, and only after booking is confirmed.</p>
+          </div>
+        </div>
+
+        <!-- STEP 3: PAYMENT -->
+        <div class="booking-step" id="step-3">
+          <div class="form-section-title">Payment</div>
+
+          <!-- Trust badges -->
+          <div class="trust-row">
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              256-bit SSL
+            </div>
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Free cancellation
+            </div>
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              No hidden fees
+            </div>
+          </div>
+
+          <!-- Card -->
+          <div class="form-group" style="margin-bottom:10px">
+            <label>Card number</label>
+            <div class="card-input-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <input type="text" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCard(this)">
+              <div class="card-icons">
+                <div class="card-icon">VISA</div>
+                <div class="card-icon">MC</div>
+                <div class="card-icon">AMEX</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-grid form-2col" style="margin-bottom:10px">
+            <div class="form-group">
+              <label>Expiry</label>
+              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+            </div>
+            <div class="form-group">
+              <label>CVC</label>
+              <input type="text" id="card-cvc" placeholder="123" maxlength="4">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:20px">
+            <label>Name on card</label>
+            <input type="text" id="card-name" placeholder="Camille Laurent">
+          </div>
+
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+            By completing this booking you agree to Via's <a href="#" style="color:var(--accent)">Terms of Service</a> and <a href="#" style="color:var(--accent)">Cancellation Policy</a>. Your card will be charged only after confirmation.
+          </div>
+        </div>
+
+        <!-- STEP 4: CONFIRMATION -->
+        <div class="booking-step" id="step-4">
+          <!-- Rendered by JS after payment -->
+        </div>
+      </div>
+
+      <!-- Order Summary sidebar -->
+      <div class="order-summary" id="order-summary">
+        <div class="order-summary-title">Your booking</div>
+        <div id="os-content">
+          <div style="font-size:13px;color:var(--muted)">Select dates to see pricing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav Buttons -->
+  <div class="booking-nav" id="booking-nav">
+    <button class="btn-outline" id="nav-back" onclick="prevStep()" style="flex:1;display:none">← Back</button>
+    <button class="btn-primary" id="nav-next" onclick="nextStep()" style="flex:1">Continue →</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+const stayId   = parseInt(getParam('id')) || 1;
+const initNights = parseInt(getParam('nights')) || 3;
+const stay     = getStay(stayId);
+const creator  = stay ? getCreator(stay.creatorId) : null;
+
+let currentStep = 1;
+let adults = 2, children = 0;
+let nights = initNights;
+let checkIn = null, checkOut = null;
+let calInstance = null;
+
+const STEP_LABELS = { 1:'Continue →', 2:'Continue →', 3:'Confirm booking', 4:'' };
+
+function init() {
+  if (!stay) return;
+  document.title = `Book ${stay.name} — Via`;
+
+  // Stay summary
+  document.getElementById('ss-img').style.backgroundImage = `url('${stay.images[0]}')`;
+  document.getElementById('ss-name').textContent = stay.name;
+  document.getElementById('ss-loc').textContent = stay.location;
+  updateSummaryMeta();
+  updateOrderSummary();
+
+  // Calendar
+  calInstance = createCalendar(document.getElementById('step1-calendar'), {
+    onChange(start, end) {
+      checkIn = start; checkOut = end;
+      const fmt = d => d ? d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }) : 'Select date';
+      document.getElementById('checkin-display').textContent  = fmt(start);
+      document.getElementById('checkout-display').textContent = fmt(end);
+      if (start && end) {
+        nights = Math.max(1, Math.round((end - start) / 86400000));
+      }
+      updateSummaryMeta();
+      updateOrderSummary();
+    }
+  });
+}
+
+function updateSummaryMeta() {
+  document.getElementById('ss-meta').textContent = `${stay.currency}${stay.price.toLocaleString()} / night · ${nights} night${nights !== 1 ? 's' : ''}`;
+}
+
+function updateOrderSummary() {
+  const sub  = stay.price * nights;
+  const fee  = Math.round(sub * 0.03);
+  const comm = Math.round(sub * stay.commission);
+  const total = sub + fee;
+  document.getElementById('os-content').innerHTML = `
+    <div style="font-size:14px;margin-bottom:14px;color:var(--muted)">
+      ${checkIn && checkOut ? `
+        <div style="margin-bottom:4px">${checkIn.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} → ${checkOut.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+      ` : '<div style="margin-bottom:4px">Dates not selected</div>'}
+      <div>${adults} adult${adults !== 1 ? 's' : ''}${children ? ` · ${children} child${children !== 1 ? 'ren' : ''}` : ''}</div>
+    </div>
+    <div class="price-breakdown">
+      <div class="price-row"><span class="label">${stay.currency}${stay.price.toLocaleString()} × ${nights} nights</span><span class="val">${stay.currency}${sub.toLocaleString()}</span></div>
+      <div class="price-row"><span class="label">Service fee (3%)</span><span class="val">${stay.currency}${fee.toLocaleString()}</span></div>
+      <div class="price-row"><span class="label" style="color:var(--muted);font-size:12px">Creator share (10%)</span><span class="val" style="color:var(--accent);font-size:12px">${stay.currency}${comm.toLocaleString()}</span></div>
+      <div class="price-row"><span class="label" style="font-weight:400;color:var(--ink)">Total</span><span class="val" style="font-size:18px">${stay.currency}${total.toLocaleString()}</span></div>
+    </div>
+    ${creator ? `<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center">10% shared with <span style="color:var(--accent)">${creator.handle}</span></div>` : ''}
+  `;
+}
+
+function adjustGuests(type, delta) {
+  if (type === 'adult') {
+    adults = Math.max(1, Math.min(8, adults + delta));
+    document.getElementById('adult-count').textContent = adults;
+    document.getElementById('adult-minus').disabled = adults <= 1;
+  } else {
+    children = Math.max(0, Math.min(6, children + delta));
+    document.getElementById('child-count').textContent = children;
+    document.getElementById('child-minus').disabled = children <= 0;
+  }
+  updateSummaryMeta();
+  updateOrderSummary();
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    // Validate dates
+    if (!checkIn || !checkOut) {
+      showToast('Please select check-in and check-out dates');
+      return;
+    }
+  }
+  if (currentStep === 2) {
+    // Validate guest details
+    const first = document.getElementById('guest-first').value.trim();
+    const last  = document.getElementById('guest-last').value.trim();
+    const email = document.getElementById('guest-email').value.trim();
+    if (!first || !last || !email) {
+      showToast('Please fill in all required fields');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Please enter a valid email address');
+      return;
+    }
+  }
+  if (currentStep === 3) {
+    // Simulate payment
+    const cardNum  = document.getElementById('card-number').value.replace(/\s/g,'');
+    const expiry   = document.getElementById('card-expiry').value;
+    const cvc      = document.getElementById('card-cvc').value;
+    const cardName = document.getElementById('card-name').value.trim();
+    if (!cardNum || cardNum.length < 13 || !expiry || !cvc || !cardName) {
+      showToast('Please complete all payment fields');
+      return;
+    }
+    processPayment();
+    return;
+  }
+  goToStep(currentStep + 1);
+}
+
+function prevStep() {
+  if (currentStep > 1) goToStep(currentStep - 1);
+}
+
+function goToStep(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.querySelectorAll('[id^="step-indicator-"]').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === n);
+    el.classList.toggle('done', i + 1 < n);
+  });
+  currentStep = n;
+  document.getElementById(`step-${n}`).classList.add('active');
+  document.getElementById('nav-back').style.display = n > 1 && n < 4 ? '' : 'none';
+  document.getElementById('nav-next').style.display = n < 4 ? '' : 'none';
+  document.getElementById('nav-next').textContent = STEP_LABELS[n];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function processPayment() {
+  const nextBtn = document.getElementById('nav-next');
+  nextBtn.textContent = '';
+  nextBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0 auto"></div>';
+  nextBtn.disabled = true;
+
+  // Simulate payment processing
+  setTimeout(() => {
+    const guestFirst = document.getElementById('guest-first').value;
+    const guestEmail = document.getElementById('guest-email').value;
+
+    // Save booking
+    VIA_STATE.addBooking({
+      stayId, stayName: stay.name, stayLocation: stay.location,
+      stayImage: stay.images[0],
+      nights, adults, children,
+      checkIn: checkIn.toISOString(), checkOut: checkOut.toISOString(),
+      guestName: guestFirst, guestEmail,
+      total: stay.price * nights * 1.03,
+      currency: stay.currency,
+      creatorId: stay.creatorId
+    });
+
+    const ref = 'VIA-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    document.getElementById('step-4').innerHTML = `
+      <div class="confirmation">
+        <div class="confirm-icon">✓</div>
+        <h2 class="confirm-title">You're booked.</h2>
+        <div class="confirm-ref">Booking ref: ${ref}</div>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.7">
+          Confirmation sent to <strong style="color:var(--ink)">${guestEmail}</strong>.<br>
+          The property will contact you within 24 hours.
+        </p>
+        <div class="confirm-details">
+          <div class="confirm-row"><span>Stay</span><strong>${stay.name}</strong></div>
+          <div class="confirm-row"><span>Dates</span><strong>${checkIn.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${checkOut.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</strong></div>
+          <div class="confirm-row"><span>Guests</span><strong>${adults} adult${adults !== 1 ? 's' : ''}${children ? ` + ${children}` : ''}</strong></div>
+          <div class="confirm-row"><span>Via creator</span><strong style="color:var(--accent)">${creator ? creator.handle : '—'}</strong></div>
+          <div class="confirm-row"><span>Total paid</span><strong>${stay.currency}${Math.round(stay.price * nights * 1.03).toLocaleString()}</strong></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:300px;margin:0 auto">
+          <a href="stay.html?id=${stayId}" class="btn-outline btn-full" style="padding:13px">View stay →</a>
+          <a href="explore.html" class="btn-primary btn-full" style="padding:13px">Explore more stays</a>
+        </div>
+      </div>
+    `;
+    goToStep(4);
+  }, 1800);
+}
+
+function formatCard(input) {
+  input.value = input.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+  input.value = v;
+}
+
+init();
+</script>
+</body>
+</html>

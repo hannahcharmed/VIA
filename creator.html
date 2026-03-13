@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.creator-page { padding-top: var(--nav-h); }
+.back-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.back-bar:hover { color: var(--ink); }
+.back-bar svg { width: 16px; height: 16px; }
+
+/* Cover */
+.creator-cover {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--cream);
+  position: relative;
+}
+
+/* Header */
+.creator-header {
+  padding: 0 20px 20px;
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--border);
+}
+.creator-header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: -36px;
+  margin-bottom: 16px;
+}
+.creator-profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 4px solid var(--warm-white);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--accent-light);
+}
+.creator-header-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 300;
+  margin-bottom: 4px;
+}
+.creator-handle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.creator-handle-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.followers-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.creator-bio {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+.creator-locations {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.creator-action-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Stats */
+.creator-stats {
+  padding: 16px 20px;
+  background: var(--cream);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border-bottom: 1px solid var(--border);
+}
+.creator-stat {
+  background: var(--warm-white);
+  padding: 14px 10px;
+  text-align: center;
+}
+.creator-stat .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--ink);
+}
+.creator-stat .lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Tabs */
+.creator-tabs {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 100;
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+}
+.creator-tab {
+  flex: 1;
+  padding: 14px 8px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.creator-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* Content panels */
+.creator-panel { display: none; padding: 24px 20px; }
+.creator-panel.active { display: block; }
+
+/* Stay list */
+.creator-stays-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+/* About */
+.about-section { margin-bottom: 28px; }
+.about-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+.about-text { font-size: 14px; line-height: 1.8; color: var(--muted); }
+
+@media (min-width: 768px) {
+  .creator-header { padding: 0 40px 24px; }
+  .creator-stats { padding: 16px 40px; }
+  .creator-panel { padding: 28px 40px; }
+  .creator-stays-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .creator-cover { height: 280px; }
+  .back-bar { padding: 14px 40px; }
+}
+@media (min-width: 1024px) {
+  .creator-header { padding: 0 80px 28px; }
+  .creator-stats { padding: 16px 80px; }
+  .creator-panel { padding: 32px 80px; max-width: 1280px; margin: 0 auto; }
+  .creator-stays-grid { grid-template-columns: repeat(3, 1fr); }
+  .creator-cover { height: 340px; }
+  .back-bar { padding: 14px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="index.html#creators">Creators</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="index.html#creators">Creators</a>
+  <a href="auth.html">Sign in</a>
+</div>
+
+<div class="creator-page page-top" id="creator-page">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+const creatorId = getParam('id') || 'camille';
+const creator = getCreator(creatorId);
+const creatorStays = creator ? getStaysByCreator(creatorId) : [];
+let following = false;
+
+function renderCreatorPage() {
+  if (!creator) {
+    document.getElementById('creator-page').innerHTML = `<div class="empty-state"><h2>Creator not found</h2><p><a href="explore.html">← Back to explore</a></p></div>`;
+    return;
+  }
+  document.title = `${creator.name} — Via`;
+
+  const allReviews = creatorStays.flatMap(s => VIA_DATA.reviews[s.id] || []).slice(0, 6);
+  const totalEarnings = creator.stats.earned;
+
+  document.getElementById('creator-page').innerHTML = `
+    <!-- Back -->
+    <div class="back-bar" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </div>
+
+    <!-- Cover -->
+    <div class="creator-cover" style="background-image:url('${creator.cover}')"></div>
+
+    <!-- Header -->
+    <div class="creator-header">
+      <div class="creator-header-top">
+        <div class="creator-profile-avatar" style="background-image:url('${creator.avatar}')"></div>
+        <div class="via-badge">Via Creator</div>
+      </div>
+      <h1 class="creator-header-name">${creator.name}</h1>
+      <div class="creator-handle-row">
+        <span class="creator-handle-text">${creator.handle}</span>
+        <span class="followers-count">${creator.followers} followers</span>
+        ${creator.verified ? '<span style="background:var(--accent);color:white;font-family:DM Mono,monospace;font-size:9px;padding:3px 8px;border-radius:1px;letter-spacing:.1em">VERIFIED</span>' : ''}
+      </div>
+      <p class="creator-bio">${creator.bio}</p>
+      <div class="creator-locations">
+        ${creator.locations.map(l => `<span class="pill">${l}</span>`).join('')}
+      </div>
+      <div class="creator-action-row">
+        <button class="btn-primary" id="follow-btn" onclick="toggleFollow()" style="padding:11px 24px">${following ? '✓ Following' : 'Follow'}</button>
+        <a href="explore.html?creator=${creator.id}" class="btn-outline" style="padding:11px 24px">View all stays</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="creator-stats">
+      <div class="creator-stat"><div class="num">${creatorStays.length}</div><div class="lbl">Stays</div></div>
+      <div class="creator-stat"><div class="num">${creator.stats.avgBooking}</div><div class="lbl">Avg booking</div></div>
+      <div class="creator-stat"><div class="num">${creator.stats.matchRate}</div><div class="lbl">Match rate</div></div>
+      <div class="creator-stat"><div class="num">${creator.followers}</div><div class="lbl">Followers</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="creator-tabs">
+      <button class="creator-tab active" onclick="switchCreatorTab('stays',this)">Stays (${creatorStays.length})</button>
+      <button class="creator-tab" onclick="switchCreatorTab('about',this)">About</button>
+      <button class="creator-tab" onclick="switchCreatorTab('reviews',this)">Reviews (${allReviews.length})</button>
+    </div>
+
+    <!-- Stays Panel -->
+    <div class="creator-panel active" id="panel-stays">
+      <div class="creator-stays-grid">
+        ${creatorStays.map(s => renderStayCard(s, creator)).join('')}
+      </div>
+    </div>
+
+    <!-- About Panel -->
+    <div class="creator-panel" id="panel-about">
+      <div class="about-section">
+        <div class="about-title">About ${creator.name.split(' ')[0]}</div>
+        <p class="about-text">${creator.bio}</p>
+      </div>
+      <div class="about-section">
+        <div class="about-title">Destinations</div>
+        <p class="about-text">Explores destinations across ${creator.locations.join(', ')}, and beyond. Known for uncovering properties that feel genuinely personal — the kind you'd never find through an algorithm.</p>
+      </div>
+      <div class="about-section">
+        <div class="about-title">How Via works for creators</div>
+        <p class="about-text">Every stay ${creator.name.split(' ')[0]} features on Via earns a commission when you book. Stays are personally vetted, and the creator's notes are their own words — unsponsored and unfiltered.</p>
+      </div>
+      <div style="background:var(--cream);border-radius:3px;padding:20px;margin-top:24px">
+        <div class="eyebrow" style="margin-bottom:12px">Creator stats</div>
+        <div class="stats-bar">
+          <div class="stats-bar-item"><div class="num">${creatorStays.length}</div><div class="lbl">Properties</div></div>
+          <div class="stats-bar-item"><div class="num">${creator.stats.matchRate}</div><div class="lbl">Match rate</div></div>
+          <div class="stats-bar-item"><div class="num">${creator.stats.avgBooking}</div><div class="lbl">Avg booking</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Panel -->
+    <div class="creator-panel" id="panel-reviews">
+      ${allReviews.length ? allReviews.map(r => `
+        <div class="review">
+          <div class="review-header">
+            <div class="review-avatar" style="background-image:url('${r.avatar}')"></div>
+            <div class="review-meta">
+              <div class="reviewer-name">${r.reviewer}</div>
+              <div class="review-date">${r.date}</div>
+            </div>
+            <div class="review-stars">${'★'.repeat(r.stars)}</div>
+          </div>
+          <p class="review-text">${r.text}</p>
+        </div>`).join('') : '<p style="color:var(--muted);font-size:14px">No reviews yet.</p>'}
+    </div>
+  `;
+
+  initWishlistButtons();
+}
+
+function switchCreatorTab(tab, btn) {
+  document.querySelectorAll('.creator-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.creator-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+function toggleFollow() {
+  following = !following;
+  const btn = document.getElementById('follow-btn');
+  if (btn) {
+    btn.textContent = following ? '✓ Following' : 'Follow';
+    btn.style.background = following ? 'var(--accent)' : '';
+  }
+  showToast(following ? `Following ${creator.name.split(' ')[0]}` : 'Unfollowed');
+}
+
+renderCreatorPage();
+</script>
+</body>
+</html>

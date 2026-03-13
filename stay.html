@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stay — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.stay-page { padding-top: var(--nav-h); }
+
+/* Back nav */
+.back-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.back-bar:hover { color: var(--ink); }
+.back-bar svg { width: 16px; height: 16px; }
+
+/* Gallery */
+.gallery-wrap { position: relative; background: var(--cream); }
+.gallery { aspect-ratio: 4/3; }
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background-size: cover;
+  background-position: center;
+}
+.gallery-count {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  background: rgba(26,23,20,0.65);
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* Content area */
+.stay-content { padding: 20px 20px 120px; }
+
+/* Stay header */
+.stay-header { margin-bottom: 24px; }
+.stay-category {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.stay-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.stay-location-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.stay-location {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stay-location svg { width: 12px; height: 12px; }
+.stay-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.stay-stars { color: var(--accent); letter-spacing: 2px; }
+.review-count { color: var(--muted); font-size: 12px; }
+
+/* Description */
+.stay-desc {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.stay-desc.truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  margin-bottom: 28px;
+  display: block;
+}
+
+/* Tags */
+.stay-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 28px;
+}
+.stay-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--sand);
+  color: var(--muted);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+/* Section heading */
+.section-h {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+
+/* Similar stays */
+.similar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+/* Desktop sidebar layout */
+@media (min-width: 1024px) {
+  .stay-inner {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 48px;
+    padding: 0 80px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .stay-content { padding: 28px 0 60px; }
+  .stay-sidebar {
+    padding: 28px 0 60px;
+    position: sticky;
+    top: calc(var(--nav-h) + 20px);
+    height: fit-content;
+  }
+  .bottom-bar { display: none !important; }
+  .gallery { aspect-ratio: 16/9; }
+  .gallery-item { aspect-ratio: 16/9; }
+  .similar-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 768px) {
+  .stay-content { padding: 24px 40px 120px; }
+  .similar-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Sidebar booking card */
+.booking-card {
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 24px;
+}
+.booking-card-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.booking-card-price .big { font-size: 28px; font-weight: 400; }
+.booking-card-price .per { font-size: 13px; color: var(--muted); }
+
+.guests-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.date-input-btn {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--cream);
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+.date-input-btn:hover { border-color: var(--accent); }
+.date-input-btn svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+.date-input-btn .date-placeholder { color: var(--muted); font-size: 12px; }
+
+.nights-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  margin-bottom: 14px;
+}
+.nights-label { font-size: 14px; color: var(--muted); }
+.nights-count {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.night-adj {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink);
+  transition: border-color 0.2s;
+}
+.night-adj:hover { border-color: var(--ink); }
+.night-adj:disabled { color: var(--border); cursor: default; }
+.nights-num { font-size: 16px; font-weight: 400; min-width: 20px; text-align: center; }
+
+.booking-card-total {
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.booking-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.booking-total-row.total {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+}
+.attribution-line {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+}
+.attribution-line span { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="index.html#creators">Creators</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="index.html#creators">Creators</a>
+  <a href="auth.html">Sign in</a>
+</div>
+
+<div class="stay-page" id="stay-page">
+  <!-- Dynamic content rendered by JS -->
+  <div id="stay-loading" style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<!-- Booking Modal (mobile) -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('booking-modal')">×</button>
+    <div id="modal-inner"></div>
+  </div>
+</div>
+
+<!-- Date picker modal -->
+<div class="modal-overlay" id="date-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('date-modal')">×</button>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:20px">Select dates</h3>
+    <div id="date-calendar"></div>
+    <div style="margin-top:16px;display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1" onclick="closeModal('date-modal')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="confirmDates()">Confirm dates</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Bar (mobile) -->
+<div class="bottom-bar" id="bottom-bar" style="display:none">
+  <div class="bottom-bar-price">
+    <span class="price-amount" id="bb-price">—</span>
+    <span class="price-unit"> / night</span>
+  </div>
+  <button class="btn-accent" id="bb-book-btn" onclick="openBookingModal()" style="padding:13px 28px">Book this stay</button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+const stayId = parseInt(getParam('id')) || 1;
+const stay = getStay(stayId);
+const creator = stay ? getCreator(stay.creatorId) : null;
+const reviews = VIA_DATA.reviews[stayId] || [];
+let nights = stay ? stay.nights : 3;
+let calInstance = null;
+
+function renderStayPage() {
+  if (!stay) {
+    document.getElementById('stay-page').innerHTML = `<div class="empty-state"><h2>Stay not found</h2><p><a href="explore.html">← Back to explore</a></p></div>`;
+    return;
+  }
+  document.title = `${stay.name} — Via`;
+
+  const similarStays = VIA_DATA.stays.filter(s => s.id !== stay.id && (s.creatorId === stay.creatorId || s.country === stay.country)).slice(0, 4);
+
+  document.getElementById('stay-loading').style.display = 'none';
+
+  document.getElementById('stay-page').innerHTML = `
+    <!-- Back -->
+    <div class="back-bar" onclick="window.location='explore.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to explore
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-wrap">
+      <div class="gallery" id="main-gallery">
+        ${stay.images.map(img => `<div class="gallery-item" style="background-image:url('${img}')"></div>`).join('')}
+      </div>
+      <div class="gallery-dots" id="gallery-dots"></div>
+      <div class="gallery-count">${stay.images.length} photos</div>
+    </div>
+
+    <div class="stay-inner" id="stay-inner">
+      <!-- Content -->
+      <div class="stay-content" id="stay-content-col">
+        <!-- Creator banner -->
+        ${creator ? `
+        <div class="creator-banner" onclick="window.location='creator.html?id=${creator.id}'" style="cursor:pointer">
+          <div class="creator-banner-avatar" style="background-image:url('${creator.avatar}')"></div>
+          <div class="creator-banner-text">
+            Stayed here by <strong>${creator.name}</strong> · ${stay.stayDate}
+          </div>
+          <svg style="margin-left:auto;color:var(--accent);flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>` : ''}
+
+        <!-- Header -->
+        <div class="stay-header">
+          <div class="stay-category">${stay.category}</div>
+          <h1 class="stay-name">${stay.name}</h1>
+          <div class="stay-location-row">
+            <div class="stay-location">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${stay.location}
+            </div>
+            <div class="stay-rating-row">
+              <span class="stay-stars">★★★★★</span>
+              <span style="font-size:14px;font-weight:400">${stay.rating}</span>
+              <span class="review-count">(${stay.reviews} reviews)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Creator quote -->
+        ${creator ? `
+        <div style="margin-bottom:24px;padding:16px 20px;background:var(--cream);border-radius:2px;border-left:2px solid var(--accent)">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.6;color:var(--ink);margin-bottom:8px">${stay.creatorNote}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em">— ${creator.name} · ${stay.stayDate}</div>
+        </div>` : ''}
+
+        <!-- Description -->
+        <p class="stay-desc truncated" id="stay-desc">${stay.description}</p>
+        <button class="read-more-btn" id="read-more-btn" onclick="toggleDesc()">Read more</button>
+
+        <!-- Tags -->
+        <div class="stay-tags">
+          ${stay.tags.map(t => `<span class="stay-tag">${t}</span>`).join('')}
+        </div>
+
+        <!-- Amenities -->
+        <h2 class="section-h">What's included</h2>
+        <div class="amenities" style="margin-bottom:8px">
+          ${stay.amenities.map(a => `
+            <div class="amenity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              ${a}
+            </div>`).join('')}
+        </div>
+
+        <!-- Reviews -->
+        ${reviews.length ? `
+        <h2 class="section-h">Guest reviews</h2>
+        <div id="reviews-list">
+          ${reviews.map(r => `
+            <div class="review">
+              <div class="review-header">
+                <div class="review-avatar" style="background-image:url('${r.avatar}')"></div>
+                <div class="review-meta">
+                  <div class="reviewer-name">${r.reviewer}</div>
+                  <div class="review-date">${r.date}</div>
+                </div>
+                <div class="review-stars">${'★'.repeat(r.stars)}</div>
+              </div>
+              <p class="review-text">${r.text}</p>
+            </div>`).join('')}
+        </div>` : ''}
+
+        <!-- Similar stays -->
+        ${similarStays.length ? `
+        <h2 class="section-h">You might also like</h2>
+        <div class="similar-grid">
+          ${similarStays.map(s => renderStayCard(s, getCreator(s.creatorId))).join('')}
+        </div>` : ''}
+      </div>
+
+      <!-- Desktop sidebar -->
+      <div class="stay-sidebar" id="stay-sidebar">
+        <div class="booking-card">
+          <div class="booking-card-price">
+            <span class="big">${stay.currency}${stay.price.toLocaleString()}</span>
+            <span class="per">/ night</span>
+          </div>
+
+          <!-- Dates -->
+          <label style="margin-bottom:6px;display:block">Dates</label>
+          <div class="guests-row" style="margin-bottom:14px">
+            <button class="date-input-btn" onclick="openDateModal('check-in')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span class="date-placeholder" id="sb-checkin">Check in</span>
+            </button>
+            <button class="date-input-btn" onclick="openDateModal('check-out')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span class="date-placeholder" id="sb-checkout">Check out</span>
+            </button>
+          </div>
+
+          <!-- Nights -->
+          <div class="nights-selector">
+            <span class="nights-label">Nights</span>
+            <div class="nights-count">
+              <button class="night-adj" id="sb-minus" onclick="changeNights(-1)">−</button>
+              <span class="nights-num" id="sb-nights">${nights}</span>
+              <button class="night-adj" onclick="changeNights(1)">+</button>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="booking-card-total">
+            <div class="booking-total-row"><span>${stay.currency}${stay.price.toLocaleString()} × <span id="sb-nights-label">${nights}</span> nights</span><span id="sb-subtotal">${stay.currency}${(stay.price * nights).toLocaleString()}</span></div>
+            <div class="booking-total-row"><span>Via service fee</span><span id="sb-fee">${stay.currency}${Math.round(stay.price * nights * 0.03).toLocaleString()}</span></div>
+            <div class="booking-total-row total"><span>Total</span><span id="sb-total">${stay.currency}${Math.round(stay.price * nights * 1.03).toLocaleString()}</span></div>
+          </div>
+
+          <a href="booking.html?id=${stay.id}&nights=${nights}" class="btn-primary btn-full" id="sb-book-btn" style="display:block;padding:15px;text-align:center;margin-bottom:10px">Book this stay</a>
+          <div class="attribution-line">10% commission shared with <span>${creator ? creator.handle : 'creator'}</span> · No hidden fees</div>
+        </div>
+
+        <!-- Save -->
+        <button class="btn-outline btn-full" style="margin-top:12px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px" data-wishlist="${stay.id}" onclick="toggleSave(this)">
+          <svg id="save-heart" width="16" height="16" viewBox="0 0 24 24" fill="${VIA_STATE.isWishlisted(stay.id) ? 'var(--accent)' : 'none'}" stroke="${VIA_STATE.isWishlisted(stay.id) ? 'var(--accent)' : 'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          ${VIA_STATE.isWishlisted(stay.id) ? 'Saved to wishlist' : 'Save to wishlist'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Init gallery
+  const galleryEl = document.getElementById('main-gallery');
+  initGallery(galleryEl);
+  initWishlistButtons();
+
+  // Show bottom bar
+  const bb = document.getElementById('bottom-bar');
+  bb.style.display = 'flex';
+  document.getElementById('bb-price').textContent = `${stay.currency}${stay.price.toLocaleString()}`;
+}
+
+function toggleDesc() {
+  const desc = document.getElementById('stay-desc');
+  const btn  = document.getElementById('read-more-btn');
+  desc.classList.toggle('truncated');
+  btn.textContent = desc.classList.contains('truncated') ? 'Read more' : 'Read less';
+}
+
+function changeNights(delta) {
+  nights = Math.max(1, Math.min(14, nights + delta));
+  document.getElementById('sb-nights').textContent = nights;
+  document.getElementById('sb-nights-label').textContent = nights;
+  document.getElementById('sb-minus').disabled = nights <= 1;
+  const sub  = stay.price * nights;
+  const fee  = Math.round(sub * 0.03);
+  document.getElementById('sb-subtotal').textContent = `${stay.currency}${sub.toLocaleString()}`;
+  document.getElementById('sb-fee').textContent       = `${stay.currency}${fee.toLocaleString()}`;
+  document.getElementById('sb-total').textContent     = `${stay.currency}${(sub + fee).toLocaleString()}`;
+  const bookBtn = document.getElementById('sb-book-btn');
+  if (bookBtn) bookBtn.href = `booking.html?id=${stay.id}&nights=${nights}`;
+}
+
+function openDateModal() {
+  openModal('date-modal');
+  const calContainer = document.getElementById('date-calendar');
+  calInstance = createCalendar(calContainer, {
+    onChange(start, end) {
+      const fmt = d => d ? d.toLocaleDateString('en-GB', { day:'numeric', month:'short' }) : '';
+      const sb_in  = document.getElementById('sb-checkin');
+      const sb_out = document.getElementById('sb-checkout');
+      if (sb_in)  sb_in.textContent  = fmt(start) || 'Check in';
+      if (sb_out) sb_out.textContent = fmt(end)   || 'Check out';
+      if (start && end) {
+        const n = Math.round((end - start) / 86400000);
+        nights = Math.max(1, n);
+        changeNights(0);
+      }
+    }
+  });
+}
+
+function confirmDates() {
+  closeModal('date-modal');
+  showToast('✓ Dates selected');
+}
+
+function openBookingModal() {
+  openModal('booking-modal');
+  document.getElementById('modal-inner').innerHTML = `
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;margin-bottom:4px">${stay.name}</h2>
+    <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:20px">${stay.location}</p>
+    <div class="nights-selector" style="padding:0;margin-bottom:16px">
+      <span class="nights-label">Nights</span>
+      <div class="nights-count">
+        <button class="night-adj" onclick="changeNightsMobile(-1)">−</button>
+        <span class="nights-num" id="modal-nights">${nights}</span>
+        <button class="night-adj" onclick="changeNightsMobile(1)">+</button>
+      </div>
+    </div>
+    <div class="booking-card-total" style="margin-bottom:16px">
+      <div class="booking-total-row"><span>${stay.currency}${stay.price.toLocaleString()} × <span id="modal-nights-label">${nights}</span> nights</span><span id="modal-subtotal">${stay.currency}${(stay.price*nights).toLocaleString()}</span></div>
+      <div class="booking-total-row"><span>Service fee</span><span id="modal-fee">${stay.currency}${Math.round(stay.price*nights*0.03).toLocaleString()}</span></div>
+      <div class="booking-total-row total"><span>Total</span><span id="modal-total">${stay.currency}${Math.round(stay.price*nights*1.03).toLocaleString()}</span></div>
+    </div>
+    <a href="booking.html?id=${stay.id}&nights=${nights}" class="btn-accent btn-full" style="display:block;padding:15px;text-align:center">Continue to booking →</a>
+    <div class="attribution-line" style="margin-top:10px">10% commission shared with <span>${creator ? creator.handle : 'creator'}</span></div>
+  `;
+}
+
+function changeNightsMobile(delta) {
+  nights = Math.max(1, Math.min(14, nights + delta));
+  document.getElementById('modal-nights').textContent = nights;
+  document.getElementById('modal-nights-label').textContent = nights;
+  const sub = stay.price * nights;
+  const fee = Math.round(sub * 0.03);
+  document.getElementById('modal-subtotal').textContent = `${stay.currency}${sub.toLocaleString()}`;
+  document.getElementById('modal-fee').textContent = `${stay.currency}${fee.toLocaleString()}`;
+  document.getElementById('modal-total').textContent = `${stay.currency}${(sub + fee).toLocaleString()}`;
+}
+
+function toggleSave(btn) {
+  const added = VIA_STATE.toggleWishlist(stay.id);
+  const heart = document.getElementById('save-heart');
+  if (heart) {
+    heart.style.fill = added ? 'var(--accent)' : 'none';
+    heart.style.stroke = added ? 'var(--accent)' : 'currentColor';
+  }
+  btn.innerHTML = btn.innerHTML.replace(/Save.*/, added ? 'Saved to wishlist' : 'Save to wishlist');
+  showToast(added ? '♥ Saved to wishlist' : 'Removed from wishlist');
+}
+
+renderStayPage();
+</script>
+</body>
+</html>
