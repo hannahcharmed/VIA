@@ -635,9 +635,16 @@
     </div>
     <form id="new-post-form" onsubmit="submitNewPost(event)">
       <div class="form-group" style="margin-bottom:14px">
-        <label>Image URL</label>
-        <input type="url" id="np-image" placeholder="https://images.unsplash.com/…" required>
-        <div id="np-img-preview" style="margin-top:8px;border-radius:2px;overflow:hidden;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none"></div>
+        <label>Photo</label>
+        <label for="np-image" id="np-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:2px;padding:24px;cursor:pointer;background:var(--cream);transition:border-color .2s;text-align:center">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
+          <span style="font-size:11px;color:var(--muted)">JPG, PNG, WEBP</span>
+        </label>
+        <input type="file" id="np-image" accept="image/*" style="display:none" required>
+        <div id="np-img-preview" style="margin-top:8px;border-radius:2px;overflow:hidden;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none;position:relative">
+          <button type="button" onclick="clearImageUpload()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);border:none;color:white;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px">×</button>
+        </div>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label>Caption</label>
@@ -779,15 +786,13 @@ function switchPanel(panel, clickedBtn) {
   document.getElementById(`panel-${panel}`).classList.add('active');
   document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
   if (clickedBtn) clickedBtn.classList.add('active');
-  // Refresh content
   if (panel === 'overview') {
     document.getElementById('recent-bookings-list').innerHTML = renderRecentBookings();
     renderChart();
   }
-  if (panel === 'bookings') {
-    document.getElementById('all-bookings-list').innerHTML = renderRecentBookings();
-  }
+  if (panel === 'bookings') document.getElementById('all-bookings-list').innerHTML = renderRecentBookings();
   if (panel === 'stays') renderMyStays();
+  if (panel === 'posts') renderPostsPanel();
 }
 
 function filterBookings(filter, btn) {
@@ -868,24 +873,30 @@ function renderPostsPanel() {
   }).join('');
 }
 
+let _uploadedImageDataUrl = null;
+
 function openNewPostModal() {
-  // Populate stay selector
+  _uploadedImageDataUrl = null;
   const sel = document.getElementById('np-stay');
   sel.innerHTML = '<option value="">— Select stay —</option>' +
     VIA_DATA.stays.map(s => `<option value="${s.id}">${s.name} (${s.location})</option>`).join('');
-  // Image preview
+
   const imgInput = document.getElementById('np-image');
-  imgInput.oninput = () => {
-    const preview = document.getElementById('np-img-preview');
-    const val = imgInput.value.trim();
-    if (val) {
+  imgInput.onchange = () => {
+    const file = imgInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      _uploadedImageDataUrl = e.target.result;
+      const preview = document.getElementById('np-img-preview');
+      const label = document.getElementById('np-upload-label');
       preview.style.display = 'block';
-      preview.style.backgroundImage = `url('${val}')`;
-    } else {
-      preview.style.display = 'none';
-    }
+      preview.style.backgroundImage = `url('${_uploadedImageDataUrl}')`;
+      label.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
   };
-  // Auto-fill location from stay
+
   sel.onchange = () => {
     const stay = getStay(parseInt(sel.value));
     if (stay) document.getElementById('np-location').value = stay.location;
@@ -893,17 +904,24 @@ function openNewPostModal() {
   openModal('modal-new-post');
 }
 
+function clearImageUpload() {
+  _uploadedImageDataUrl = null;
+  document.getElementById('np-image').value = '';
+  document.getElementById('np-img-preview').style.display = 'none';
+  document.getElementById('np-upload-label').style.display = 'flex';
+}
+
 function submitNewPost(e) {
   e.preventDefault();
-  const stay = getStay(parseInt(document.getElementById('np-stay').value));
-  const caption = document.getElementById('np-caption').value;
-  // Add to VIA_DATA.posts as a new post (session only)
+  const stayId = parseInt(document.getElementById('np-stay').value);
+  const stay = getStay(stayId);
+  if (!_uploadedImageDataUrl) { showToast('Please upload a photo first'); return; }
   const newPost = {
     id: 'pnew-' + Date.now(),
     creatorId: 'camille',
     stayId: stay.id,
-    image: document.getElementById('np-image').value,
-    caption,
+    image: _uploadedImageDataUrl,
+    caption: document.getElementById('np-caption').value,
     location: document.getElementById('np-location').value || stay.location,
     postedAt: new Date().toISOString().split('T')[0],
     stats: { views: 0, saves: 0, bookings: 0, revenue: '€0' }
@@ -911,16 +929,9 @@ function submitNewPost(e) {
   VIA_DATA.posts.unshift(newPost);
   closeModal('modal-new-post');
   document.getElementById('new-post-form').reset();
-  document.getElementById('np-img-preview').style.display = 'none';
+  clearImageUpload();
   showToast('✓ Post published — now live on Explore');
   renderPostsPanel();
-}
-
-// Patch switchPanel to render posts
-const _origSwitch = switchPanel;
-function switchPanel(panel, clickedBtn) {
-  _origSwitch(panel, clickedBtn);
-  if (panel === 'posts') renderPostsPanel();
 }
 
 // ── Init ──────────────────────────────────────────────────

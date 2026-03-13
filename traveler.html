@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Trips — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.dash-layout {
+  padding-top: var(--nav-h);
+  min-height: 100svh;
+  background: var(--warm-white);
+}
+.dash-sidebar { display: none; }
+.dash-main { padding: 24px 20px 80px; }
+
+.dash-bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.dash-nav-item {
+  flex: 1; padding: 12px 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  transition: color 0.2s;
+}
+.dash-nav-item svg { width: 20px; height: 20px; }
+.dash-nav-item.active { color: var(--ink); }
+
+.dash-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.dash-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 4vw, 32px); font-weight: 300;
+}
+.dash-greeting em { font-style: italic; color: var(--accent); }
+
+.dash-stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 24px;
+}
+.dash-stat-card { background: var(--cream); border-radius: 3px; padding: 16px; }
+.dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
+.dash-stat-card .big-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 40px); font-weight: 300; color: var(--ink); line-height: 1; margin-bottom: 6px;
+}
+.dash-stat-card .change {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; color: var(--muted);
+}
+
+.section-h {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400;
+  margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.section-h a { font-size: 12px; color: var(--accent); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+
+/* Upcoming trip card */
+.trip-card {
+  border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
+  margin-bottom: 12px; cursor: pointer; transition: box-shadow 0.2s;
+}
+.trip-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.trip-card-img {
+  width: 100%; aspect-ratio: 16/7;
+  background-size: cover; background-position: center;
+  position: relative;
+}
+.trip-card-status {
+  position: absolute; top: 12px; left: 12px;
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 1px;
+}
+.trip-card-status.confirmed { background: #E6F4EE; color: var(--success); }
+.trip-card-status.pending { background: #FEF3E8; color: #C47B0A; }
+.trip-card-status.completed { background: rgba(0,0,0,0.45); color: rgba(255,255,255,0.8); }
+.trip-card-body { padding: 14px 16px 16px; }
+.trip-card-name { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; margin-bottom: 4px; }
+.trip-card-meta { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
+.trip-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+}
+.trip-card-creator { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.trip-card-creator img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+.trip-card-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; }
+
+/* Wishlist grid */
+.wishlist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.wishlist-item {
+  border-radius: 3px; overflow: hidden; cursor: pointer;
+  border: 1px solid var(--border); transition: box-shadow 0.2s;
+}
+.wishlist-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.wishlist-item-img { aspect-ratio: 1; background-size: cover; background-position: center; }
+.wishlist-item-info { padding: 8px 10px; }
+.wishlist-item-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wishlist-item-meta { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.06em; margin-top: 2px; }
+
+/* Panels */
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
+/* Sidebar */
+.sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.sidebar-nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer; background: none; border: none; width: 100%; text-align: left;
+  transition: all 0.2s; position: relative;
+}
+.sidebar-nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sidebar-nav-item:hover { color: var(--ink); background: var(--cream); }
+.sidebar-nav-item.active { color: var(--ink); background: var(--cream); border-right: 2px solid var(--ink); }
+.sidebar-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+.sidebar-user { display: flex; align-items: center; gap: 10px; }
+.sidebar-user-av { width: 32px; height: 32px; border-radius: 50%; background-size: cover; background-color: var(--accent-light); }
+.sidebar-user-name { font-size: 13px; font-weight: 400; }
+.sidebar-user-role { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+
+@media (min-width: 1024px) {
+  .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
+  .dash-sidebar {
+    display: flex; flex-direction: column; border-right: 1px solid var(--border);
+    padding: 24px 0; height: calc(100vh - var(--nav-h));
+    position: sticky; top: var(--nav-h); overflow-y: auto;
+  }
+  .dash-main { padding: 32px 48px 60px; }
+  .dash-bottom-nav { display: none; }
+  .dash-stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 768px) {
+  .dash-main { padding: 28px 40px 80px; }
+  .dash-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .wishlist-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <div class="nav-avatar" id="nav-av" title="My Trips"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
+  <a href="traveler.html" style="color:var(--ink)">My Trips</a>
+</div>
+
+<div class="dash-layout page-top">
+  <!-- Desktop sidebar -->
+  <div class="dash-sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" class="nav-logo" style="font-size:22px">V<span>.</span>ia</a>
+    </div>
+    <a href="explore.html" class="sidebar-nav-item" style="text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Explore
+    </a>
+    <button class="sidebar-nav-item active" onclick="switchPanel('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('trips',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      My Trips
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('wishlist',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Wishlist
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('account',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </button>
+    <div style="flex:1"></div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="sidebar-user-av" id="sb-avatar" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80')"></div>
+        <div>
+          <div class="sidebar-user-name" id="sb-user-name">Alex Chen</div>
+          <div class="sidebar-user-role">Traveler</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="dash-main">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="dash-panel active" id="panel-overview">
+      <div class="dash-header">
+        <div class="dash-greeting">Welcome back, <em id="dash-first-name">Alex</em>.</div>
+        <a href="explore.html" class="btn-accent" style="padding:10px 20px;font-size:11px;text-decoration:none">Explore stays →</a>
+      </div>
+
+      <div class="dash-stats-grid">
+        <div class="dash-stat-card">
+          <div class="eyebrow">Upcoming trips</div>
+          <div class="big-num" id="stat-upcoming">2</div>
+          <div class="change">next: Mar 20</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Trips taken</div>
+          <div class="big-num">3</div>
+          <div class="change">via creator picks</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Nights booked</div>
+          <div class="big-num">11</div>
+          <div class="change">across 5 stays</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Wishlisted</div>
+          <div class="big-num" id="stat-wishlist">0</div>
+          <div class="change">saved stays</div>
+        </div>
+      </div>
+
+      <!-- Next trip banner -->
+      <div id="next-trip-banner"></div>
+
+      <!-- Recent stays -->
+      <div class="section-h" style="margin-top:8px">
+        Upcoming trips
+        <a href="#" onclick="switchPanel('trips',null)">View all →</a>
+      </div>
+      <div id="overview-trips"></div>
+
+      <!-- Wishlist preview -->
+      <div class="section-h" style="margin-top:28px">
+        Saved stays
+        <a href="#" onclick="switchPanel('wishlist',null)">View all →</a>
+      </div>
+      <div class="wishlist-grid" id="overview-wishlist"></div>
+      <div id="overview-wishlist-empty" style="display:none;color:var(--muted);font-size:14px;padding:16px 0">
+        No saved stays yet.
+        <a href="explore.html" style="color:var(--accent)">Explore →</a>
+      </div>
+    </div>
+
+    <!-- TRIPS PANEL -->
+    <div class="dash-panel" id="panel-trips">
+      <div class="dash-header">
+        <div class="dash-greeting">My Trips</div>
+        <a href="explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Browse stays →</a>
+      </div>
+      <div class="tabs" style="margin-bottom:20px;max-width:400px">
+        <button class="tab-btn active" onclick="filterTrips('all',this)">All</button>
+        <button class="tab-btn" onclick="filterTrips('confirmed',this)">Upcoming</button>
+        <button class="tab-btn" onclick="filterTrips('completed',this)">Past</button>
+      </div>
+      <div id="all-trips-list"></div>
+    </div>
+
+    <!-- WISHLIST PANEL -->
+    <div class="dash-panel" id="panel-wishlist">
+      <div class="dash-header">
+        <div class="dash-greeting">Wishlist</div>
+        <a href="explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Discover more →</a>
+      </div>
+      <div class="wishlist-grid" id="full-wishlist"></div>
+      <div id="wishlist-empty" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:40px;margin-bottom:16px;opacity:.3">♡</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:8px">Nothing saved yet</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Tap ♡ on any stay in Explore to save it here.</p>
+        <a href="explore.html" class="btn-primary" style="padding:12px 28px;text-decoration:none;display:inline-block">Explore stays</a>
+      </div>
+    </div>
+
+    <!-- ACCOUNT PANEL -->
+    <div class="dash-panel" id="panel-account">
+      <div class="dash-header">
+        <div class="dash-greeting">Account</div>
+      </div>
+      <div style="max-width:520px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:3px">
+          <div id="account-avatar" style="width:64px;height:64px;border-radius:50%;background-size:cover;background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80');flex-shrink:0"></div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400" id="account-name-display">Alex Chen</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px">Traveler</div>
+            <button class="btn-outline" style="font-size:10px;padding:6px 14px" onclick="showToast('Photo upload — coming soon')">Change photo</button>
+          </div>
+        </div>
+        <form onsubmit="saveAccount(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" id="acc-first" value="Alex">
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" id="acc-last" value="Chen">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Email</label>
+            <input type="email" id="acc-email" value="alex@demo.via.travel">
+          </div>
+          <div class="form-group" style="margin-bottom:20px">
+            <label>Nationality</label>
+            <input type="text" id="acc-nationality" placeholder="e.g. British">
+          </div>
+          <button type="submit" class="btn-primary" style="padding:13px 28px">Save changes</button>
+        </form>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+          <button class="btn-outline" style="color:var(--error);border-color:var(--error);font-size:12px" onclick="confirmSignOut()">Sign out</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end dash-main -->
+</div>
+
+<!-- Mobile bottom nav -->
+<div class="dash-bottom-nav">
+  <a href="explore.html" class="dash-nav-item" style="text-decoration:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Explore
+  </a>
+  <button class="dash-nav-item active" onclick="switchPanel('overview',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Home
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('trips',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    Trips
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('wishlist',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Saved
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('account',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Account
+  </button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+// Demo bookings for this traveler
+const TRAVELER_BOOKINGS = [
+  {
+    id: 1, stayId: 1, status: 'confirmed',
+    checkIn: '2026-03-20', checkOut: '2026-03-23', nights: 3, guests: 2,
+    total: 1155, currency: '€',
+    stay: VIA_DATA.stays[0]
+  },
+  {
+    id: 2, stayId: 7, status: 'confirmed',
+    checkIn: '2026-04-10', checkOut: '2026-04-12', nights: 2, guests: 2,
+    total: 350, currency: '£',
+    stay: VIA_DATA.stays[6]
+  },
+  {
+    id: 3, stayId: 4, status: 'completed',
+    checkIn: '2026-01-15', checkOut: '2026-01-18', nights: 3, guests: 1,
+    total: 630, currency: '€',
+    stay: VIA_DATA.stays[3]
+  },
+  {
+    id: 4, stayId: 6, status: 'completed',
+    checkIn: '2025-11-04', checkOut: '2025-11-07', nights: 3, guests: 2,
+    total: 870, currency: '€',
+    stay: VIA_DATA.stays[5]
+  },
+  {
+    id: 5, stayId: 2, status: 'completed',
+    checkIn: '2025-08-22', checkOut: '2025-08-24', nights: 2, guests: 2,
+    total: 840, currency: '€',
+    stay: VIA_DATA.stays[1]
+  },
+];
+
+function tripCardHtml(b) {
+  const creator = getCreator(b.stay.creatorId);
+  const checkInDate = new Date(b.checkIn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const checkOutDate = new Date(b.checkOut).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return `
+  <div class="trip-card" onclick="window.location='stay.html?id=${b.stayId}'">
+    <div class="trip-card-img" style="background-image:url('${b.stay.images[0]}')">
+      <div class="trip-card-status ${b.status}">${b.status === 'confirmed' ? 'Upcoming' : 'Completed'}</div>
+    </div>
+    <div class="trip-card-body">
+      <div class="trip-card-name">${b.stay.name}</div>
+      <div class="trip-card-meta">${b.stay.location}</div>
+      <div class="trip-card-meta" style="margin-top:4px">${checkInDate} → ${checkOutDate} · ${b.nights} nights · ${b.guests} guest${b.guests > 1 ? 's' : ''}</div>
+      <div class="trip-card-footer">
+        ${creator ? `<div class="trip-card-creator">
+          <img src="${creator.avatar}" alt="${creator.name}">
+          via ${creator.handle}
+        </div>` : '<div></div>'}
+        <div class="trip-card-price">${b.currency}${b.total.toLocaleString()}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderOverview() {
+  const upcoming = TRAVELER_BOOKINGS.filter(b => b.status === 'confirmed');
+  document.getElementById('stat-upcoming').textContent = upcoming.length;
+
+  // Next trip banner
+  const next = upcoming[0];
+  const banner = document.getElementById('next-trip-banner');
+  if (next) {
+    const daysUntil = Math.ceil((new Date(next.checkIn) - Date.now()) / 86400000);
+    banner.innerHTML = `
+      <div style="background:var(--ink);border-radius:3px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px">Next trip</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:white">${next.stay.name}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);margin-top:3px">${next.stay.location} · in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}</div>
+        </div>
+        <a href="stay.html?id=${next.stayId}" style="background:rgba(255,255,255,.12);color:white;padding:10px 18px;border-radius:2px;text-decoration:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View details →</a>
+      </div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+
+  document.getElementById('overview-trips').innerHTML = upcoming.slice(0,2).map(tripCardHtml).join('') ||
+    `<p style="color:var(--muted);font-size:14px;padding:12px 0">No upcoming trips. <a href="explore.html" style="color:var(--accent)">Start exploring →</a></p>`;
+
+  renderWishlistPreview();
+}
+
+function renderWishlistPreview() {
+  const wl = VIA_STATE.wishlist;
+  document.getElementById('stat-wishlist').textContent = wl.length;
+  const grid = document.getElementById('overview-wishlist');
+  const empty = document.getElementById('overview-wishlist-empty');
+  if (!wl.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  const stays = wl.slice(0,6).map(id => getStay(id)).filter(Boolean);
+  grid.innerHTML = stays.map(s => `
+    <div class="wishlist-item" onclick="window.location='stay.html?id=${s.id}'">
+      <div class="wishlist-item-img" style="background-image:url('${s.images[0]}')"></div>
+      <div class="wishlist-item-info">
+        <div class="wishlist-item-name">${s.name}</div>
+        <div class="wishlist-item-meta">${s.currency}${s.price.toLocaleString()} / night</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderTrips(filter) {
+  let bookings = filter && filter !== 'all' ? TRAVELER_BOOKINGS.filter(b => b.status === filter) : TRAVELER_BOOKINGS;
+  const list = document.getElementById('all-trips-list');
+  list.innerHTML = bookings.map(tripCardHtml).join('') ||
+    `<p style="color:var(--muted);font-size:14px;padding:20px 0">No trips in this category.</p>`;
+}
+
+function renderWishlist() {
+  const wl = VIA_STATE.wishlist;
+  const grid = document.getElementById('full-wishlist');
+  const empty = document.getElementById('wishlist-empty');
+  if (!wl.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  const stays = wl.map(id => getStay(id)).filter(Boolean);
+  grid.innerHTML = stays.map(s => {
+    const creator = getCreator(s.creatorId);
+    return `
+    <div class="wishlist-item" onclick="window.location='stay.html?id=${s.id}'">
+      <div class="wishlist-item-img" style="background-image:url('${s.images[0]}')"></div>
+      <div class="wishlist-item-info">
+        <div class="wishlist-item-name">${s.name}</div>
+        <div class="wishlist-item-meta">${s.location}</div>
+        <div class="wishlist-item-meta">${s.currency}${s.price.toLocaleString()} · via ${creator ? creator.handle : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchPanel(panel, clickedBtn) {
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${panel}`).classList.add('active');
+  document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+  if (clickedBtn) clickedBtn.classList.add('active');
+  if (panel === 'overview') renderOverview();
+  if (panel === 'trips') renderTrips('all');
+  if (panel === 'wishlist') renderWishlist();
+}
+
+function filterTrips(filter, btn) {
+  document.querySelectorAll('#panel-trips .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTrips(filter);
+}
+
+function setMobileActive(btn) {
+  document.querySelectorAll('.dash-nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function saveAccount(e) {
+  e.preventDefault();
+  showToast(`✓ Account updated`);
+}
+
+function confirmSignOut() {
+  VIA_STATE.user = null;
+  window.location.href = 'auth.html';
+}
+
+// Init
+const user = VIA_STATE.user;
+if (user) {
+  const firstName = (user.name || 'Alex').split(' ')[0];
+  document.getElementById('dash-first-name').textContent = firstName;
+  if (document.getElementById('sb-user-name')) document.getElementById('sb-user-name').textContent = user.name || 'Alex Chen';
+  if (document.getElementById('account-name-display')) document.getElementById('account-name-display').textContent = user.name || 'Alex Chen';
+  if (user.avatar) {
+    if (document.getElementById('sb-avatar')) document.getElementById('sb-avatar').style.backgroundImage = `url('${user.avatar}')`;
+    if (document.getElementById('account-avatar')) document.getElementById('account-avatar').style.backgroundImage = `url('${user.avatar}')`;
+  }
+}
+
+renderOverview();
+</script>
+</body>
+</html>
