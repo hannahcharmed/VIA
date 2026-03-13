@@ -3,140 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Explore Stays — Via</title>
+<title>Explore — Via</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
+<!-- Leaflet for map view -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
+/* ── Layout ──────────────────────────────────────── */
 .explore-layout {
   display: flex;
   flex-direction: column;
   min-height: 100svh;
-}
-.explore-header {
-  padding: calc(var(--nav-h) + 20px) 20px 0;
   background: var(--warm-white);
 }
-.explore-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(28px, 5vw, 42px);
-  font-weight: 300;
-  margin-bottom: 6px;
-}
-.explore-title em { font-style: italic; color: var(--accent); }
-.explore-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
 
-/* Results meta bar */
-.results-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
+/* ── Location bar ────────────────────────────────── */
+.location-bar {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 102;
   background: var(--warm-white);
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: calc(var(--nav-h) + 44px);
-  z-index: 90;
-}
-.results-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-}
-.sort-select {
-  background: none;
-  border: none;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 4px;
-  width: auto;
-}
-
-/* View toggle */
-.view-toggle {
+  padding: 10px 20px;
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
 }
-.view-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all 0.2s;
-}
-.view-btn.active { background: var(--ink); border-color: var(--ink); color: white; }
-.view-btn svg { width: 13px; height: 13px; }
-
-/* Grid */
-.stays-grid {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-/* Active filters strip */
-.active-filters {
-  display: flex;
-  gap: 8px;
-  padding: 0 20px 10px;
-  flex-wrap: wrap;
-  display: none;
-}
-.active-filters.visible { display: flex; }
-.active-filter-tag {
+.location-detect-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--ink);
-  color: var(--warm-white);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
-  padding: 5px 10px;
-  border-radius: 20px;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
-.active-filter-tag button {
+.location-detect-btn:hover { border-color: var(--accent); color: var(--accent); }
+.location-detect-btn.detected { border-color: var(--success); color: var(--success); }
+.location-detect-btn svg { width: 13px; height: 13px; }
+.location-input-wrap {
+  position: relative;
+  flex: 1;
+}
+.location-input {
+  width: 100%;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.location-input:focus { border-color: var(--ink); }
+.location-input::placeholder { color: var(--muted); }
+.location-near-tag {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-light);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.location-near-tag.visible { display: flex; }
+.location-near-tag button {
   background: none;
   border: none;
-  color: var(--warm-white);
-  opacity: 0.7;
-  font-size: 14px;
-  line-height: 1;
-  padding: 0;
   cursor: pointer;
+  color: var(--accent);
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
 }
 
-/* No results */
-.no-results {
-  grid-column: 1/-1;
-  text-align: center;
-  padding: 60px 20px;
+/* ── View mode tabs ──────────────────────────────── */
+.view-mode-bar {
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: calc(var(--nav-h) + 45px);
+  z-index: 100;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.no-results h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px;
-  font-weight: 300;
-  margin-bottom: 10px;
+.view-mode-bar::-webkit-scrollbar { display: none; }
+.view-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  margin-bottom: -1px;
 }
-.no-results p { color: var(--muted); font-size: 14px; }
+.view-mode-btn svg { width: 14px; height: 14px; }
+.view-mode-btn:hover { color: var(--ink); }
+.view-mode-btn.active { color: var(--ink); border-bottom-color: var(--ink); }
 
-/* Creator filter section */
+/* ── Filter controls (feed + grid) ──────────────── */
+.explore-filters {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+}
 .creator-filter-row {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding: 14px 20px;
+  padding: 12px 20px;
   scrollbar-width: none;
-  border-bottom: 1px solid var(--border);
-  background: var(--cream);
 }
 .creator-filter-row::-webkit-scrollbar { display: none; }
 .creator-chip {
@@ -155,26 +159,375 @@
 }
 .creator-chip:hover { border-color: var(--ink); color: var(--ink); }
 .creator-chip.active { background: var(--ink); border-color: var(--ink); color: white; }
-.creator-chip img {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  object-fit: cover;
+.creator-chip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+
+/* ── Feed view ───────────────────────────────────── */
+#view-feed {
+  padding: 16px 0 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 
+.feed-post {
+  width: 100%;
+  max-width: 560px;
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
+  margin-bottom: 8px;
+}
+
+.feed-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 10px;
+}
+.feed-av {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+.feed-creator-info { flex: 1; min-width: 0; }
+.feed-creator-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.feed-creator-loc {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.feed-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.feed-post-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+.feed-post-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 45%,
+    rgba(0,0,0,0.55) 100%
+  );
+  pointer-events: none;
+}
+.feed-image-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+}
+.feed-img-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.15s, background 0.15s;
+}
+.feed-img-btn:hover { transform: scale(1.08); background: rgba(255,255,255,0.28); }
+.feed-img-btn.saved { color: #ff5a5f; }
+.feed-image-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 16px 14px;
+  z-index: 2;
+}
+.feed-stay-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: white;
+  line-height: 1.2;
+}
+.feed-stay-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.75);
+  margin-top: 3px;
+}
+.feed-price-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: white;
+  margin-top: 7px;
+}
+
+.feed-post-body {
+  padding: 10px 16px 0;
+}
+.feed-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.feed-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.feed-stat svg { width: 11px; height: 11px; }
+.feed-caption {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.feed-caption.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+}
+.feed-read-more {
+  background: none;
+  border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  display: block;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+.feed-book-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.feed-book-btn:hover { background: #2c2622; }
+.feed-book-btn span { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: rgba(255,255,255,0.6); }
+
+.feed-near-label {
+  width: 100%;
+  max-width: 560px;
+  padding: 14px 16px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.feed-near-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Map view ────────────────────────────────────── */
+#view-map {
+  display: flex;
+  height: calc(100svh - var(--nav-h) - 45px - 45px);
+  min-height: 400px;
+}
+#map-container {
+  flex: 1;
+  z-index: 1;
+}
+#map-sidebar {
+  display: none;
+  width: 340px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-left: 1px solid var(--border);
+  background: var(--warm-white);
+  padding: 16px;
+}
+.map-stay-card {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: box-shadow 0.2s;
+}
+.map-stay-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.map-stay-card.highlighted { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.map-stay-thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background-size: cover; background-position: center; }
+.map-stay-info { padding: 10px 12px; }
+.map-stay-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; }
+.map-stay-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; margin-top: 3px; }
+
+/* Map mobile bottom sheet */
+#map-bottom-sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border);
+  border-radius: 12px 12px 0 0;
+  padding: 16px 20px 30px;
+  z-index: 500;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+#map-bottom-sheet.open { transform: translateY(0); }
+.map-sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 14px;
+}
+
+/* Custom map pins */
+.map-pin {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.map-pin:hover { transform: scale(1.15); }
+.map-price-pill {
+  background: var(--ink);
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.15s;
+}
+.map-price-pill:hover, .map-price-pill.active { background: var(--accent); }
+
+/* ── Grid view ───────────────────────────────────── */
+#view-grid {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.results-meta-bar {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--warm-white);
+}
+.results-count { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); }
+.sort-select {
+  background: none; border: none;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  color: var(--muted); cursor: pointer; padding: 4px;
+}
+
+/* ── No results ──────────────────────────────────── */
+.no-results {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px 20px;
+}
+.no-results h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300; margin-bottom: 10px;
+}
+.no-results p { color: var(--muted); font-size: 14px; }
+
+/* ── Responsive ──────────────────────────────────── */
 @media (min-width: 768px) {
-  .explore-header { padding: calc(var(--nav-h) + 24px) 40px 0; }
-  .stays-grid { padding: 24px 40px; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .results-meta { padding: 12px 40px; top: calc(var(--nav-h) + 48px); }
-  .active-filters { padding: 0 40px 12px; }
-  .creator-filter-row { padding: 14px 40px; }
+  .location-bar { padding: 10px 40px; }
+  .view-mode-bar { padding: 0 40px; }
+  .creator-filter-row { padding: 12px 40px; }
+  .results-meta-bar { padding: 10px 40px; }
+  #view-grid { padding: 24px 40px; grid-template-columns: 1fr 1fr; gap: 20px; }
+  #map-sidebar { display: block; }
 }
 @media (min-width: 1024px) {
-  .explore-header { padding: calc(var(--nav-h) + 28px) 80px 0; }
-  .stays-grid { padding: 28px 80px; grid-template-columns: repeat(3, 1fr); }
-  .results-meta { padding: 12px 80px; }
-  .active-filters { padding: 0 80px 12px; }
-  .creator-filter-row { padding: 14px 80px; }
+  .location-bar { padding: 10px 80px; }
+  .view-mode-bar { padding: 0 80px; }
+  .creator-filter-row { padding: 12px 80px; }
+  .results-meta-bar { padding: 10px 80px; }
+  #view-grid { padding: 28px 80px; grid-template-columns: repeat(3, 1fr); }
 }
+
+/* Leaflet popup override */
+.leaflet-popup-content-wrapper {
+  border-radius: 3px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+  font-family: 'Geist', sans-serif !important;
+}
+.leaflet-popup-content { margin: 12px 14px !important; }
+.popup-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; margin-bottom: 3px; }
+.popup-meta { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; }
+.popup-link { display: block; text-align: center; padding: 8px 16px; background: #1A1714; color: white; border-radius: 2px; font-size: 12px; text-decoration: none; font-family: 'Geist', sans-serif; }
+.popup-link:hover { background: #2c2622; }
 </style>
 </head>
 <body>
@@ -185,7 +538,6 @@
   <div class="nav-links">
     <a href="explore.html" style="color:var(--ink)">Explore</a>
     <a href="index.html#creators">Creators</a>
-    <a href="index.html#how">How it works</a>
     <a href="auth.html" class="nav-signin">Sign in</a>
     <a href="dashboard.html" class="nav-dashboard" style="display:none">Dashboard</a>
     <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
@@ -199,75 +551,107 @@
 <div class="nav-drawer" id="nav-drawer">
   <a href="explore.html">Explore</a>
   <a href="index.html#creators">Creators</a>
-  <a href="index.html#how">How it works</a>
   <a href="auth.html">Sign in</a>
 </div>
 
 <div class="explore-layout page-top">
-  <!-- Header -->
-  <div class="explore-header">
-    <h1 class="explore-title">Explore <em>curated</em> stays</h1>
-    <p class="explore-subtitle">Every property handpicked by creators whose taste you already follow.</p>
-  </div>
 
-  <!-- Search bar -->
-  <div class="search-bar" style="position:sticky;top:var(--nav-h);z-index:101">
-    <div class="search-input-wrap">
-      <span class="search-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </span>
-      <input type="text" id="search-input" placeholder="Search destinations, stays, creators..." autocomplete="off">
-      <button class="search-clear" id="search-clear">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+  <!-- Location bar -->
+  <div class="location-bar">
+    <button class="location-detect-btn" id="detect-btn" onclick="detectLocation()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      <span id="detect-label">Detect location</span>
+    </button>
+    <div class="location-input-wrap">
+      <input type="text" class="location-input" id="location-input" placeholder="Search by city, country…" oninput="handleLocationInput()" autocomplete="off">
+    </div>
+    <div class="location-near-tag" id="near-tag">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span id="near-tag-text">Near you</span>
+      <button onclick="clearLocation()">×</button>
     </div>
   </div>
 
-  <!-- Creator filter row -->
-  <div class="creator-filter-row" id="creator-filter-row"></div>
-
-  <!-- Category filters -->
-  <div class="filter-bar">
-    <button class="filter-chip active" data-group="cat" data-filter="all">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      All stays
+  <!-- View mode bar -->
+  <div class="view-mode-bar">
+    <button class="view-mode-btn active" id="btn-feed" onclick="setMode('feed')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/><rect x="13" y="16" width="8" height="5" rx="1"/></svg>
+      Feed
     </button>
-    <button class="filter-chip" data-group="cat" data-filter="Boutique Hotel">Boutique Hotel</button>
-    <button class="filter-chip" data-group="cat" data-filter="Private Villa">Private Villa</button>
-    <button class="filter-chip" data-group="cat" data-filter="Ryokan">Ryokan</button>
-    <button class="filter-chip" data-group="cat" data-filter="Riad">Riad</button>
-    <button class="filter-chip" data-group="cat" data-filter="Resort">Resort</button>
-    <button class="filter-chip" data-group="cat" data-filter="Luxury Hotel">Luxury Hotel</button>
-    <button class="filter-chip" data-group="cat" data-filter="Guesthouse">Guesthouse</button>
+    <button class="view-mode-btn" id="btn-map" onclick="setMode('map')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      Map
+    </button>
+    <button class="view-mode-btn" id="btn-grid" onclick="setMode('grid')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Browse
+    </button>
   </div>
 
-  <!-- Results meta -->
-  <div class="results-meta">
-    <div class="results-count" id="results-count">12 stays</div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <select class="sort-select" id="sort-select" onchange="applyFilters()">
-        <option value="default">Sort: Featured</option>
-        <option value="price-asc">Price: Low to high</option>
-        <option value="price-desc">Price: High to low</option>
-        <option value="rating">Highest rated</option>
-        <option value="reviews">Most reviewed</option>
-      </select>
-      <div class="view-toggle">
-        <button class="view-btn active" id="view-grid" onclick="setView('grid')" aria-label="Grid view">
-          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        </button>
-        <button class="view-btn" id="view-list" onclick="setView('list')" aria-label="List view">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+  <!-- Filters (hidden in map mode) -->
+  <div class="explore-filters" id="explore-filters">
+    <!-- Creator chips -->
+    <div class="creator-filter-row" id="creator-filter-row"></div>
+    <!-- Category filter bar -->
+    <div class="filter-bar" id="cat-filter-bar">
+      <button class="filter-chip active" data-group="cat" data-filter="all">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        All stays
+      </button>
+      <button class="filter-chip" data-group="cat" data-filter="Boutique Hotel">Boutique Hotel</button>
+      <button class="filter-chip" data-group="cat" data-filter="Private Villa">Private Villa</button>
+      <button class="filter-chip" data-group="cat" data-filter="Ryokan">Ryokan</button>
+      <button class="filter-chip" data-group="cat" data-filter="Riad">Riad</button>
+      <button class="filter-chip" data-group="cat" data-filter="Resort">Resort</button>
+      <button class="filter-chip" data-group="cat" data-filter="Luxury Hotel">Luxury Hotel</button>
+      <button class="filter-chip" data-group="cat" data-filter="Guesthouse">Guesthouse</button>
+    </div>
+  </div>
+
+  <!-- ── FEED VIEW ── -->
+  <div id="view-feed"></div>
+
+  <!-- ── MAP VIEW ── -->
+  <div id="view-map" style="display:none">
+    <div id="map-container"></div>
+    <div id="map-sidebar">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;margin-bottom:14px">
+        Stays on the map
+      </div>
+      <div id="map-sidebar-list"></div>
+    </div>
+  </div>
+  <!-- Mobile map bottom sheet -->
+  <div id="map-bottom-sheet">
+    <div class="map-sheet-handle"></div>
+    <div id="map-sheet-content"></div>
+  </div>
+
+  <!-- ── GRID VIEW ── -->
+  <div id="view-grid-container" style="display:none">
+    <div class="search-bar" style="position:sticky;top:calc(var(--nav-h) + 90px);z-index:99">
+      <div class="search-input-wrap">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input type="text" id="search-input" placeholder="Search stays, countries, creators…" autocomplete="off">
+        <button class="search-clear" id="search-clear">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
     </div>
+    <div class="results-meta-bar">
+      <div class="results-count" id="results-count">12 stays</div>
+      <select class="sort-select" id="sort-select" onchange="renderGrid()">
+        <option value="default">Featured</option>
+        <option value="price-asc">Price ↑</option>
+        <option value="price-desc">Price ↓</option>
+        <option value="rating">Top rated</option>
+      </select>
+    </div>
+    <div id="view-grid"></div>
   </div>
 
-  <!-- Active filters -->
-  <div class="active-filters" id="active-filters"></div>
-
-  <!-- Results grid -->
-  <div class="stays-grid" id="stays-grid"></div>
 </div>
 
 <!-- Footer -->
@@ -286,40 +670,416 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 <script>
-let currentView = 'grid';
+/* ================================================================
+   State
+   ================================================================ */
+let currentMode = 'feed';
 let activeCreator = null;
+let activeCat = 'all';
+let userLocation = null; // { lat, lng, city }
+let leafletMap = null;
+let highlightedStayId = null;
 
-// Render creator filter chips
+/* ================================================================
+   Location
+   ================================================================ */
+function detectLocation() {
+  const btn = document.getElementById('detect-btn');
+  const label = document.getElementById('detect-label');
+  if (!navigator.geolocation) {
+    showToast('Geolocation not supported by this browser');
+    return;
+  }
+  label.textContent = 'Detecting…';
+  btn.style.opacity = '0.7';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      // Reverse geocode using Nominatim (free OSM API)
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        .then(r => r.json())
+        .then(d => {
+          const city = d.address.city || d.address.town || d.address.village || d.address.county || 'your area';
+          setUserLocation(lat, lng, city);
+        })
+        .catch(() => setUserLocation(lat, lng, 'your area'));
+    },
+    () => {
+      label.textContent = 'Detect location';
+      btn.style.opacity = '1';
+      showToast('Could not get location — please enter a city manually');
+    },
+    { timeout: 8000 }
+  );
+}
+
+function setUserLocation(lat, lng, city) {
+  userLocation = { lat, lng, city };
+  const btn = document.getElementById('detect-btn');
+  const label = document.getElementById('detect-label');
+  label.textContent = city;
+  btn.style.opacity = '1';
+  btn.classList.add('detected');
+  document.getElementById('near-tag-text').textContent = `Near ${city}`;
+  document.getElementById('near-tag').classList.add('visible');
+  document.getElementById('location-input').value = '';
+  if (currentMode === 'feed') renderFeed();
+  if (currentMode === 'map' && leafletMap) leafletMap.setView([lat, lng], 6);
+}
+
+function handleLocationInput() {
+  const val = document.getElementById('location-input').value.trim();
+  if (!val) { clearLocation(); return; }
+  // Match against stay locations/countries
+  userLocation = { city: val, lat: null, lng: null, manual: true };
+  document.getElementById('near-tag-text').textContent = `Near "${val}"`;
+  document.getElementById('near-tag').classList.add('visible');
+  document.getElementById('detect-btn').classList.remove('detected');
+  document.getElementById('detect-label').textContent = 'Detect location';
+  if (currentMode === 'feed') renderFeed();
+}
+
+function clearLocation() {
+  userLocation = null;
+  document.getElementById('near-tag').classList.remove('visible');
+  document.getElementById('location-input').value = '';
+  document.getElementById('detect-btn').classList.remove('detected');
+  document.getElementById('detect-label').textContent = 'Detect location';
+  if (currentMode === 'feed') renderFeed();
+}
+
+/* ================================================================
+   Mode switching
+   ================================================================ */
+function setMode(mode) {
+  currentMode = mode;
+  ['feed','map','grid'].forEach(m => {
+    document.getElementById(`btn-${m}`).classList.toggle('active', m === mode);
+  });
+  document.getElementById('view-feed').style.display          = mode === 'feed' ? '' : 'none';
+  document.getElementById('view-map').style.display           = mode === 'map'  ? 'flex' : 'none';
+  document.getElementById('view-grid-container').style.display = mode === 'grid' ? '' : 'none';
+  document.getElementById('explore-filters').style.display    = mode === 'map'  ? 'none' : '';
+
+  if (mode === 'feed') renderFeed();
+  if (mode === 'map')  initMap();
+  if (mode === 'grid') renderGrid();
+}
+
+/* ================================================================
+   Creator chips
+   ================================================================ */
 function renderCreatorChips() {
   const row = document.getElementById('creator-filter-row');
   row.innerHTML = `<button class="creator-chip active" data-creator="all" onclick="filterByCreator('all',this)">
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" style="border-radius:50%;padding:2px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    All creators
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" style="padding:2px">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    All
   </button>` +
   VIA_DATA.creators.map(c => `
     <button class="creator-chip" data-creator="${c.id}" onclick="filterByCreator('${c.id}',this)">
       <img src="${c.avatar}" alt="${c.name}">
       ${c.name.split(' ')[0]}
-    </button>
-  `).join('');
+    </button>`).join('');
 }
 
 function filterByCreator(id, btn) {
   activeCreator = id === 'all' ? null : id;
   document.querySelectorAll('.creator-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
-  applyFilters();
+  if (currentMode === 'feed') renderFeed();
+  if (currentMode === 'grid') renderGrid();
 }
 
-function applyFilters() {
-  const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
-  const activeCatChip = document.querySelector('.filter-chip[data-group="cat"].active');
-  const catFilter = activeCatChip ? activeCatChip.dataset.filter : 'all';
-  const sortVal  = document.getElementById('sort-select').value;
+document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeCat = chip.dataset.filter;
+    if (currentMode === 'feed') renderFeed();
+    if (currentMode === 'grid') renderGrid();
+  });
+});
+
+/* ================================================================
+   Feed view
+   ================================================================ */
+function getNearbyStayIds(locationStr) {
+  if (!locationStr) return [];
+  const q = locationStr.toLowerCase();
+  return VIA_DATA.stays
+    .filter(s =>
+      s.location.toLowerCase().includes(q) ||
+      s.country.toLowerCase().includes(q) ||
+      s.tags.some(t => t.toLowerCase().includes(q))
+    )
+    .map(s => s.id);
+}
+
+function filteredPosts() {
+  let posts = [...VIA_DATA.posts];
+  if (activeCreator) posts = posts.filter(p => p.creatorId === activeCreator);
+  if (activeCat !== 'all') {
+    const stayIds = VIA_DATA.stays.filter(s => s.category === activeCat).map(s => s.id);
+    posts = posts.filter(p => stayIds.includes(p.stayId));
+  }
+  return posts;
+}
+
+function renderFeed() {
+  const container = document.getElementById('view-feed');
+  let posts = filteredPosts();
+  if (!posts.length) {
+    container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">No posts match your filters.</div>`;
+    return;
+  }
+
+  // Sort: nearby first if location set
+  let nearbyIds = [];
+  if (userLocation && userLocation.city) {
+    nearbyIds = getNearbyStayIds(userLocation.city);
+    if (nearbyIds.length) {
+      posts = [
+        ...posts.filter(p => nearbyIds.includes(p.stayId)),
+        ...posts.filter(p => !nearbyIds.includes(p.stayId))
+      ];
+    }
+  }
+
+  const savedWl = VIA_STATE.wishlist;
+  let html = '';
+  let nearSectionDone = false;
+
+  posts.forEach((post, i) => {
+    const creator = getCreator(post.creatorId);
+    const stay = getStay(post.stayId);
+    if (!creator || !stay) return;
+    const isSaved = savedWl.includes(post.stayId);
+
+    // Section dividers
+    if (nearbyIds.length && i === 0) {
+      html += `<div class="feed-near-label">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        Near ${userLocation.city}
+      </div>`;
+    }
+    if (nearbyIds.length && !nearSectionDone && !nearbyIds.includes(post.stayId)) {
+      nearSectionDone = true;
+      html += `<div class="feed-near-label">More around the world</div>`;
+    }
+
+    html += `
+    <div class="feed-post" id="fp-${post.id}">
+      <div class="feed-post-header">
+        <img class="feed-av" src="${creator.avatar}" alt="${creator.name}">
+        <div class="feed-creator-info">
+          <div class="feed-creator-name">${creator.name}</div>
+          <div class="feed-creator-loc">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${post.location}
+          </div>
+        </div>
+        <div class="feed-time">${timeAgo(post.postedAt)}</div>
+      </div>
+
+      <div class="feed-post-image" style="background-image:url('${post.image}')" onclick="window.location='stay.html?id=${stay.id}'">
+        <div class="feed-image-actions">
+          <button class="feed-img-btn ${isSaved ? 'saved' : ''}" id="save-btn-${post.id}" onclick="event.stopPropagation();toggleFeedSave('${post.id}',${stay.id})"
+            title="${isSaved ? 'Saved' : 'Save'}">
+            ${isSaved ? '♥' : '♡'}
+          </button>
+          <button class="feed-img-btn" onclick="event.stopPropagation();showToast('Link copied!')" title="Share">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </button>
+        </div>
+        <div class="feed-image-bottom">
+          <div class="feed-stay-name">${stay.name}</div>
+          <div class="feed-stay-meta">${stay.category} · ${stay.location}</div>
+          <div class="feed-price-tag">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${stay.currency}${stay.price.toLocaleString()} / night
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-post-body">
+        <div class="feed-stats-row">
+          <div class="feed-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            ${fmtNum(post.stats.views)}
+          </div>
+          <div class="feed-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            ${fmtNum(post.stats.saves)} saves
+          </div>
+          <div class="feed-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            ${post.stats.bookings} bookings
+          </div>
+        </div>
+        <div class="feed-caption" id="cap-${post.id}">${post.caption}</div>
+        <button class="feed-read-more" id="rm-${post.id}" onclick="expandCaption('${post.id}')">more</button>
+        <a class="feed-book-btn" href="stay.html?id=${stay.id}">
+          Book this stay
+          <span>★ ${stay.rating} · ${stay.reviews} reviews</span>
+        </a>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Check captions — hide "more" if not needed
+  posts.forEach(post => {
+    const cap = document.getElementById(`cap-${post.id}`);
+    const rm  = document.getElementById(`rm-${post.id}`);
+    if (cap && rm && cap.scrollHeight <= cap.clientHeight + 4) rm.style.display = 'none';
+  });
+}
+
+function toggleFeedSave(postId, stayId) {
+  const added = VIA_STATE.toggleWishlist(stayId);
+  const btn = document.getElementById(`save-btn-${postId}`);
+  if (btn) {
+    btn.textContent = added ? '♥' : '♡';
+    btn.classList.toggle('saved', added);
+  }
+  showToast(added ? '♥ Saved to wishlist' : 'Removed from wishlist');
+}
+
+function expandCaption(postId) {
+  const cap = document.getElementById(`cap-${postId}`);
+  const rm  = document.getElementById(`rm-${postId}`);
+  if (cap) cap.classList.add('expanded');
+  if (rm) rm.style.display = 'none';
+}
+
+/* ================================================================
+   Map view
+   ================================================================ */
+function initMap() {
+  if (leafletMap) {
+    leafletMap.invalidateSize();
+    renderMapSidebar();
+    return;
+  }
+
+  const center = userLocation && userLocation.lat ? [userLocation.lat, userLocation.lng] : [30, 15];
+  const zoom = userLocation && userLocation.lat ? 7 : 3;
+
+  leafletMap = L.map('map-container', {
+    center, zoom,
+    zoomControl: true,
+    attributionControl: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+  }).addTo(leafletMap);
+
+  // Add pins for all stays
+  VIA_DATA.stays.forEach(stay => {
+    const coords = VIA_COORDS[stay.id];
+    if (!coords) return;
+    const creator = getCreator(stay.creatorId);
+
+    // Price pill marker
+    const icon = L.divIcon({
+      html: `<div class="map-price-pill" id="mpin-${stay.id}">${stay.currency}${stay.price.toLocaleString()}</div>`,
+      className: '',
+      iconAnchor: [0, 0]
+    });
+
+    const marker = L.marker(coords, { icon }).addTo(leafletMap);
+
+    marker.on('click', () => {
+      showMapStay(stay.id);
+      // Highlight pin
+      document.querySelectorAll('.map-price-pill').forEach(p => p.classList.remove('active'));
+      const pin = document.getElementById(`mpin-${stay.id}`);
+      if (pin) pin.classList.add('active');
+      // Highlight sidebar card
+      document.querySelectorAll('.map-stay-card').forEach(c => c.classList.remove('highlighted'));
+      const card = document.getElementById(`mcard-${stay.id}`);
+      if (card) { card.classList.add('highlighted'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    });
+
+    // Popup
+    const popupHtml = `
+      <div class="popup-name">${stay.name}</div>
+      <div class="popup-meta">${stay.category} · ${stay.currency}${stay.price.toLocaleString()}/night<br>
+      via ${creator ? creator.handle : ''} · ★ ${stay.rating}</div>
+      <a class="popup-link" href="stay.html?id=${stay.id}">View stay →</a>`;
+    marker.bindPopup(popupHtml, { maxWidth: 220 });
+  });
+
+  renderMapSidebar();
+}
+
+function renderMapSidebar() {
+  const list = document.getElementById('map-sidebar-list');
+  if (!list) return;
+  list.innerHTML = VIA_DATA.stays.map(stay => {
+    const creator = getCreator(stay.creatorId);
+    return `<div class="map-stay-card" id="mcard-${stay.id}" onclick="flyToStay(${stay.id})">
+      <div class="map-stay-thumb" style="background-image:url('${stay.images[0]}');height:120px;background-size:cover;background-position:center"></div>
+      <div class="map-stay-info">
+        <div class="map-stay-name">${stay.name}</div>
+        <div class="map-stay-meta">${stay.location}</div>
+        <div class="map-stay-meta" style="margin-top:4px">${stay.currency}${stay.price.toLocaleString()}/night · via ${creator ? creator.handle : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function flyToStay(stayId) {
+  const coords = VIA_COORDS[stayId];
+  if (!coords || !leafletMap) return;
+  leafletMap.flyTo(coords, 13, { duration: 1.2 });
+  showMapStay(stayId);
+}
+
+function showMapStay(stayId) {
+  const stay = getStay(stayId);
+  const creator = getCreator(stay.creatorId);
+  const sheet = document.getElementById('map-bottom-sheet');
+  const content = document.getElementById('map-sheet-content');
+  content.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:80px;height:70px;border-radius:2px;background-image:url('${stay.images[0]}');background-size:cover;background-position:center;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400">${stay.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;margin:3px 0">${stay.category} · ${stay.location}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em">via ${creator ? creator.handle : ''} · ★ ${stay.rating}</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300">${stay.currency}${stay.price.toLocaleString()}<span style="font-size:14px;color:var(--muted)">/night</span></div>
+      <a href="stay.html?id=${stay.id}" class="btn-primary" style="flex:1;text-align:center;padding:11px">View stay →</a>
+    </div>`;
+  sheet.classList.add('open');
+}
+
+document.getElementById('map-bottom-sheet').addEventListener('click', e => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+/* ================================================================
+   Grid view
+   ================================================================ */
+function renderGrid() {
+  const searchVal = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+  const sortVal   = document.getElementById('sort-select')?.value || 'default';
 
   let results = [...VIA_DATA.stays];
-
-  // Search
+  if (activeCreator) results = results.filter(s => s.creatorId === activeCreator);
+  if (activeCat !== 'all') results = results.filter(s => s.category === activeCat);
   if (searchVal) {
     results = results.filter(s =>
       s.name.toLowerCase().includes(searchVal) ||
@@ -329,123 +1089,47 @@ function applyFilters() {
       (getCreator(s.creatorId) && getCreator(s.creatorId).name.toLowerCase().includes(searchVal))
     );
   }
-
-  // Category
-  if (catFilter && catFilter !== 'all') {
-    results = results.filter(s => s.category === catFilter);
-  }
-
-  // Creator
-  if (activeCreator) {
-    results = results.filter(s => s.creatorId === activeCreator);
-  }
-
-  // Sort
   if (sortVal === 'price-asc') results.sort((a,b) => a.price - b.price);
   else if (sortVal === 'price-desc') results.sort((a,b) => b.price - a.price);
   else if (sortVal === 'rating') results.sort((a,b) => b.rating - a.rating);
-  else if (sortVal === 'reviews') results.sort((a,b) => b.reviews - a.reviews);
 
-  renderResults(results);
-
-  // Update count
   document.getElementById('results-count').textContent = `${results.length} stay${results.length !== 1 ? 's' : ''}`;
 
-  // Update active filters display
-  updateActiveFiltersDisplay(catFilter, searchVal);
-}
-
-function updateActiveFiltersDisplay(catFilter, searchVal) {
-  const container = document.getElementById('active-filters');
-  let tags = [];
-  if (catFilter && catFilter !== 'all') tags.push({ label: catFilter, clear: () => { document.querySelector('.filter-chip[data-filter="all"]').click(); }});
-  if (activeCreator) {
-    const c = getCreator(activeCreator);
-    if (c) tags.push({ label: c.name, clear: () => { filterByCreator('all', document.querySelector('.creator-chip[data-creator="all"]')); }});
-  }
-  if (tags.length) {
-    container.classList.add('visible');
-    container.innerHTML = '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;padding:5px 0">Filters:</span>' +
-      tags.map(t => `<span class="active-filter-tag">${t.label}<button onclick="(${t.clear.toString()})()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:12px;padding:0;margin-left:2px">×</button></span>`).join('');
-  } else {
-    container.classList.remove('visible');
-    container.innerHTML = '';
-  }
-}
-
-function renderResults(stays) {
-  const grid = document.getElementById('stays-grid');
-  if (!stays.length) {
-    grid.innerHTML = `<div class="no-results">
-      <div style="font-size:48px;margin-bottom:16px;opacity:.3">🔍</div>
-      <h3>No stays found</h3>
-      <p>Try adjusting your search or filters</p>
-    </div>`;
+  const grid = document.getElementById('view-grid');
+  if (!results.length) {
+    grid.innerHTML = `<div class="no-results"><div style="font-size:48px;margin-bottom:16px;opacity:.3">🔍</div><h3>No stays found</h3><p>Try adjusting your search or filters</p></div>`;
     return;
   }
-
-  if (currentView === 'list') {
-    grid.style.gridTemplateColumns = '1fr';
-    grid.innerHTML = stays.map(stay => {
-      const creator = getCreator(stay.creatorId);
-      return `<div class="stay-card" style="display:flex;gap:0" onclick="window.location='stay.html?id=${stay.id}'">
-        <div class="stay-card-img" style="background-image:url('${stay.images[0]}');flex-shrink:0;width:140px;aspect-ratio:auto;height:auto;min-height:100px"></div>
-        <div class="stay-card-body" style="flex:1;padding:14px 16px">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-            <div class="stay-card-name" style="font-size:18px">${stay.name}</div>
-            <div class="stay-card-rating"><span class="star">★</span> ${stay.rating}</div>
-          </div>
-          <div class="stay-card-location">${stay.location}</div>
-          ${creator ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">via ${creator.handle}</div>` : ''}
-          <div class="stay-card-price">
-            <span class="price-amount">${stay.currency}${stay.price.toLocaleString()}</span>
-            <span class="price-unit">/ night</span>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  } else {
-    const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    grid.innerHTML = stays.map(stay => renderStayCard(stay, getCreator(stay.creatorId))).join('');
-  }
+  const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  grid.innerHTML = results.map(s => renderStayCard(s, getCreator(s.creatorId))).join('');
   initWishlistButtons();
 }
 
-function setView(v) {
-  currentView = v;
-  document.getElementById('view-grid').classList.toggle('active', v === 'grid');
-  document.getElementById('view-list').classList.toggle('active', v === 'list');
-  applyFilters();
-}
-
-// Search
+/* ================================================================
+   Search (grid)
+   ================================================================ */
 const searchInput = document.getElementById('search-input');
 const searchClear = document.getElementById('search-clear');
-searchInput.addEventListener('input', () => {
-  searchClear.classList.toggle('visible', searchInput.value.length > 0);
-  applyFilters();
-});
-searchClear.addEventListener('click', () => {
-  searchInput.value = '';
-  searchClear.classList.remove('visible');
-  applyFilters();
-});
-
-// Category filter chips
-document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.filter-chip[data-group="cat"]').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    applyFilters();
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    searchClear.classList.toggle('visible', searchInput.value.length > 0);
+    renderGrid();
   });
-});
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.classList.remove('visible');
+    renderGrid();
+  });
+}
 
-// Init
+/* ================================================================
+   Init
+   ================================================================ */
 renderCreatorChips();
-applyFilters();
+renderFeed();
 
-// Handle pre-selected creator from URL
+// Pre-select creator from URL
 const creatorParam = getParam('creator');
 if (creatorParam) {
   setTimeout(() => {
@@ -454,8 +1138,7 @@ if (creatorParam) {
   }, 0);
 }
 
-// Responsive grid reflow
-window.addEventListener('resize', () => { if (currentView === 'grid') applyFilters(); });
+window.addEventListener('resize', () => { if (currentMode === 'grid') renderGrid(); });
 </script>
 </body>
 </html>

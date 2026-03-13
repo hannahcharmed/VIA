@@ -382,6 +382,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Earnings
     </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('posts',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/><rect x="13" y="16" width="8" height="5" rx="1"/></svg>
+      Posts
+    </button>
     <button class="sidebar-nav-item" onclick="switchPanel('profile',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Profile
@@ -585,8 +589,77 @@
       </div>
     </div>
 
+    <!-- POSTS PANEL -->
+    <div class="dash-panel" id="panel-posts">
+      <div class="dash-header">
+        <div class="dash-greeting">Posts</div>
+        <button class="btn-accent" style="padding:10px 18px;font-size:11px" onclick="openNewPostModal()">+ New post</button>
+      </div>
+      <!-- Summary stats -->
+      <div class="dash-stats-grid" style="margin-bottom:20px">
+        <div class="dash-stat-card">
+          <div class="eyebrow">Total views</div>
+          <div class="big-num" id="posts-total-views">0</div>
+          <div class="change up" id="posts-views-change">across all posts</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Total saves</div>
+          <div class="big-num" id="posts-total-saves">0</div>
+          <div class="change neutral">wishlisted stays</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Bookings driven</div>
+          <div class="big-num" id="posts-total-bookings">0</div>
+          <div class="change up">from posts</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Revenue driven</div>
+          <div class="big-num" id="posts-total-revenue">—</div>
+          <div class="change neutral">10% = your cut</div>
+        </div>
+      </div>
+      <!-- Posts list -->
+      <div id="posts-list"></div>
+    </div>
+
   </div><!-- end dash-main -->
 </div><!-- end dash-layout -->
+
+<!-- NEW POST MODAL -->
+<div class="modal" id="modal-new-post">
+  <div class="modal-overlay" onclick="closeModal('modal-new-post')"></div>
+  <div class="modal-box" style="max-width:500px;width:90%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400">New post</div>
+      <button style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:0" onclick="closeModal('modal-new-post')">×</button>
+    </div>
+    <form id="new-post-form" onsubmit="submitNewPost(event)">
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Image URL</label>
+        <input type="url" id="np-image" placeholder="https://images.unsplash.com/…" required>
+        <div id="np-img-preview" style="margin-top:8px;border-radius:2px;overflow:hidden;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Caption</label>
+        <textarea id="np-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;font-family:'Geist',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color .2s;resize:vertical" placeholder="Share your thoughts on this stay…" required></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Tag a stay</label>
+        <select id="np-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:10px 14px;font-family:'Geist',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer">
+          <option value="">— Select stay —</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Location shown</label>
+        <input type="text" id="np-location" placeholder="e.g. Aix-en-Provence, France">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn-outline" style="flex:1;padding:12px" onclick="closeModal('modal-new-post')">Cancel</button>
+        <button type="submit" class="btn-primary" style="flex:2;padding:12px">Publish post</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <!-- Mobile bottom nav -->
 <div class="dash-bottom-nav" id="mobile-bottom-nav">
@@ -606,6 +679,10 @@
   <button class="dash-nav-item" onclick="switchPanel('earnings',null);setMobileActive(this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
     Earnings
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('posts',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/><rect x="13" y="16" width="8" height="5" rx="1"/></svg>
+    Posts
   </button>
   <button class="dash-nav-item" onclick="switchPanel('profile',null);setMobileActive(this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -739,7 +816,114 @@ function updatePeriod() {
   document.getElementById('stat-bookings').textContent = Math.round(12 * m);
 }
 
-// Init
+// ── Posts panel ──────────────────────────────────────────
+function renderPostsPanel() {
+  // Aggregate stats
+  const posts = getPostsByCreator('camille');
+  const totalViews    = posts.reduce((s, p) => s + p.stats.views, 0);
+  const totalSaves    = posts.reduce((s, p) => s + p.stats.saves, 0);
+  const totalBookings = posts.reduce((s, p) => s + p.stats.bookings, 0);
+
+  document.getElementById('posts-total-views').textContent    = fmtNum(totalViews);
+  document.getElementById('posts-total-saves').textContent    = fmtNum(totalSaves);
+  document.getElementById('posts-total-bookings').textContent = totalBookings;
+  document.getElementById('posts-total-revenue').textContent  = '€18.2k';
+
+  const list = document.getElementById('posts-list');
+  if (!list) return;
+  list.innerHTML = posts.map(post => {
+    const stay = getStay(post.stayId);
+    const convRate = stay ? ((post.stats.bookings / (post.stats.saves || 1)) * 100).toFixed(1) : '—';
+    return `
+    <div style="display:flex;gap:14px;padding:14px;background:var(--cream);border-radius:2px;border:1px solid var(--border);margin-bottom:10px">
+      <div style="width:72px;height:72px;border-radius:2px;background-image:url('${post.image}');background-size:cover;background-position:center;flex-shrink:0;cursor:pointer" onclick="window.location='stay.html?id=${post.stayId}'"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400">${stay ? stay.name : 'Stay'}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;margin-top:1px">${timeAgo(post.postedAt)} · ${post.location}</div>
+          </div>
+          <a href="stay.html?id=${post.stayId}" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View →</a>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${post.caption}</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+            <span style="color:var(--ink);font-size:13px">${fmtNum(post.stats.views)}</span> views
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+            <span style="color:var(--ink);font-size:13px">${fmtNum(post.stats.saves)}</span> saves
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+            <span style="color:var(--success);font-size:13px">${post.stats.bookings}</span> bookings
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+            <span style="color:var(--ink);font-size:13px">${post.stats.revenue}</span> driven
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+            <span style="color:var(--ink);font-size:13px">${convRate}%</span> conv.
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openNewPostModal() {
+  // Populate stay selector
+  const sel = document.getElementById('np-stay');
+  sel.innerHTML = '<option value="">— Select stay —</option>' +
+    VIA_DATA.stays.map(s => `<option value="${s.id}">${s.name} (${s.location})</option>`).join('');
+  // Image preview
+  const imgInput = document.getElementById('np-image');
+  imgInput.oninput = () => {
+    const preview = document.getElementById('np-img-preview');
+    const val = imgInput.value.trim();
+    if (val) {
+      preview.style.display = 'block';
+      preview.style.backgroundImage = `url('${val}')`;
+    } else {
+      preview.style.display = 'none';
+    }
+  };
+  // Auto-fill location from stay
+  sel.onchange = () => {
+    const stay = getStay(parseInt(sel.value));
+    if (stay) document.getElementById('np-location').value = stay.location;
+  };
+  openModal('modal-new-post');
+}
+
+function submitNewPost(e) {
+  e.preventDefault();
+  const stay = getStay(parseInt(document.getElementById('np-stay').value));
+  const caption = document.getElementById('np-caption').value;
+  // Add to VIA_DATA.posts as a new post (session only)
+  const newPost = {
+    id: 'pnew-' + Date.now(),
+    creatorId: 'camille',
+    stayId: stay.id,
+    image: document.getElementById('np-image').value,
+    caption,
+    location: document.getElementById('np-location').value || stay.location,
+    postedAt: new Date().toISOString().split('T')[0],
+    stats: { views: 0, saves: 0, bookings: 0, revenue: '€0' }
+  };
+  VIA_DATA.posts.unshift(newPost);
+  closeModal('modal-new-post');
+  document.getElementById('new-post-form').reset();
+  document.getElementById('np-img-preview').style.display = 'none';
+  showToast('✓ Post published — now live on Explore');
+  renderPostsPanel();
+}
+
+// Patch switchPanel to render posts
+const _origSwitch = switchPanel;
+function switchPanel(panel, clickedBtn) {
+  _origSwitch(panel, clickedBtn);
+  if (panel === 'posts') renderPostsPanel();
+}
+
+// ── Init ──────────────────────────────────────────────────
 const user = VIA_STATE.user;
 if (user) {
   const name = user.name || 'Camille';
