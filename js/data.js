@@ -389,9 +389,107 @@ const VIA_STATE = {
   isWishlisted(stayId) { return this.wishlist.includes(stayId); }
 };
 
+// Stay coordinates [lat, lng] for map view
+const VIA_COORDS = {
+  1:  [43.5297,   5.4474],
+  2:  [48.8566,   2.3522],
+  3:  [40.6280,  14.4843],
+  4:  [38.7169,  -9.1399],
+  5:  [35.0116, 135.7681],
+  6:  [43.7102,   7.2620],
+  7:  [51.5074,  -0.1278],
+  8:  [31.6295,  -7.9811],
+  9:  [-8.5069, 115.2625],
+  10: [37.5665, 126.9780],
+  11: [55.6761,  12.5683],
+  12: [20.2115, -87.4654],
+};
+
+// Creator posts (social feed)
+VIA_DATA.posts = [
+  {
+    id: 'p1', creatorId: 'camille', stayId: 1,
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80',
+    caption: 'Four days I genuinely never wanted to leave. The garden here in the early morning — lavender still wet, coffee in hand — is one of the best things I\'ve experienced anywhere.',
+    location: 'Aix-en-Provence, France',
+    postedAt: '2025-01-18',
+    stats: { views: 124800, saves: 8420, bookings: 14, revenue: '€5,390' }
+  },
+  {
+    id: 'p2', creatorId: 'yuna', stayId: 5,
+    image: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80',
+    caption: 'I have stayed in over 40 ryokans. This is the one I return to when I need to remember what stillness feels like. The private onsen at 5am, the garden at sunrise.',
+    location: 'Kyoto, Japan',
+    postedAt: '2025-03-10',
+    stats: { views: 287400, saves: 21600, bookings: 22, revenue: '¥1.87m' }
+  },
+  {
+    id: 'p3', creatorId: 'marcos', stayId: 3,
+    image: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=900&q=80',
+    caption: 'You will not find a better view in all of Positano. We sat on this terrace for four hours and watched the light change. Nothing to add.',
+    location: 'Positano, Italy',
+    postedAt: '2025-05-22',
+    stats: { views: 198600, saves: 15200, bookings: 18, revenue: '€12,240' }
+  },
+  {
+    id: 'p4', creatorId: 'sofia', stayId: 11,
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&q=80',
+    caption: 'Tivoli lights visible from the bathtub. I keep going back every December. There is no other hotel in Copenhagen like this — or really anywhere.',
+    location: 'Copenhagen, Denmark',
+    postedAt: '2024-12-20',
+    stats: { views: 94200, saves: 6810, bookings: 9, revenue: '€4,770' }
+  },
+  {
+    id: 'p5', creatorId: 'camille', stayId: 2,
+    image: 'https://images.unsplash.com/photo-1543158181-e6f9f6712055?w=900&q=80',
+    caption: 'My Paris base for the 9th arr. Warm plaster walls, the best breakfast, and they remembered my coffee order by day two.',
+    location: 'Paris, France',
+    postedAt: '2024-10-14',
+    stats: { views: 88300, saves: 5640, bookings: 11, revenue: '€4,620' }
+  },
+  {
+    id: 'p6', creatorId: 'marcos', stayId: 8,
+    image: 'https://images.unsplash.com/photo-1548018560-c7196548c73f?w=900&q=80',
+    caption: 'A full day in this garden and you forget the medina exists. Five acres of palms, two pools, and the owner has spent thirty years making it perfect.',
+    location: 'Marrakech, Morocco',
+    postedAt: '2025-01-12',
+    stats: { views: 156700, saves: 11900, bookings: 16, revenue: '€5,120' }
+  },
+  {
+    id: 'p7', creatorId: 'yuna', stayId: 9,
+    image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=900&q=80',
+    caption: 'Waking up to that jungle canopy every morning at 6am reset something in me entirely. The Campuhan River below, the rice terraces beyond. Ubud at its most unhurried.',
+    location: 'Ubud, Bali',
+    postedAt: '2025-04-18',
+    stats: { views: 312400, saves: 24700, bookings: 31, revenue: '€8,680' }
+  },
+  {
+    id: 'p8', creatorId: 'sofia', stayId: 12,
+    image: 'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=900&q=80',
+    caption: 'Cenote mornings and rooftop sunsets within the same perfect day. Tulum doesn\'t need to try this hard, and yet it does.',
+    location: 'Tulum, Mexico',
+    postedAt: '2025-03-08',
+    stats: { views: 76100, saves: 5280, bookings: 7, revenue: '€1,365' }
+  },
+];
+
 // Helpers
 function getCreator(id) { return VIA_DATA.creators.find(c => c.id === id); }
 function getStay(id) { return VIA_DATA.stays.find(s => s.id === id); }
 function getStaysByCreator(creatorId) { return VIA_DATA.stays.filter(s => s.creatorId === creatorId); }
+function getPostsByCreator(creatorId) { return VIA_DATA.posts.filter(p => p.creatorId === creatorId); }
 function formatPrice(amount, currency) { return `${currency}${typeof amount === 'number' ? amount.toLocaleString() : amount}`; }
 function starsHtml(n) { return '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n)); }
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return '1 day ago';
+  if (diff < 30) return `${diff} days ago`;
+  if (diff < 365) return `${Math.floor(diff/30)} months ago`;
+  return `${Math.floor(diff/365)}y ago`;
+}
+function fmtNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'm';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'k';
+  return n.toString();
+}
