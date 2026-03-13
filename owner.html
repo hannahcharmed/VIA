@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Portal — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.dash-layout {
+  padding-top: var(--nav-h);
+  min-height: 100svh;
+  background: var(--warm-white);
+}
+.dash-sidebar { display: none; }
+.dash-main { padding: 24px 20px 80px; }
+
+/* Mobile bottom nav */
+.dash-bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.dash-nav-item {
+  flex: 1;
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.dash-nav-item svg { width: 20px; height: 20px; }
+.dash-nav-item.active { color: var(--ink); }
+
+/* Header */
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dash-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 300;
+}
+.dash-greeting em { font-style: italic; color: var(--accent); }
+
+/* Stat cards */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.dash-stat-card {
+  background: var(--cream);
+  border-radius: 3px;
+  padding: 16px;
+}
+.dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
+.dash-stat-card .big-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.dash-stat-card .change {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.change.up { color: var(--success); }
+.change.down { color: var(--error); }
+.change.neutral { color: var(--muted); }
+
+/* Revenue banner */
+.payout-banner {
+  background: var(--ink);
+  border-radius: 3px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.payout-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
+}
+.payout-amount {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: white;
+}
+.payout-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* Chart */
+.chart-card {
+  background: var(--cream);
+  border-radius: 3px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.chart-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 100px;
+}
+.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.chart-bar {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.chart-bar:hover { opacity: 0.8; }
+.chart-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* Section title */
+.section-h {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-h a { font-size: 12px; color: var(--accent); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+
+/* Booking item */
+.booking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.booking-item:hover { background: var(--cream); border-radius: 2px; padding-left: 8px; }
+.booking-item:last-child { border-bottom: none; }
+.booking-thumb {
+  width: 44px; height: 44px;
+  border-radius: 2px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.booking-info { flex: 1; min-width: 0; }
+.booking-name { font-size: 14px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; margin-top: 2px; }
+.booking-amount { font-size: 15px; font-weight: 400; flex-shrink: 0; }
+.booking-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.booking-status.confirmed { background: #E6F4EE; color: var(--success); }
+.booking-status.pending { background: #FEF3E8; color: #C47B0A; }
+.booking-status.completed { background: var(--cream); color: var(--muted); }
+
+/* Property row */
+.property-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: var(--cream);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.property-thumb {
+  width: 64px; height: 52px;
+  border-radius: 2px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.property-info { flex: 1; min-width: 0; }
+.property-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.property-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; margin-top: 2px; }
+.property-stats { display: flex; gap: 14px; flex-shrink: 0; }
+.property-stat { text-align: right; }
+.property-stat .v { font-size: 15px; font-weight: 400; }
+.property-stat .l { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.06em; }
+
+/* Creator row */
+.creator-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.creator-row:last-child { border-bottom: none; }
+.creator-av {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.creator-info { flex: 1; min-width: 0; }
+.creator-name { font-size: 14px; font-weight: 400; }
+.creator-handle { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+.creator-stat { text-align: right; flex-shrink: 0; }
+.creator-stat .v { font-size: 14px; }
+.creator-stat .l { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.06em; }
+
+/* Panels */
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
+/* Notification dot */
+.notif-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  position: absolute;
+  top: 6px; right: 6px;
+}
+
+/* Sidebar */
+.sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s;
+  position: relative;
+}
+.sidebar-nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sidebar-nav-item:hover { color: var(--ink); background: var(--cream); }
+.sidebar-nav-item.active { color: var(--ink); background: var(--cream); border-right: 2px solid var(--ink); }
+.sidebar-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+.sidebar-user { display: flex; align-items: center; gap: 10px; }
+.sidebar-user-av {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background-size: cover;
+  background-color: var(--accent-light);
+}
+.sidebar-user-name { font-size: 13px; font-weight: 400; }
+.sidebar-user-role { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+
+@media (min-width: 1024px) {
+  .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
+  .dash-sidebar {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    height: calc(100vh - var(--nav-h));
+    position: sticky;
+    top: var(--nav-h);
+    overflow-y: auto;
+  }
+  .dash-main { padding: 32px 48px 60px; }
+  .dash-bottom-nav { display: none; }
+  .dash-stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 768px) {
+  .dash-main { padding: 28px 40px 80px; }
+  .dash-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
+    <div class="nav-avatar" id="nav-av" title="Owner Portal"></div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
+  <a href="owner.html" style="color:var(--ink)">Owner Portal</a>
+</div>
+
+<div class="dash-layout page-top">
+  <!-- Desktop sidebar -->
+  <div class="dash-sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" class="nav-logo" style="font-size:22px">V<span>.</span>ia</a>
+    </div>
+    <button class="sidebar-nav-item active" onclick="switchPanel('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('bookings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Bookings
+      <span style="margin-left:auto;background:var(--accent);color:white;font-size:9px;padding:2px 6px;border-radius:20px">4</span>
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('properties',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Properties
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('creators',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Creators
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('revenue',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Revenue
+    </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+    <div style="flex:1"></div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="sidebar-user-av" id="sb-avatar" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80')"></div>
+        <div>
+          <div class="sidebar-user-name" id="sb-user-name">Henri Blanc</div>
+          <div class="sidebar-user-role">Property Owner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="dash-main">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="dash-panel active" id="panel-overview">
+      <div class="dash-header">
+        <div class="dash-greeting">Good morning, <em id="dash-first-name">Henri</em>.</div>
+        <select class="dash-period" id="period-select" style="background:var(--cream);border:1px solid var(--border);border-radius:2px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:8px 12px;color:var(--muted);cursor:pointer;" onchange="updatePeriod()">
+          <option value="30">Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="365">This year</option>
+        </select>
+      </div>
+
+      <div class="dash-stats-grid">
+        <div class="dash-stat-card">
+          <div class="eyebrow">Via revenue</div>
+          <div class="big-num" id="stat-revenue">€8,460</div>
+          <div class="change up">↑ 22% vs last period</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Bookings</div>
+          <div class="big-num" id="stat-bookings">18</div>
+          <div class="change up">↑ 4 new this month</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Avg stay length</div>
+          <div class="big-num">3.2</div>
+          <div class="change neutral">nights</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Occupancy (Via)</div>
+          <div class="big-num">68%</div>
+          <div class="change up">↑ 11% this month</div>
+        </div>
+      </div>
+
+      <div class="payout-banner">
+        <div>
+          <div class="payout-label">Next payout (after Via commission)</div>
+          <div class="payout-amount">€7,614</div>
+          <div class="payout-meta">Settles 1 Apr 2026 · Bank transfer · 90% of booking revenue</div>
+        </div>
+        <button class="btn-accent" style="padding:11px 20px;font-size:10px;flex-shrink:0">Payout settings</button>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Revenue via creators</div>
+        </div>
+        <div class="chart-bars" id="revenue-chart"></div>
+      </div>
+
+      <div class="section-h">
+        Upcoming bookings
+        <a href="#" onclick="switchPanel('bookings',null)">View all →</a>
+      </div>
+      <div id="recent-bookings-list"></div>
+
+      <div class="section-h" style="margin-top:28px">
+        Top performing creators
+        <a href="#" onclick="switchPanel('creators',null)">View all →</a>
+      </div>
+      <div id="top-creators-list"></div>
+    </div>
+
+    <!-- BOOKINGS PANEL -->
+    <div class="dash-panel" id="panel-bookings">
+      <div class="dash-header">
+        <div class="dash-greeting">Bookings</div>
+      </div>
+      <div class="tabs" style="margin-bottom:20px;max-width:420px">
+        <button class="tab-btn active" onclick="filterBookings('all',this)">All</button>
+        <button class="tab-btn" onclick="filterBookings('confirmed',this)">Confirmed</button>
+        <button class="tab-btn" onclick="filterBookings('pending',this)">Pending</button>
+        <button class="tab-btn" onclick="filterBookings('completed',this)">Completed</button>
+      </div>
+      <div id="all-bookings-list"></div>
+    </div>
+
+    <!-- PROPERTIES PANEL -->
+    <div class="dash-panel" id="panel-properties">
+      <div class="dash-header">
+        <div class="dash-greeting">Properties</div>
+        <button class="btn-outline" style="padding:9px 18px" onclick="showToast('List a new property — coming soon')">+ Add property</button>
+      </div>
+      <div id="properties-list"></div>
+    </div>
+
+    <!-- CREATORS PANEL -->
+    <div class="dash-panel" id="panel-creators">
+      <div class="dash-header">
+        <div class="dash-greeting">Creator partnerships</div>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;max-width:520px;line-height:1.7">Creators drive bookings at zero upfront cost. You only pay the 10% Via commission on confirmed stays.</p>
+      <div id="creators-list"></div>
+    </div>
+
+    <!-- REVENUE PANEL -->
+    <div class="dash-panel" id="panel-revenue">
+      <div class="dash-header">
+        <div class="dash-greeting">Revenue</div>
+      </div>
+      <div class="dash-stats-grid">
+        <div class="dash-stat-card">
+          <div class="eyebrow">All-time Via revenue</div>
+          <div class="big-num">€41,800</div>
+          <div class="change up">↑ 38% YoY</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Pending payout</div>
+          <div class="big-num">€7,614</div>
+          <div class="change neutral">Settles Apr 1</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">Via commission paid</div>
+          <div class="big-num">€4,180</div>
+          <div class="change neutral">10% of bookings</div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="eyebrow">This month</div>
+          <div class="big-num">€8,460</div>
+          <div class="change up">↑ 22%</div>
+        </div>
+      </div>
+      <div class="section-h" style="margin-top:8px">Payout history</div>
+      <div id="payout-history"></div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="dash-panel" id="panel-settings">
+      <div class="dash-header">
+        <div class="dash-greeting">Settings</div>
+      </div>
+      <div style="max-width:560px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:3px">
+          <div id="settings-avatar" style="width:64px;height:64px;border-radius:50%;background-size:cover;background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80');flex-shrink:0"></div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400" id="settings-name-display">Henri Blanc</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px" id="settings-property-display">Hôtel Le Pigonnet</div>
+            <button class="btn-outline" style="font-size:10px;padding:6px 14px" onclick="showToast('Photo upload — coming soon')">Change photo</button>
+          </div>
+        </div>
+        <form onsubmit="saveSettings(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" id="pf-first" value="Henri">
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" id="pf-last" value="Blanc">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Email</label>
+            <input type="email" id="pf-email" value="henri@lepigonnet.fr">
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Property name</label>
+            <input type="text" id="pf-property" value="Hôtel Le Pigonnet">
+          </div>
+          <div class="form-group" style="margin-bottom:20px">
+            <label>Payout bank (IBAN / account)</label>
+            <input type="text" id="pf-bank" placeholder="FR76 •••• •••• •••• ••••">
+          </div>
+          <button type="submit" class="btn-primary" style="padding:13px 28px">Save changes</button>
+        </form>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Danger zone</div>
+          <button class="btn-outline" style="color:var(--error);border-color:var(--error)" onclick="showToast('Contact support to remove your property')">Remove property</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end dash-main -->
+</div>
+
+<!-- Mobile bottom nav -->
+<div class="dash-bottom-nav">
+  <button class="dash-nav-item active" onclick="switchPanel('overview',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Home
+  </button>
+  <button class="dash-nav-item" style="position:relative" onclick="switchPanel('bookings',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <div class="notif-dot"></div>
+    Bookings
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('properties',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    Properties
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('creators',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Creators
+  </button>
+  <button class="dash-nav-item" onclick="switchPanel('settings',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Account
+  </button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+// Demo bookings for this owner's property
+const OWNER_BOOKINGS = [
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Sarah M.', creatorName: 'Camille Laurent', nights: 3, total: 1155, currency: '€', checkIn: '2026-03-20', status: 'confirmed' },
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Tom K.', creatorName: 'Camille Laurent', nights: 4, total: 1540, currency: '€', checkIn: '2026-03-27', status: 'confirmed' },
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Mei L.', creatorName: 'Camille Laurent', nights: 2, total: 770, currency: '€', checkIn: '2026-04-02', status: 'pending' },
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Luca B.', creatorName: 'Camille Laurent', nights: 5, total: 1925, currency: '€', checkIn: '2026-04-10', status: 'pending' },
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Isabelle F.', creatorName: 'Camille Laurent', nights: 3, total: 1155, currency: '€', checkIn: '2026-02-14', status: 'completed' },
+  { stayId: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence, France', stayImage: VIA_DATA.stays[0].images[0], guestName: 'James C.', creatorName: 'Camille Laurent', nights: 3, total: 1155, currency: '€', checkIn: '2026-01-28', status: 'completed' },
+];
+
+const CHART_DATA = [
+  { month: 'Oct', revenue: 2100 },
+  { month: 'Nov', revenue: 3850 },
+  { month: 'Dec', revenue: 5200 },
+  { month: 'Jan', revenue: 4100 },
+  { month: 'Feb', revenue: 6800 },
+  { month: 'Mar', revenue: 8460 },
+];
+
+const CREATOR_PERFORMANCE = [
+  { id: 'camille', bookings: 14, revenue: '€32,400', conversion: '94%' },
+  { id: 'marcos',  bookings: 3,  revenue: '€6,900',  conversion: '87%' },
+];
+
+const PAYOUT_HISTORY = [
+  { date: 'Mar 1, 2026', gross: '€9,400', commission: '€940', net: '€8,460', ref: 'OW-003201' },
+  { date: 'Feb 1, 2026', gross: '€7,560', commission: '€756', net: '€6,804', ref: 'OW-003094' },
+  { date: 'Jan 1, 2026', gross: '€4,560', commission: '€456', net: '€4,104', ref: 'OW-002980' },
+  { date: 'Dec 1, 2025', gross: '€5,800', commission: '€580', net: '€5,220', ref: 'OW-002865' },
+];
+
+function renderChart() {
+  const max = Math.max(...CHART_DATA.map(d => d.revenue));
+  const el = document.getElementById('revenue-chart');
+  if (!el) return;
+  el.innerHTML = CHART_DATA.map(d => {
+    const pct = (d.revenue / max * 100).toFixed(1);
+    return `<div class="chart-col">
+      <div class="chart-bar" style="height:${pct}%;background:var(--accent)" title="${d.month}: €${d.revenue.toLocaleString()}"></div>
+      <div class="chart-label">${d.month}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderBookings(filter) {
+  let list = filter && filter !== 'all' ? OWNER_BOOKINGS.filter(b => b.status === filter) : OWNER_BOOKINGS;
+  if (!list.length) return '<p style="color:var(--muted);font-size:14px;padding:20px 0">No bookings in this category.</p>';
+  return list.map(b => `
+    <div class="booking-item">
+      <div class="booking-thumb" style="background-image:url('${b.stayImage}')"></div>
+      <div class="booking-info">
+        <div class="booking-name">${b.guestName}</div>
+        <div class="booking-meta">${b.stayName} · ${b.nights} nights · Check-in ${new Date(b.checkIn).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+        <div class="booking-meta" style="margin-top:2px">via ${b.creatorName}</div>
+      </div>
+      <span class="booking-amount">${b.currency}${b.total.toLocaleString()}</span>
+      <span class="booking-status ${b.status}">${b.status}</span>
+    </div>`).join('');
+}
+
+function renderProperties() {
+  const el = document.getElementById('properties-list');
+  if (!el) return;
+  const stay = VIA_DATA.stays[0];
+  el.innerHTML = `
+    <div class="property-row">
+      <div class="property-thumb" style="background-image:url('${stay.images[0]}')"></div>
+      <div class="property-info">
+        <div class="property-name">${stay.name}</div>
+        <div class="property-meta">${stay.location} · ${stay.category}</div>
+        <div class="property-meta" style="margin-top:4px">★ ${stay.rating} · ${stay.reviews} reviews · ${stay.currency}${stay.price}/night</div>
+      </div>
+      <div class="property-stats">
+        <div class="property-stat">
+          <div class="v">18</div>
+          <div class="l">bookings</div>
+        </div>
+        <div class="property-stat">
+          <div class="v">€41k</div>
+          <div class="l">all-time</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--cream);border:1px dashed var(--border);border-radius:2px;padding:20px;text-align:center;cursor:pointer" onclick="showToast('Add a new property — coming soon')">
+      <div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">+ List another property</div>
+    </div>`;
+}
+
+function renderCreators() {
+  const el = document.getElementById('creators-list');
+  if (!el) return;
+  el.innerHTML = CREATOR_PERFORMANCE.map(cp => {
+    const c = getCreator(cp.id);
+    if (!c) return '';
+    return `<div class="creator-row">
+      <div class="creator-av" style="background-image:url('${c.avatar}')"></div>
+      <div class="creator-info">
+        <div class="creator-name">${c.name}</div>
+        <div class="creator-handle">${c.handle} · ${c.followers} followers</div>
+      </div>
+      <div style="display:flex;gap:16px;flex-shrink:0">
+        <div class="creator-stat">
+          <div class="v">${cp.bookings}</div>
+          <div class="l">bookings</div>
+        </div>
+        <div class="creator-stat">
+          <div class="v">${cp.revenue}</div>
+          <div class="l">revenue</div>
+        </div>
+        <div class="creator-stat">
+          <div class="v">${cp.conversion}</div>
+          <div class="l">match rate</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTopCreators() {
+  const el = document.getElementById('top-creators-list');
+  if (!el) return;
+  el.innerHTML = CREATOR_PERFORMANCE.slice(0, 2).map(cp => {
+    const c = getCreator(cp.id);
+    if (!c) return '';
+    return `<div class="creator-row">
+      <div class="creator-av" style="background-image:url('${c.avatar}')"></div>
+      <div class="creator-info">
+        <div class="creator-name">${c.name}</div>
+        <div class="creator-handle">${c.handle} · ${cp.bookings} bookings this period</div>
+      </div>
+      <div class="creator-stat">
+        <div class="v">${cp.revenue}</div>
+        <div class="l">driven</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPayoutHistory() {
+  const el = document.getElementById('payout-history');
+  if (!el) return;
+  el.innerHTML = PAYOUT_HISTORY.map(p => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <div>
+        <div>${p.date}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref} · commission ${p.commission}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="font-size:16px;font-weight:400">${p.net}</span>
+        <span style="background:#E6F4EE;color:var(--success);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:1px">PAID</span>
+      </div>
+    </div>`).join('');
+}
+
+function switchPanel(panel, clickedBtn) {
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${panel}`).classList.add('active');
+  document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+  if (clickedBtn) clickedBtn.classList.add('active');
+
+  if (panel === 'overview') {
+    document.getElementById('recent-bookings-list').innerHTML = renderBookings('confirmed');
+    renderChart();
+    renderTopCreators();
+  }
+  if (panel === 'bookings') document.getElementById('all-bookings-list').innerHTML = renderBookings('all');
+  if (panel === 'properties') renderProperties();
+  if (panel === 'creators') renderCreators();
+  if (panel === 'revenue') renderPayoutHistory();
+}
+
+function filterBookings(filter, btn) {
+  document.querySelectorAll('#panel-bookings .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('all-bookings-list').innerHTML = renderBookings(filter);
+}
+
+function setMobileActive(btn) {
+  document.querySelectorAll('.dash-nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function saveSettings(e) {
+  e.preventDefault();
+  const first = document.getElementById('pf-first').value;
+  const last = document.getElementById('pf-last').value;
+  showToast(`✓ Settings saved — ${first} ${last}`);
+}
+
+function updatePeriod() {
+  const period = document.getElementById('period-select').value;
+  const m = { 30: 1, 90: 2.7, 365: 8.4 }[period] || 1;
+  document.getElementById('stat-revenue').textContent = `€${Math.round(8460 * m / 1000)}k`;
+  document.getElementById('stat-bookings').textContent = Math.round(18 * m);
+}
+
+// Init
+const user = VIA_STATE.user;
+if (user) {
+  const firstName = (user.name || 'Henri').split(' ')[0];
+  document.getElementById('dash-first-name').textContent = firstName;
+  if (document.getElementById('sb-user-name')) {
+    document.getElementById('sb-user-name').textContent = user.name || 'Henri Blanc';
+  }
+  if (user.avatar && document.getElementById('sb-avatar')) {
+    document.getElementById('sb-avatar').style.backgroundImage = `url('${user.avatar}')`;
+  }
+  if (user.property && document.getElementById('settings-property-display')) {
+    document.getElementById('settings-property-display').textContent = user.property;
+  }
+}
+
+// Initial render
+document.getElementById('recent-bookings-list').innerHTML = renderBookings('confirmed');
+renderChart();
+renderTopCreators();
+</script>
+</body>
+</html>

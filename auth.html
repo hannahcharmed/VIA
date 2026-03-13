@@ -152,6 +152,58 @@
   line-height: 1.7;
 }
 
+/* Demo access panel */
+.demo-access {
+  background: var(--sand);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 28px;
+}
+.demo-access-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-align: center;
+}
+.demo-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.demo-btn {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--warm-white);
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Geist', sans-serif;
+}
+.demo-btn:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(196,117,74,0.12); }
+.demo-btn-icon { font-size: 18px; margin-bottom: 3px; }
+.demo-btn-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: block;
+}
+.demo-btn-name {
+  font-size: 10px;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Visual side */
 @media (min-width: 1024px) {
   .auth-wrap { grid-template-columns: 1fr 1fr; }
@@ -208,6 +260,28 @@
     <div class="auth-box">
       <a href="index.html" class="auth-logo">V<span>.</span>ia</a>
       <div class="auth-tagline">Travel by way of trust.</div>
+
+      <!-- Demo Access -->
+      <div class="demo-access">
+        <div class="demo-access-label">Quick preview — click to enter as</div>
+        <div class="demo-btns">
+          <button class="demo-btn" onclick="demoLogin('traveler')">
+            <div class="demo-btn-icon">✈️</div>
+            <span class="demo-btn-role">Traveler</span>
+            <span class="demo-btn-name">Alex Chen</span>
+          </button>
+          <button class="demo-btn" onclick="demoLogin('creator')">
+            <div class="demo-btn-icon">✨</div>
+            <span class="demo-btn-role">Creator</span>
+            <span class="demo-btn-name">Camille Laurent</span>
+          </button>
+          <button class="demo-btn" onclick="demoLogin('owner')">
+            <div class="demo-btn-icon">🏨</div>
+            <span class="demo-btn-role">Owner</span>
+            <span class="demo-btn-name">Le Pigonnet</span>
+          </button>
+        </div>
+      </div>
 
       <!-- Tabs -->
       <div class="tabs auth-tabs">
@@ -424,6 +498,38 @@ function forgotPassword(e) {
   const email = document.getElementById('si-email').value;
   if (!email) { showToast('Enter your email address first'); return; }
   showToast('✓ Password reset link sent to ' + email);
+}
+
+const DEMO_USERS = {
+  traveler: {
+    name: 'Alex Chen',
+    email: 'alex@demo.via.travel',
+    role: 'traveler',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80'
+  },
+  creator: {
+    name: 'Camille Laurent',
+    email: 'camille@demo.via.travel',
+    role: 'creator',
+    avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80'
+  },
+  owner: {
+    name: 'Henri Blanc',
+    email: 'henri@demo.via.travel',
+    role: 'owner',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80',
+    property: 'Hôtel Le Pigonnet'
+  }
+};
+
+function demoLogin(role) {
+  VIA_STATE.user = DEMO_USERS[role];
+  showToast(`✓ Entering ${role} portal…`);
+  setTimeout(() => {
+    if (role === 'creator') window.location.href = 'dashboard.html';
+    else if (role === 'owner') window.location.href = 'owner.html';
+    else window.location.href = 'explore.html';
+  }, 800);
 }
 
 // Pre-select role from URL
