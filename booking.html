@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book your stay — Via</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:ital,wght@0,200;0,300;0,400;1,200&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
 <style>
 .booking-page {
@@ -52,7 +52,7 @@
   text-overflow: ellipsis;
 }
 .stay-summary-loc {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.08em;
@@ -63,7 +63,7 @@
   color: var(--ink);
 }
 .stay-summary-change {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--accent);
   letter-spacing: 0.08em;
@@ -112,7 +112,7 @@
 }
 .date-cell:hover, .date-cell.selected { border-color: var(--accent); }
 .date-cell .dc-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -164,7 +164,7 @@
   border-radius: 2px;
   padding: 12px 14px;
   font-size: 14px;
-  font-family: 'Geist', sans-serif;
+  font-family: 'Raleway', sans-serif;
   color: var(--ink);
   width: 100%;
   resize: vertical;
@@ -204,7 +204,7 @@
   background: var(--sand);
   display: flex; align-items: center; justify-content: center;
   font-size: 7px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   letter-spacing: 0.05em;
   color: var(--muted);
   font-weight: 400;
@@ -252,7 +252,7 @@
   margin-bottom: 12px;
 }
 .confirm-ref {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.15em;
@@ -325,7 +325,7 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="index.html" class="nav-logo">V<span>.</span>ia</a>
+  <a href="index.html" class="nav-logo">Via</a>
   <div class="nav-links">
     <a href="explore.html">Explore</a>
     <a href="auth.html" class="nav-signin">Sign in</a>
@@ -582,7 +582,7 @@ function updateOrderSummary() {
       <div class="price-row"><span class="label" style="color:var(--muted);font-size:12px">Creator share (10%)</span><span class="val" style="color:var(--accent);font-size:12px">${stay.currency}${comm.toLocaleString()}</span></div>
       <div class="price-row"><span class="label" style="font-weight:400;color:var(--ink)">Total</span><span class="val" style="font-size:18px">${stay.currency}${total.toLocaleString()}</span></div>
     </div>
-    ${creator ? `<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center">10% shared with <span style="color:var(--accent)">${creator.handle}</span></div>` : ''}
+    ${creator ? `<div style="margin-top:10px;font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);text-align:center">10% shared with <span style="color:var(--accent)">${creator.handle}</span></div>` : ''}
   `;
 }
 

@@ -29,7 +29,7 @@ ul, ol { list-style: none; }
 body {
   background: var(--warm-white);
   color: var(--ink);
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 300;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -37,20 +37,22 @@ body {
 
 /* === TYPOGRAPHY === */
 .font-serif   { font-family: 'Cormorant Garamond', serif; }
-.font-mono    { font-family: 'DM Mono', monospace; }
+.font-mono    { font-family: 'Raleway', sans-serif; }
 
 .eyebrow {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.2em;
+  font-weight: 200;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .section-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.2em;
+  font-weight: 200;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 14px;
@@ -105,7 +107,8 @@ body {
 }
 .nav-links a {
   font-size: 11px;
-  letter-spacing: 0.12em;
+  font-weight: 200;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
   transition: color 0.2s;
@@ -165,11 +168,12 @@ body {
 }
 .nav-drawer.open { transform: translateY(0); }
 .nav-drawer a {
-  font-size: 14px;
-  letter-spacing: 0.1em;
+  font-size: 13px;
+  font-weight: 200;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--muted);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   padding: 8px 0;
   border-bottom: 1px solid var(--border);
 }
@@ -186,12 +190,12 @@ body {
   padding: 13px 28px;
   border-radius: 2px;
   font-size: 11px;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   border: none;
   transition: background 0.2s;
-  font-family: 'Geist', sans-serif;
-  font-weight: 300;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 200;
   text-align: center;
 }
 .btn-primary:hover { background: var(--accent); color: var(--warm-white); }
@@ -203,12 +207,12 @@ body {
   padding: 13px 28px;
   border-radius: 2px;
   font-size: 11px;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   border: none;
   transition: opacity 0.2s;
-  font-family: 'Geist', sans-serif;
-  font-weight: 300;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 200;
   text-align: center;
 }
 .btn-accent:hover { opacity: 0.88; }
@@ -220,11 +224,12 @@ body {
   padding: 12px 28px;
   border-radius: 2px;
   font-size: 11px;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   border: 1px solid var(--border);
   transition: all 0.2s;
-  font-family: 'Geist', sans-serif;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 200;
 }
 .btn-outline:hover { border-color: var(--ink); }
 
@@ -264,9 +269,10 @@ body {
   gap: 6px;
 }
 label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.15em;
+  font-weight: 200;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -276,7 +282,7 @@ input, select, textarea {
   border-radius: 2px;
   padding: 12px 14px;
   font-size: 14px;
-  font-family: 'Geist', sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 300;
   color: var(--ink);
   outline: none;
@@ -311,9 +317,10 @@ textarea { resize: vertical; min-height: 100px; }
   flex: 1;
   padding: 11px 8px;
   text-align: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.1em;
+  font-weight: 200;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
   border: none;
@@ -334,9 +341,10 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .divider-line { flex: 1; height: 1px; background: var(--border); }
 .divider-text {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.2em;
+  font-weight: 200;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
@@ -427,7 +435,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .stay-card-rating .star { color: var(--accent); font-size: 11px; }
 .stay-card-location {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.1em;
@@ -483,7 +491,7 @@ textarea { resize: vertical; min-height: 100px; }
 .via-badge {
   background: var(--accent);
   color: white;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -497,7 +505,7 @@ textarea { resize: vertical; min-height: 100px; }
   margin-bottom: 3px;
 }
 .creator-card-handle {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   margin-bottom: 10px;
@@ -514,7 +522,7 @@ textarea { resize: vertical; min-height: 100px; }
   font-size: 10px;
   padding: 3px 9px;
   border-radius: 20px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
 }
 .creator-card-stats {
   display: flex;
@@ -524,7 +532,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .stat-item .stat-num { font-size: 16px; font-weight: 400; }
 .stat-item .stat-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   color: var(--muted);
   letter-spacing: 0.1em;
@@ -556,9 +564,10 @@ textarea { resize: vertical; min-height: 100px; }
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 7px 14px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.1em;
+  font-weight: 200;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
   cursor: pointer;
@@ -679,7 +688,7 @@ textarea { resize: vertical; min-height: 100px; }
   color: var(--warm-white);
   padding: 12px 22px;
   border-radius: 24px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 11px;
   letter-spacing: 0.08em;
   z-index: 1000;
@@ -785,7 +794,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .review-meta .reviewer-name { font-size: 14px; font-weight: 400; }
 .review-meta .review-date {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.08em;
@@ -816,7 +825,7 @@ textarea { resize: vertical; min-height: 100px; }
   color: var(--ink);
 }
 .stats-bar-item .lbl {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -837,7 +846,7 @@ textarea { resize: vertical; min-height: 100px; }
   text-align: center;
   padding: 12px 4px;
   border-bottom: 2px solid var(--border);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -874,7 +883,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .cal-dow {
   text-align: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.1em;
   color: var(--muted);
@@ -936,7 +945,7 @@ textarea { resize: vertical; min-height: 100px; }
   margin-bottom: 6px;
 }
 .dash-stat-card .change {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   letter-spacing: 0.1em;
 }
@@ -970,7 +979,7 @@ textarea { resize: vertical; min-height: 100px; }
   text-overflow: ellipsis;
 }
 .booking-meta {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.08em;
@@ -979,7 +988,7 @@ textarea { resize: vertical; min-height: 100px; }
 .booking-amount { font-size: 15px; font-weight: 400; flex-shrink: 0; }
 .booking-status {
   display: inline-block;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1013,7 +1022,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .auth-logo span { color: var(--accent); }
 .auth-tagline {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.15em;
@@ -1035,7 +1044,7 @@ textarea { resize: vertical; min-height: 100px; }
   color: var(--ink);
   cursor: pointer;
   transition: border-color 0.2s;
-  font-family: 'Geist', sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 .social-btn:hover { border-color: var(--ink); }
 .social-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
@@ -1055,7 +1064,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .footer-logo span { color: var(--accent); }
 .footer-tagline {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.15em;
@@ -1076,7 +1085,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .footer-links a:hover { color: var(--ink); }
 .footer-copy {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.08em;
@@ -1274,7 +1283,7 @@ textarea { resize: vertical; min-height: 100px; }
   bottom: 24px; left: 50%;
   transform: translateX(-50%);
   color: rgba(255,255,255,0.45);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 11px;
   letter-spacing: 0.18em;
   white-space: nowrap;
@@ -1338,7 +1347,7 @@ textarea { resize: vertical; min-height: 100px; }
   margin-bottom: 3px;
 }
 .dest-count {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1397,7 +1406,7 @@ textarea { resize: vertical; min-height: 100px; }
 }
 .testimonial-name { font-size: 13px; font-weight: 400; margin-bottom: 2px; }
 .testimonial-meta {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Raleway', sans-serif;
   font-size: 9px;
   color: var(--muted);
   letter-spacing: 0.08em;
