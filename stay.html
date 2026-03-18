@@ -339,6 +339,21 @@
   </div>
 </div>
 
+<!-- Photo Lightbox -->
+<div class="lightbox" id="photo-lightbox" role="dialog" aria-modal="true">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="Stay photo">
+  <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
 <!-- Bottom Bar (mobile) -->
 <div class="bottom-bar" id="bottom-bar" style="display:none">
   <div class="bottom-bar-price">
@@ -379,7 +394,7 @@ function renderStayPage() {
     <!-- Gallery -->
     <div class="gallery-wrap">
       <div class="gallery" id="main-gallery">
-        ${stay.images.map(img => `<div class="gallery-item" style="background-image:url('${img}')"></div>`).join('')}
+        ${stay.images.map((img, i) => `<div class="gallery-item gallery-item-clickable" style="background-image:url('${img}')" onclick="openLightbox(${JSON.stringify(stay.images)}, ${i})" title="View photo"></div>`).join('')}
       </div>
       <div class="gallery-dots" id="gallery-dots"></div>
       <div class="gallery-count">${stay.images.length} photos</div>
@@ -618,6 +633,49 @@ function toggleSave(btn) {
   btn.innerHTML = btn.innerHTML.replace(/Save.*/, added ? 'Saved to wishlist' : 'Save to wishlist');
   showToast(added ? '♥ Saved to wishlist' : 'Removed from wishlist');
 }
+
+// ── Lightbox ──────────────────────────────────────────────────
+let lbImages = [];
+let lbIndex  = 0;
+
+function openLightbox(images, idx) {
+  lbImages = images;
+  lbIndex  = idx;
+  updateLightbox();
+  document.getElementById('photo-lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lightboxNav(dir) {
+  lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
+  updateLightbox();
+}
+
+function updateLightbox() {
+  const img = document.getElementById('lightbox-img');
+  img.src = lbImages[lbIndex].replace(/w=\d+/, 'w=1400').replace(/q=\d+/, 'q=90');
+  document.getElementById('lightbox-counter').textContent =
+    `${lbIndex + 1} / ${lbImages.length}`;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('photo-lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')  lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
+});
+
+// Close on backdrop click
+document.getElementById('photo-lightbox').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeLightbox();
+});
 
 renderStayPage();
 </script>
