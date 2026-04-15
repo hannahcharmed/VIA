@@ -679,6 +679,12 @@ function processPayment() {
       creatorId: stay.creatorId
     });
 
+    // Attribution: use deal-link ref if present, else fall back to stay's creator
+    const refHandle = localStorage.getItem('via_ref');
+    const attributedCreator = refHandle ? '@' + refHandle : (creator ? creator.handle : '—');
+    localStorage.removeItem('via_ref');
+    localStorage.removeItem('via_ref_stay');
+
     const ref = 'VIA-' + Math.random().toString(36).substring(2,8).toUpperCase();
     document.getElementById('step-4').innerHTML = `
       <div class="confirmation">
@@ -693,7 +699,7 @@ function processPayment() {
           <div class="confirm-row"><span>Stay</span><strong>${stay.name}</strong></div>
           <div class="confirm-row"><span>Dates</span><strong>${checkIn.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${checkOut.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</strong></div>
           <div class="confirm-row"><span>Guests</span><strong>${adults} adult${adults !== 1 ? 's' : ''}${children ? ` + ${children}` : ''}</strong></div>
-          <div class="confirm-row"><span>Via creator</span><strong style="color:var(--accent)">${creator ? creator.handle : '—'}</strong></div>
+          <div class="confirm-row"><span>Via creator</span><strong style="color:var(--accent)">${attributedCreator}</strong></div>
           <div class="confirm-row"><span>Total paid</span><strong>${stay.currency}${Math.round(stay.price * nights * 1.03).toLocaleString()}</strong></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;max-width:300px;margin:0 auto">

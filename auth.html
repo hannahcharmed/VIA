@@ -526,10 +526,19 @@ function demoLogin(role) {
   VIA_STATE.user = DEMO_USERS[role];
   showToast(`✓ Entering ${role} portal…`);
   setTimeout(() => {
-    if (role === 'creator') window.location.href = 'dashboard.html';
-    else if (role === 'owner') window.location.href = 'owner.html';
-    else window.location.href = 'traveler.html';
+    const dest = nextUrl || (
+      role === 'creator' ? 'dashboard.html' :
+      role === 'owner'   ? 'owner.html'     :
+                           'traveler.html'
+    );
+    window.location.href = dest;
   }, 800);
+}
+
+// Auto demo-login when arriving via a CTA (e.g. ?auto=traveler&next=booking.html...)
+const autoRole = getParam('auto');
+if (autoRole && DEMO_USERS[autoRole]) {
+  demoLogin(autoRole);
 }
 
 // Pre-select role from URL

@@ -629,6 +629,46 @@
   </div><!-- end dash-main -->
 </div><!-- end dash-layout -->
 
+<!-- DEAL LINK MODAL -->
+<div class="modal-overlay" id="modal-deal-link">
+  <div class="modal" style="max-width:480px;width:90%">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('modal-deal-link')">×</button>
+    <div class="eyebrow" style="margin-bottom:12px">Your deal link</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:8px" id="dl-stay-name"></h2>
+    <p style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:20px">
+      Share this link on your social channels. Every booking through it automatically credits your Via account with the full 10% commission — no manual tracking needed.
+    </p>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <div id="dl-link-text" style="flex:1;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Raleway',sans-serif;letter-spacing:0.04em"></div>
+      <button class="btn-primary" style="padding:8px 16px;white-space:nowrap;flex-shrink:0" onclick="copyDealLink()">Copy</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-clicks">—</div>
+        <div class="eyebrow" style="margin-top:6px">Clicks</div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-bookings">—</div>
+        <div class="eyebrow" style="margin-top:6px">Bookings</div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-earned">—</div>
+        <div class="eyebrow" style="margin-top:6px">Earned</div>
+      </div>
+    </div>
+    <div style="padding-top:16px;border-top:1px solid var(--border)">
+      <div class="section-label" style="margin-bottom:8px">Share on</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-outline" style="padding:8px 16px;font-size:10px" onclick="shareLink('instagram')">Instagram</button>
+        <button class="btn-outline" style="padding:8px 16px;font-size:10px" onclick="shareLink('tiktok')">TikTok</button>
+        <button class="btn-outline" style="padding:8px 16px;font-size:10px" onclick="shareLink('twitter')">X / Twitter</button>
+        <button class="btn-outline" style="padding:8px 16px;font-size:10px" onclick="copyDealLink()">Copy link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- NEW POST MODAL -->
 <div class="modal-overlay" id="modal-new-post">
   <div class="modal" style="max-width:500px;width:90%;padding:28px 24px">
@@ -787,6 +827,9 @@ function renderMyStays() {
           <div class="l">${s.reviews} rev</div>
         </div>
       </div>
+      <button class="btn-outline" style="padding:7px 14px;font-size:10px;white-space:nowrap;flex-shrink:0" onclick="openDealLinkModal(${s.id})">
+        Share link
+      </button>
     </div>`).join('');
 }
 
@@ -992,6 +1035,56 @@ function submitNewPost(e) {
   clearImageUpload();
   showToast('✓ Post published — now live on Explore');
   renderPostsPanel();
+}
+
+// ── Deal link generator ───────────────────────────────────
+let _dealLinkUrl = '';
+
+function openDealLinkModal(stayId) {
+  const stay = getStay(stayId);
+  if (!stay) return;
+  const creator = getCreator(stay.creatorId);
+  const handle  = creator ? creator.handle.replace('@', '') : 'camille';
+
+  document.getElementById('dl-stay-name').textContent = stay.name;
+
+  // Build the shareable URL (relative for demo; would be absolute in prod)
+  _dealLinkUrl = `${location.origin}/stay.html?id=${stayId}&ref=${handle}`;
+  document.getElementById('dl-link-text').textContent =
+    `via.travel/stay/${stayId}?ref=${handle}`;
+
+  // Pull stats from matching post if available, else show zeros
+  const post = VIA_DATA.posts.find(p => p.stayId === stayId && p.creatorId === stay.creatorId);
+  document.getElementById('dl-clicks').textContent   = post ? fmtNum(post.stats.saves)    : '0';
+  document.getElementById('dl-bookings').textContent = post ? post.stats.bookings          : '0';
+  document.getElementById('dl-earned').textContent   = post ? post.stats.revenue           : '€0';
+
+  openModal('modal-deal-link');
+}
+
+function copyDealLink() {
+  const text = _dealLinkUrl;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('✓ Link copied to clipboard'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('✓ Link copied to clipboard');
+  }
+}
+
+function shareLink(platform) {
+  const msgs = {
+    instagram: 'Link copied — paste it in your Instagram bio or story.',
+    tiktok:    'Link copied — paste it in your TikTok bio.',
+    twitter:   'Link copied — paste it into your post.',
+  };
+  copyDealLink();
+  if (msgs[platform]) setTimeout(() => showToast(msgs[platform]), 1500);
 }
 
 // ── Init ──────────────────────────────────────────────────
