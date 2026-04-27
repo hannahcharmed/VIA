@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Trips — Via</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:ital,wght@0,200;0,300;0,400;1,200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
 <style>
 .dash-layout {
@@ -30,7 +30,7 @@
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   background: none; border: none; cursor: pointer;
   color: var(--muted);
-  font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
   transition: color 0.2s;
 }
 .dash-nav-item svg { width: 20px; height: 20px; }
@@ -41,7 +41,7 @@
   margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
 }
 .dash-greeting {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(22px, 4vw, 32px); font-weight: 300;
 }
 .dash-greeting em { font-style: italic; color: var(--accent); }
@@ -53,18 +53,18 @@
 .dash-stat-card { background: var(--cream); border-radius: 3px; padding: 16px; }
 .dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
 .dash-stat-card .big-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(28px, 5vw, 40px); font-weight: 300; color: var(--ink); line-height: 1; margin-bottom: 6px;
 }
 .dash-stat-card .change {
-  font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.08em; color: var(--muted);
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.08em; color: var(--muted);
 }
 
 .section-h {
-  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400;
+  font-family: 'Fraunces', Georgia, serif; font-size: 20px; font-weight: 400;
   margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
 }
-.section-h a { font-size: 12px; color: var(--accent); font-family: 'Raleway', sans-serif; letter-spacing: 0.08em; }
+.section-h a { font-size: 12px; color: var(--accent); font-family: 'Inter', -apple-system, sans-serif; letter-spacing: 0.08em; }
 
 /* Upcoming trip card */
 .trip-card {
@@ -79,22 +79,22 @@
 }
 .trip-card-status {
   position: absolute; top: 12px; left: 12px;
-  font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
   padding: 4px 10px; border-radius: 1px;
 }
 .trip-card-status.confirmed { background: #E6F4EE; color: var(--success); }
 .trip-card-status.pending { background: #FEF3E8; color: #C47B0A; }
 .trip-card-status.completed { background: rgba(0,0,0,0.45); color: rgba(255,255,255,0.8); }
 .trip-card-body { padding: 14px 16px 16px; }
-.trip-card-name { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; margin-bottom: 4px; }
-.trip-card-meta { font-family: 'Raleway', sans-serif; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
+.trip-card-name { font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 400; margin-bottom: 4px; }
+.trip-card-meta { font-family: 'Inter', -apple-system, sans-serif; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
 .trip-card-footer {
   display: flex; align-items: center; justify-content: space-between;
   margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
 }
 .trip-card-creator { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
 .trip-card-creator img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
-.trip-card-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; }
+.trip-card-price { font-family: 'Fraunces', Georgia, serif; font-size: 18px; font-weight: 400; }
 
 /* Wishlist grid */
 .wishlist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
@@ -106,10 +106,10 @@
 .wishlist-item-img { aspect-ratio: 1; background-size: cover; background-position: center; }
 .wishlist-item-info { padding: 8px 10px; }
 .wishlist-item-name {
-  font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400;
+  font-family: 'Fraunces', Georgia, serif; font-size: 14px; font-weight: 400;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wishlist-item-meta { font-family: 'Raleway', sans-serif; font-size: 8px; color: var(--muted); letter-spacing: 0.06em; margin-top: 2px; }
+.wishlist-item-meta { font-family: 'Inter', -apple-system, sans-serif; font-size: 8px; color: var(--muted); letter-spacing: 0.06em; margin-top: 2px; }
 
 /* Panels */
 .dash-panel { display: none; }
@@ -119,7 +119,7 @@
 .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
 .sidebar-nav-item {
   display: flex; align-items: center; gap: 12px; padding: 11px 20px;
-  font-family: 'Raleway', sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--muted); cursor: pointer; background: none; border: none; width: 100%; text-align: left;
   transition: all 0.2s; position: relative;
 }
@@ -130,7 +130,7 @@
 .sidebar-user { display: flex; align-items: center; gap: 10px; }
 .sidebar-user-av { width: 32px; height: 32px; border-radius: 50%; background-size: cover; background-color: var(--accent-light); }
 .sidebar-user-name { font-size: 13px; font-weight: 400; }
-.sidebar-user-role { font-family: 'Raleway', sans-serif; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+.sidebar-user-role { font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
 
 @media (min-width: 1024px) {
   .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
@@ -154,7 +154,7 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="index.html" class="nav-logo">Via</a>
+  <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
   <div class="nav-links">
     <a href="explore.html">Explore</a>
     <a href="auth.html" class="nav-signin">Sign in</a>
@@ -176,7 +176,7 @@
   <!-- Desktop sidebar -->
   <div class="dash-sidebar">
     <div class="sidebar-logo">
-      <a href="index.html" class="nav-logo" style="font-size:22px">Via</a>
+      <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
     </div>
     <a href="explore.html" class="sidebar-nav-item" style="text-decoration:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
