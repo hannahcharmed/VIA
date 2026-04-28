@@ -392,10 +392,166 @@ function renderCreatorCard(creator) {
   `;
 }
 
+// ── SWIPE-TO-ACT ──────────────────────────────────────────────
+// Wraps an element in swipe-card-wrap and reveals approve/decline actions.
+// onApprove / onDecline are callbacks called after the swipe settles.
+function initSwipeCard(el, { onApprove, onDecline } = {}) {
+  const THRESHOLD = 72; // px before action fires
+
+  const wrap = document.createElement('div');
+  wrap.className = 'swipe-card-wrap';
+
+  const approveReveal = document.createElement('div');
+  approveReveal.className = 'swipe-card-reveal swipe-reveal-approve';
+  approveReveal.innerHTML = '<span class="swipe-reveal-label approve">✓ Approve</span>';
+
+  const declineReveal = document.createElement('div');
+  declineReveal.className = 'swipe-card-reveal swipe-reveal-decline';
+  declineReveal.innerHTML = '<span class="swipe-reveal-label decline">✗ Decline</span>';
+
+  el.parentNode.insertBefore(wrap, el);
+  el.classList.add('swipe-card-inner');
+  wrap.appendChild(approveReveal);
+  wrap.appendChild(declineReveal);
+  wrap.appendChild(el);
+
+  let startX = 0, currentX = 0, dragging = false;
+
+  function onPointerDown(e) {
+    if (e.touches) {
+      startX = e.touches[0].clientX;
+    } else {
+      startX = e.clientX;
+    }
+    dragging = true;
+    el.classList.add('dragging');
+  }
+
+  function onPointerMove(e) {
+    if (!dragging) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    currentX = x - startX;
+    el.style.transform = `translateX(${currentX}px)`;
+    const ratio = Math.abs(currentX) / THRESHOLD;
+    const labelEl = currentX > 0
+      ? approveReveal.querySelector('.swipe-reveal-label')
+      : declineReveal.querySelector('.swipe-reveal-label');
+    const otherEl = currentX > 0
+      ? declineReveal.querySelector('.swipe-reveal-label')
+      : approveReveal.querySelector('.swipe-reveal-label');
+    if (labelEl) labelEl.style.opacity = Math.min(1, ratio);
+    if (otherEl) otherEl.style.opacity = 0;
+    if (e.touches) e.preventDefault();
+  }
+
+  function onPointerUp() {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    const fired = Math.abs(currentX) >= THRESHOLD;
+    if (fired && currentX > 0 && onApprove) {
+      el.style.transform = `translateX(110%)`;
+      setTimeout(() => { wrap.style.display = 'none'; onApprove(); }, 280);
+    } else if (fired && currentX < 0 && onDecline) {
+      el.style.transform = `translateX(-110%)`;
+      setTimeout(() => { wrap.style.display = 'none'; onDecline(); }, 280);
+    } else {
+      el.style.transform = '';
+      approveReveal.querySelector('.swipe-reveal-label').style.opacity = 0;
+      declineReveal.querySelector('.swipe-reveal-label').style.opacity = 0;
+    }
+    currentX = 0;
+  }
+
+  el.addEventListener('touchstart', onPointerDown, { passive: true });
+  el.addEventListener('touchmove', onPointerMove, { passive: false });
+  el.addEventListener('touchend', onPointerUp);
+  el.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+}
+
+// ── BOTTOM TAB BAR ────────────────────────────────────────────
+// Activate the correct tab based on the current panel.
+function initBottomTabBar(tabBarId, panelSwitchFn) {
+  const bar = document.getElementById(tabBarId);
+  if (!bar) return;
+  bar.querySelectorAll('.bottom-tab-item[data-panel]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = btn.dataset.panel;
+      if (panel === '_explore') { window.location.href = 'explore.html'; return; }
+      if (panel === '_messages') { window.location.href = 'messages.html'; return; }
+      bar.querySelectorAll('.bottom-tab-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (panelSwitchFn) panelSwitchFn(panel);
+    });
+  });
+}
+
+// ── ONBOARDING SUCCESS ────────────────────────────────────────
+function showOnboardSuccess(name, role, redirectUrl) {
+  const overlay = document.createElement('div');
+  overlay.className = 'onboard-success';
+  overlay.innerHTML = `
+    <div class="onboard-success-via">VIA</div>
+    <div class="onboard-success-check">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="onboard-success-title">You're <em>in.</em></div>
+    <p class="onboard-success-sub">Welcome to Via, ${name}.<br>Your ${role} profile is ready.</p>
+  `;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('show')));
+  setTimeout(() => { window.location.href = redirectUrl; }, 2600);
+}
+
+// ── IMAGE UPLOAD (native camera) ──────────────────────────────
+function initImageUpload(inputId, previewId, labelId) {
+  const input   = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+  const label   = document.getElementById(labelId);
+  if (!input) return null;
+
+  let dataUrl = null;
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      dataUrl = e.target.result;
+      if (preview) {
+        preview.style.backgroundImage = `url('${dataUrl}')`;
+        preview.style.display = 'block';
+      }
+      if (label) label.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  return {
+    getDataUrl: () => dataUrl,
+    clear: () => {
+      dataUrl = null;
+      input.value = '';
+      if (preview) { preview.style.backgroundImage = ''; preview.style.display = 'none'; }
+      if (label) label.style.display = '';
+    }
+  };
+}
+
+// ── PWA REGISTRATION ─────────────────────────────────────────
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   initScrollReveal();
   initSmoothScroll();
   initWishlistButtons();
+  registerSW();
 });
