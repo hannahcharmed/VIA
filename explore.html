@@ -353,7 +353,7 @@
   background: var(--ink);
   color: white;
   border: none;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 13px;
   cursor: pointer;
@@ -404,7 +404,7 @@
 }
 .map-stay-card {
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
   margin-bottom: 12px;
@@ -435,7 +435,7 @@
 .map-sheet-handle {
   width: 36px; height: 4px;
   background: var(--border);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   margin: 0 auto 14px;
 }
 
@@ -496,7 +496,7 @@
 }
 .no-results h3 {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 28px; font-weight: 300; margin-bottom: 10px;
+  font-size: 28px; font-weight: 400; margin-bottom: 10px;
 }
 .no-results p { color: var(--muted); font-size: 14px; }
 
@@ -519,14 +519,14 @@
 
 /* Leaflet popup override */
 .leaflet-popup-content-wrapper {
-  border-radius: 3px !important;
+  border-radius: var(--radius-md) !important;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
   font-family: 'Inter', -apple-system, sans-serif !important;
 }
 .leaflet-popup-content { margin: 12px 14px !important; }
 .popup-name { font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-weight: 400; margin-bottom: 3px; }
 .popup-meta { font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; }
-.popup-link { display: block; text-align: center; padding: 8px 16px; background: #1A1714; color: white; border-radius: 2px; font-size: 12px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; }
+.popup-link { display: block; text-align: center; padding: 8px 16px; background: #1A1714; color: white; border-radius: var(--radius-sm); font-size: 12px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; }
 .popup-link:hover { background: #2c2622; }
 </style>
 </head>
@@ -615,7 +615,7 @@
   <div id="view-map" style="display:none">
     <div id="map-container"></div>
     <div id="map-sidebar">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;margin-bottom:14px">
+      <div style="font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:14px">
         Stays on the map
       </div>
       <div id="map-sidebar-list"></div>
@@ -928,7 +928,7 @@ function renderFeed() {
           Book this stay
           <span>★ ${stay.rating} · ${stay.reviews} reviews</span>
         </a>
-        ${isCreatorUser ? `<button onclick="openExplorePostModal(${stay.id})" style="margin-top:8px;width:100%;padding:10px;border:1px solid var(--border);border-radius:2px;background:none;font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Post this stay</button>` : ''}
+        ${isCreatorUser ? `<button onclick="openExplorePostModal(${stay.id})" style="margin-top:8px;width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:none;font-family:var(--sans);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">+ Post this stay</button>` : ''}
       </div>
     </div>`;
   });
@@ -1053,15 +1053,15 @@ function showMapStay(stayId) {
   const content = document.getElementById('map-sheet-content');
   content.innerHTML = `
     <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="width:80px;height:70px;border-radius:2px;background-image:url('${stay.images[0]}');background-size:cover;background-position:center;flex-shrink:0"></div>
+      <div style="width:80px;height:70px;border-radius:var(--radius-sm);background-image:url('${stay.images[0]}');background-size:cover;background-position:center;flex-shrink:0"></div>
       <div style="flex:1;min-width:0">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400">${stay.name}</div>
-        <div style="font-family:'Raleway',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.08em;margin:3px 0">${stay.category} · ${stay.location}</div>
-        <div style="font-family:'Raleway',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.08em">via ${creator ? creator.handle : ''} · ★ ${stay.rating}</div>
+        <div style="font-family:var(--serif);font-size:19px;font-weight:400">${stay.name}</div>
+        <div style="font-family:var(--sans);font-size:9px;color:var(--muted);letter-spacing:.08em;margin:3px 0">${stay.category} · ${stay.location}</div>
+        <div style="font-family:var(--sans);font-size:9px;color:var(--muted);letter-spacing:.08em">via ${creator ? creator.handle : ''} · ★ ${stay.rating}</div>
       </div>
     </div>
     <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300">${stay.currency}${stay.price.toLocaleString()}<span style="font-size:14px;color:var(--muted)">/night</span></div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400">${stay.currency}${stay.price.toLocaleString()}<span style="font-size:14px;color:var(--muted)">/night</span></div>
       <a href="stay.html?id=${stay.id}" class="btn-primary" style="flex:1;text-align:center;padding:11px">View stay →</a>
     </div>`;
   sheet.classList.add('open');
@@ -1217,26 +1217,26 @@ window.addEventListener('resize', () => { if (currentMode === 'grid') renderGrid
   <div class="modal" style="max-width:480px;width:90%;padding:28px 24px">
     <div class="modal-handle"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400">Post this stay</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400">Post this stay</div>
       <button class="modal-close" onclick="closeModal('modal-explore-post')" style="position:static">×</button>
     </div>
     <form onsubmit="submitExplorePost(event)">
       <div class="form-group" style="margin-bottom:14px">
         <label>Photo</label>
-        <label for="ep-image" id="ep-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:2px;padding:24px;cursor:pointer;background:var(--cream);text-align:center">
+        <label for="ep-image" id="ep-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:24px;cursor:pointer;background:var(--cream);text-align:center">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span style="font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
+          <span style="font-family:var(--sans);font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
         </label>
         <input type="file" id="ep-image" accept="image/*" style="display:none" required>
-        <div id="ep-img-preview" style="margin-top:8px;border-radius:2px;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none"></div>
+        <div id="ep-img-preview" style="margin-top:8px;border-radius:var(--radius-sm);aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none"></div>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label>Caption</label>
-        <textarea id="ep-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;font-family:'Raleway',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;resize:vertical" placeholder="Share your thoughts…" required></textarea>
+        <textarea id="ep-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;resize:vertical" placeholder="Share your thoughts…" required></textarea>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label>Stay</label>
-        <select id="ep-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:10px 14px;font-family:'Raleway',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer"></select>
+        <select id="ep-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer"></select>
       </div>
       <div class="form-group" style="margin-bottom:20px">
         <label>Location shown</label>

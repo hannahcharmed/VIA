@@ -250,7 +250,7 @@ function renderCreatorPage() {
       <div class="creator-handle-row">
         <span class="creator-handle-text">${creator.handle}</span>
         <span class="followers-count">${creator.followers} followers</span>
-        ${creator.verified ? '<span style="background:var(--accent);color:white;font-family:DM Mono,monospace;font-size:9px;padding:3px 8px;border-radius:1px;letter-spacing:.1em">VERIFIED</span>' : ''}
+        ${creator.verified ? '<span style="background:var(--accent);color:white;font-family:DM Mono,monospace;font-size:9px;padding:3px 8px;border-radius:100px;letter-spacing:.1em">VERIFIED</span>' : ''}
       </div>
       <p class="creator-bio">${creator.bio}</p>
       <div class="creator-locations">
@@ -298,7 +298,7 @@ function renderCreatorPage() {
         <div class="about-title">How Via works for creators</div>
         <p class="about-text">Every stay ${creator.name.split(' ')[0]} features on Via earns a commission when you book. Stays are personally vetted, and the creator's notes are their own words — unsponsored and unfiltered.</p>
       </div>
-      <div style="background:var(--cream);border-radius:3px;padding:20px;margin-top:24px">
+      <div style="background:var(--cream);border-radius:var(--radius-md);padding:20px;margin-top:24px">
         <div class="eyebrow" style="margin-bottom:12px">Creator stats</div>
         <div class="stats-bar">
           <div class="stats-bar-item"><div class="num">${creatorStays.length}</div><div class="lbl">Properties</div></div>

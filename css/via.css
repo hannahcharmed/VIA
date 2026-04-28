@@ -224,7 +224,10 @@ body {
   font-weight: 700;
   text-align: center;
 }
+.btn-primary { cursor: pointer; }
 .btn-primary:hover { background: var(--orange); color: var(--ink); }
+.btn-accent { cursor: pointer; }
+.btn-outline { cursor: pointer; }
 
 .btn-accent {
   display: inline-block;
@@ -317,9 +320,63 @@ input, select, textarea {
   appearance: none;
   width: 100%;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,165,116,0.14);
+}
 input::placeholder, textarea::placeholder { color: var(--muted); }
 textarea { resize: vertical; min-height: 100px; }
+
+/* === FIELD WRAPPER === */
+.field { margin-bottom: 20px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.field input, .field select, .field textarea { border-radius: var(--radius-sm); }
+.field-help { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* === CHIP === */
+.chip {
+  padding: 8px 14px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--ink-2);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+.chip:hover { border-color: var(--orange); background: var(--yellow-soft); color: var(--ink); }
+.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* === TAB BAR (pill variant — use inside panels) === */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+}
+.tab-bar .tab-btn {
+  flex: none;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  padding: 8px 16px;
+  background: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.tab-bar .tab-btn:hover { border-color: var(--orange); color: var(--ink); }
+.tab-bar .tab-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
 
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-left: 40px; }
@@ -957,9 +1014,11 @@ textarea { resize: vertical; min-height: 100px; }
 
 /* === DASHBOARD CARD === */
 .dash-stat-card {
-  background: var(--cream);
+  background: white;
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 20px;
+  box-shadow: var(--shadow-sm);
 }
 .dash-stat-card .eyebrow { margin-bottom: 8px; }
 .dash-stat-card .big-num {
@@ -1018,9 +1077,10 @@ textarea { resize: vertical; min-height: 100px; }
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 1px;
+  padding: 4px 10px;
+  border-radius: 100px;
   flex-shrink: 0;
+  font-weight: 600;
 }
 .booking-status.confirmed { background: #E6F4EE; color: var(--success); }
 .booking-status.pending   { background: #FDF2EB; color: var(--accent); }

@@ -62,13 +62,13 @@
 .dash-greeting {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(22px, 4vw, 32px);
-  font-weight: 300;
+  font-weight: 400;
 }
 .dash-greeting em { font-style: italic; color: var(--accent); }
 .dash-period {
   background: var(--cream);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -87,15 +87,17 @@
   margin-bottom: 24px;
 }
 .dash-stat-card {
-  background: var(--cream);
-  border-radius: 3px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   padding: 16px;
+  box-shadow: var(--shadow-sm);
 }
 .dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
 .dash-stat-card .big-num {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(28px, 5vw, 40px);
-  font-weight: 300;
+  font-weight: 400;
   color: var(--ink);
   line-height: 1;
   margin-bottom: 6px;
@@ -115,7 +117,7 @@
 /* Payout banner */
 .payout-banner {
   background: var(--ink);
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -136,7 +138,7 @@
 .payout-amount {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 28px;
-  font-weight: 300;
+  font-weight: 400;
   color: white;
 }
 .payout-meta {
@@ -148,10 +150,12 @@
 
 /* Chart */
 .chart-card {
-  background: var(--cream);
-  border-radius: 3px;
-  padding: 16px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
 }
 .chart-header {
   display: flex;
@@ -187,7 +191,7 @@
 .chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .chart-bar {
   width: 100%;
-  border-radius: 2px 2px 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   min-height: 4px;
   transition: opacity 0.2s;
   cursor: pointer;
@@ -222,7 +226,7 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.booking-item:hover { background: var(--cream); border-radius: 2px; padding-left: 8px; }
+.booking-item:hover { background: var(--cream); border-radius: var(--radius-sm); padding-left: 8px; }
 .booking-item:last-child { border-bottom: none; }
 
 /* My stays */
@@ -238,12 +242,12 @@
   align-items: center;
   padding: 12px;
   background: var(--cream);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
 }
 .my-stay-thumb {
   width: 52px; height: 52px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
@@ -585,11 +589,11 @@
         <div class="dash-greeting">Profile settings</div>
       </div>
       <div style="max-width:560px">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:3px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:var(--radius-md)">
           <div style="width:64px;height:64px;border-radius:50%;background-image:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80');background-size:cover;flex-shrink:0"></div>
           <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400" id="profile-name-display">Camille Laurent</div>
-            <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);margin-bottom:8px">@camille · 287k followers</div>
+            <div style="font-family:var(--serif);font-size:20px;font-weight:400" id="profile-name-display">Camille Laurent</div>
+            <div style="font-family:var(--sans);font-size:10px;color:var(--muted);margin-bottom:8px">@camille · 287k followers</div>
             <button class="btn-outline" style="font-size:10px;padding:6px 14px">Change photo</button>
           </div>
         </div>
@@ -614,7 +618,7 @@
           </div>
           <div class="form-group" style="margin-bottom:14px">
             <label>Bio</label>
-            <textarea id="pf-bio" style="min-height:90px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;font-family:'Raleway',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color .2s;resize:vertical">Slow travel, beautiful hotels, and the kind of mornings you never want to leave. Based between Paris and wherever I just got back from.</textarea>
+            <textarea id="pf-bio" style="min-height:90px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color .2s;resize:vertical">Slow travel, beautiful hotels, and the kind of mornings you never want to leave. Based between Paris and wherever I just got back from.</textarea>
           </div>
           <div class="form-group" style="margin-bottom:20px">
             <label>Payout email</label>
@@ -623,7 +627,7 @@
           <button type="submit" class="btn-primary" style="padding:13px 28px">Save changes</button>
         </form>
         <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border)">
-          <div style="font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Danger zone</div>
+          <div style="font-family:var(--sans);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Danger zone</div>
           <button class="btn-outline" style="color:var(--error);border-color:var(--error)" onclick="showToast('Contact support to close your account')">Delete account</button>
         </div>
       </div>
@@ -638,7 +642,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px" id="creator-wishlist-grid"></div>
       <div id="creator-wishlist-empty" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:40px;margin-bottom:16px;opacity:.3">♡</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:8px">Nothing saved yet</div>
+        <div style="font-family:var(--serif);font-size:24px;font-weight:400;margin-bottom:8px">Nothing saved yet</div>
         <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Tap ♡ on any stay in Explore to save it here.</p>
         <a href="explore.html" class="btn-primary" style="padding:12px 28px;text-decoration:none;display:inline-block">Explore stays</a>
       </div>
@@ -686,25 +690,25 @@
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeModal('modal-deal-link')">×</button>
     <div class="eyebrow" style="margin-bottom:12px">Your deal link</div>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:8px" id="dl-stay-name"></h2>
+    <h2 style="font-family:var(--serif);font-size:26px;font-weight:400;margin-bottom:8px" id="dl-stay-name"></h2>
     <p style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:20px">
       Share this link on your social channels. Every booking through it automatically credits your Via account with the full 10% commission — no manual tracking needed.
     </p>
-    <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-      <div id="dl-link-text" style="flex:1;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Raleway',sans-serif;letter-spacing:0.04em"></div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <div id="dl-link-text" style="flex:1;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--sans);letter-spacing:0.04em"></div>
       <button class="btn-primary" style="padding:8px 16px;white-space:nowrap;flex-shrink:0" onclick="copyDealLink()">Copy</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-clicks">—</div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-family:var(--serif);font-size:28px;font-weight:400" id="dl-clicks">—</div>
         <div class="eyebrow" style="margin-top:6px">Clicks</div>
       </div>
-      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-bookings">—</div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-family:var(--serif);font-size:28px;font-weight:400" id="dl-bookings">—</div>
         <div class="eyebrow" style="margin-top:6px">Bookings</div>
       </div>
-      <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:16px;text-align:center">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300" id="dl-earned">—</div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-family:var(--serif);font-size:28px;font-weight:400" id="dl-earned">—</div>
         <div class="eyebrow" style="margin-top:6px">Earned</div>
       </div>
     </div>
@@ -725,29 +729,29 @@
   <div class="modal" style="max-width:500px;width:90%;padding:28px 24px">
     <div class="modal-handle"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400">New post</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400">New post</div>
       <button class="modal-close" onclick="closeModal('modal-new-post')" style="position:static">×</button>
     </div>
     <form id="new-post-form" onsubmit="submitNewPost(event)">
       <div class="form-group" style="margin-bottom:14px">
         <label>Photo</label>
-        <label for="np-image" id="np-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:2px;padding:24px;cursor:pointer;background:var(--cream);transition:border-color .2s;text-align:center">
+        <label for="np-image" id="np-upload-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:24px;cursor:pointer;background:var(--cream);transition:border-color .2s;text-align:center">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span style="font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
+          <span style="font-family:var(--sans);font-size:10px;letter-spacing:.1em;color:var(--muted)">TAP TO UPLOAD FROM DEVICE</span>
           <span style="font-size:11px;color:var(--muted)">JPG, PNG, WEBP</span>
         </label>
         <input type="file" id="np-image" accept="image/*" style="display:none" required>
-        <div id="np-img-preview" style="margin-top:8px;border-radius:2px;overflow:hidden;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none;position:relative">
+        <div id="np-img-preview" style="margin-top:8px;border-radius:var(--radius-sm);overflow:hidden;aspect-ratio:4/5;background:var(--cream);background-size:cover;background-position:center;display:none;position:relative">
           <button type="button" onclick="clearImageUpload()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);border:none;color:white;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px">×</button>
         </div>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label>Caption</label>
-        <textarea id="np-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:12px 14px;font-family:'Raleway',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color .2s;resize:vertical" placeholder="Share your thoughts on this stay…" required></textarea>
+        <textarea id="np-caption" style="min-height:80px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color .2s;resize:vertical" placeholder="Share your thoughts on this stay…" required></textarea>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label>Tag a stay</label>
-        <select id="np-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:10px 14px;font-family:'Raleway',sans-serif;font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer">
+        <select id="np-stay" required style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;cursor:pointer">
           <option value="">— Select stay —</option>
         </select>
       </div>
@@ -940,11 +944,11 @@ function renderCreatorPayoutHistory() {
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
       <div>
         <div>${p.date}</div>
-        <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref}</div>
+        <div style="font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref}</div>
       </div>
       <div style="display:flex;align-items:center;gap:14px">
         <span style="font-size:16px;font-weight:400">${p.amount}</span>
-        <span style="background:#E6F4EE;color:var(--success);font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:1px">PAID</span>
+        <span style="background:#E6F4EE;color:var(--success);font-family:var(--sans);font-size:9px;letter-spacing:.1em;padding:4px 10px;border-radius:100px">PAID</span>
       </div>
     </div>`
   ).join('');
@@ -965,11 +969,11 @@ function renderCreatorWishlist() {
   const stays = wl.map(id => getStay(id)).filter(Boolean);
   grid.innerHTML = stays.map(s => {
     const creator = getCreator(s.creatorId);
-    return `<div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow=''" onclick="window.location='stay.html?id=${s.id}'">
+    return `<div style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow=''" onclick="window.location='stay.html?id=${s.id}'">
       <div style="aspect-ratio:1;background-image:url('${s.images[0]}');background-size:cover;background-position:center"></div>
       <div style="padding:8px 10px">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
-        <div style="font-family:'Raleway',sans-serif;font-size:8px;color:var(--muted);letter-spacing:.06em;margin-top:2px">${s.currency}${s.price.toLocaleString()} · via ${creator ? creator.handle : ''}</div>
+        <div style="font-family:var(--serif);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+        <div style="font-family:var(--sans);font-size:8px;color:var(--muted);letter-spacing:.06em;margin-top:2px">${s.currency}${s.price.toLocaleString()} · via ${creator ? creator.handle : ''}</div>
       </div>
     </div>`;
   }).join('');
@@ -994,31 +998,31 @@ function renderPostsPanel() {
     const stay = getStay(post.stayId);
     const convRate = stay ? ((post.stats.bookings / (post.stats.saves || 1)) * 100).toFixed(1) : '—';
     return `
-    <div style="display:flex;gap:14px;padding:14px;background:var(--cream);border-radius:2px;border:1px solid var(--border);margin-bottom:10px">
-      <div style="width:72px;height:72px;border-radius:2px;background-image:url('${post.image}');background-size:cover;background-position:center;flex-shrink:0;cursor:pointer" onclick="window.location='stay.html?id=${post.stayId}'"></div>
+    <div style="display:flex;gap:14px;padding:14px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:10px">
+      <div style="width:72px;height:72px;border-radius:var(--radius-sm);background-image:url('${post.image}');background-size:cover;background-position:center;flex-shrink:0;cursor:pointer" onclick="window.location='stay.html?id=${post.stayId}'"></div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">
           <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400">${stay ? stay.name : 'Stay'}</div>
-            <div style="font-family:'Raleway',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.08em;margin-top:1px">${timeAgo(post.postedAt)} · ${post.location}</div>
+            <div style="font-family:var(--serif);font-size:16px;font-weight:400">${stay ? stay.name : 'Stay'}</div>
+            <div style="font-family:var(--sans);font-size:9px;color:var(--muted);letter-spacing:.08em;margin-top:1px">${timeAgo(post.postedAt)} · ${post.location}</div>
           </div>
-          <a href="stay.html?id=${post.stayId}" style="font-family:'Raleway',sans-serif;font-size:9px;color:var(--accent);letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View →</a>
+          <a href="stay.html?id=${post.stayId}" style="font-family:var(--sans);font-size:9px;color:var(--accent);letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View →</a>
         </div>
         <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${post.caption}</div>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${fmtNum(post.stats.views)}</span> views
           </div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${fmtNum(post.stats.saves)}</span> saves
           </div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--success);font-size:13px">${post.stats.bookings}</span> bookings
           </div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${post.stats.revenue}</span> driven
           </div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted)">
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${convRate}%</span> conv.
           </div>
         </div>
