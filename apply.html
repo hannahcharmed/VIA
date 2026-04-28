@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply for trade — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.apply-layout {
+  padding-top: var(--nav-h);
+  min-height: 100svh;
+  background: var(--cream);
+}
+.apply-main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 100px;
+}
+.apply-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.apply-back:hover { color: var(--ink); }
+.apply-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.apply-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+.listing-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 24px;
+}
+.listing-card-thumb {
+  width: 76px; height: 64px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--sand-soft);
+}
+.listing-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.listing-card-info h5 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.listing-card-info p { font-size: 13px; color: var(--muted); }
+.trade-badge {
+  display: inline-block;
+  background: var(--yellow-bright);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 100px;
+  margin-top: 6px;
+}
+
+.apply-quota {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--yellow-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  border: 1px solid var(--yellow);
+}
+
+.field { margin-bottom: 20px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.field input, .field select, .field textarea {
+  border-radius: var(--radius-sm);
+}
+.field .field-help {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.55;
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chip {
+  padding: 8px 14px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--ink-2);
+}
+.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
+
+.apply-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-top: 1px solid var(--line);
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 100;
+}
+.apply-footer-hint { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.apply-footer-hint strong { color: var(--success); }
+
+/* Success overlay */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  z-index: 500;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+.success-overlay.show { display: flex; }
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+.success-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.success-sub { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 32px; max-width: 380px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+  <div class="nav-links">
+    <a href="explore.html">Explore</a>
+    <a href="auth.html">Sign in</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
+</div>
+
+<div class="apply-layout">
+  <div class="apply-main">
+    <button class="apply-back" onclick="history.back()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to stay
+    </button>
+
+    <h1 class="apply-title">Apply for content trade</h1>
+    <p class="apply-subtitle">Your showcase will be shared automatically. The owner replies within 48 hours.</p>
+
+    <div class="listing-card" id="listing-preview">
+      <div class="listing-card-thumb">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&q=80" alt="" id="listing-img">
+      </div>
+      <div class="listing-card-info">
+        <h5 id="listing-name">Hôtel Le Pigonnet</h5>
+        <p id="listing-loc">Aix-en-Provence, France · 3 nights</p>
+        <span class="trade-badge">Trade available</span>
+      </div>
+    </div>
+
+    <div class="apply-quota">
+      <span style="font-size:16px;margin-top:1px;">✦</span>
+      <div><strong>Free application — 1 of 1</strong> this month. Upgrade to Via Premium for unlimited applications.</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Check-in</label>
+        <input type="date" id="checkin" />
+      </div>
+      <div class="field">
+        <label>Check-out</label>
+        <input type="date" id="checkout" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your pitch</label>
+      <textarea id="pitch" rows="6" placeholder="Tell the owner why you're the right match — mention your audience, past similar stays, and why this property resonates..."></textarea>
+      <p class="field-help">300 characters minimum. The owner sees this alongside your creator showcase.</p>
+    </div>
+
+    <div class="field">
+      <label>Deliverables you'll produce</label>
+      <div class="chip-grid">
+        <button class="chip selected" onclick="toggleChip(this)">1 IG Reel</button>
+        <button class="chip selected" onclick="toggleChip(this)">3 IG Story frames</button>
+        <button class="chip selected" onclick="toggleChip(this)">1 TikTok</button>
+        <button class="chip" onclick="toggleChip(this)">1 IG Feed post</button>
+        <button class="chip" onclick="toggleChip(this)">Blog feature</button>
+        <button class="chip" onclick="toggleChip(this)">YouTube vlog</button>
+        <button class="chip" onclick="toggleChip(this)">UGC photo pack</button>
+      </div>
+      <p class="field-help">Deliverables are tracked in-app after approval. Missed deliverables affect your creator rating.</p>
+    </div>
+
+    <div class="field">
+      <label>Content rights granted</label>
+      <select>
+        <option>3 months cross-post</option>
+        <option selected>6 months cross-post</option>
+        <option>12 months cross-post</option>
+        <option>Perpetual cross-post</option>
+      </select>
+      <p class="field-help">The owner may repost your content on their channels for this duration.</p>
+    </div>
+  </div>
+</div>
+
+<div class="apply-footer">
+  <div class="apply-footer-hint">
+    Stay owner responds within <strong>48 hours</strong>.<br>
+    You'll be notified by email.
+  </div>
+  <button class="btn-primary" onclick="submitApplication()" style="flex-shrink:0;">Submit application →</button>
+</div>
+
+<!-- Success state -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-icon">✦</div>
+  <h2 class="success-title">Application sent!</h2>
+  <p class="success-sub">The owner will review your showcase and respond within 48 hours. You'll get an email when they reply — check your inbox tab to track it.</p>
+  <a href="../app/dashboard.html" class="btn-primary">Back to dashboard →</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+
+const stayId = parseInt(getParam('stayId') || '1');
+const stay = VIA_DATA.stays.find(s => s.id === stayId) || VIA_DATA.stays[0];
+
+if (stay) {
+  document.getElementById('listing-name').textContent = stay.name;
+  document.getElementById('listing-loc').textContent = stay.location + ' · 3 nights';
+  document.getElementById('listing-img').src = stay.images[0];
+}
+
+function toggleChip(chip) { chip.classList.toggle('selected'); }
+
+function submitApplication() {
+  const pitch = document.getElementById('pitch').value;
+  if (pitch.length < 80) {
+    showToast('Add a bit more to your pitch — owners need context.');
+    return;
+  }
+  document.getElementById('success-overlay').classList.add('show');
+}
+</script>
+</body>
+</html>

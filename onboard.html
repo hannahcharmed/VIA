@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get started — Via</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/via.css">
+<style>
+.onboard-page {
+  min-height: 100svh;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px 20px 60px;
+}
+.onboard-logo {
+  margin-bottom: 40px;
+  color: var(--ink);
+}
+.onboard-wrap {
+  width: 100%;
+  max-width: 480px;
+}
+.onboard-progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+.onboard-progress-dot {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background 0.3s;
+}
+.onboard-progress-dot.active { background: var(--orange); }
+.onboard-progress-dot.done { background: var(--ink); }
+.onboard-step { display: none; }
+.onboard-step.active { display: block; }
+.onboard-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.onboard-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 500;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+.onboard-sub {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.role-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+.role-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 16px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.role-card:hover { border-color: var(--orange); box-shadow: var(--shadow-sm); }
+.role-card.selected { border-color: var(--ink); background: var(--yellow-soft); }
+.role-icon {
+  font-size: 20px;
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--sand-soft);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.role-card.selected .role-icon { background: var(--yellow-bright); }
+.role-text h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
+.role-text p { font-size: 13px; line-height: 1.55; color: var(--muted); }
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.chip {
+  padding: 8px 14px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--ink-2);
+}
+.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
+
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.field input, .field select, .field textarea {
+  border-radius: var(--radius-sm);
+}
+.field .field-help {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.handle-input {
+  display: flex;
+  align-items: center;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.handle-input-prefix {
+  padding: 0 10px;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 15px;
+  border-right: 1px solid var(--line);
+  background: white;
+  height: 100%;
+  display: flex; align-items: center;
+  line-height: 46px;
+}
+.handle-input input {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 12px;
+}
+.handle-input input:focus { outline: none; }
+.handle-input-stat {
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--orange-deep);
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.onboard-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.onboard-back {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  text-align: center;
+}
+.onboard-back:hover { color: var(--ink); }
+
+@media (min-width: 640px) {
+  .onboard-page { padding-top: 72px; }
+  .role-card { padding: 22px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="onboard-page">
+  <a href="index.html" class="onboard-logo">
+    <svg width="72" height="28" viewBox="0 0 360 120" aria-label="Via" fill="none">
+      <path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/>
+      <path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/>
+      <path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/>
+      <circle fill="#E8A574" cx="328" cy="102" r="7.5"/>
+    </svg>
+  </a>
+
+  <div class="onboard-wrap">
+
+    <!-- ── STEP 0: ROLE SELECTION ── -->
+    <div class="onboard-step active" id="step-role">
+      <div class="onboard-progress">
+        <div class="onboard-progress-dot active"></div>
+        <div class="onboard-progress-dot"></div>
+        <div class="onboard-progress-dot"></div>
+      </div>
+      <div class="onboard-eyebrow">Step 1 of 3</div>
+      <h1 class="onboard-title">How will you use Via?</h1>
+      <p class="onboard-sub">You can always switch later. We'll tailor what you see to match.</p>
+      <div class="role-list">
+        <button class="role-card selected" data-role="creator" onclick="selectRole(this)">
+          <div class="role-icon">✦</div>
+          <div class="role-text">
+            <h4>I'm a creator</h4>
+            <p>Apply for content trades with stays that match your audience. List places you've been and earn commission on bookings.</p>
+          </div>
+        </button>
+        <button class="role-card" data-role="owner" onclick="selectRole(this)">
+          <div class="role-icon">◈</div>
+          <div class="role-text">
+            <h4>I own or operate a stay</h4>
+            <p>Find vetted creators, review applications, and track deliverables — all in one place.</p>
+          </div>
+        </button>
+        <button class="role-card" data-role="traveler" onclick="selectRole(this)">
+          <div class="role-icon">◎</div>
+          <div class="role-text">
+            <h4>I'm here to travel</h4>
+            <p>Book stays chosen by creators you trust. Every booking supports the creator who surfaced it.</p>
+          </div>
+        </button>
+      </div>
+      <div class="onboard-footer">
+        <button class="btn-primary btn-full" onclick="continueFromRole()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── CREATOR STEP 1: NICHE ── -->
+    <div class="onboard-step" id="step-creator-niche">
+      <div class="onboard-progress">
+        <div class="onboard-progress-dot done"></div>
+        <div class="onboard-progress-dot active"></div>
+        <div class="onboard-progress-dot"></div>
+      </div>
+      <div class="onboard-eyebrow">Step 2 of 3</div>
+      <h1 class="onboard-title">What do you make content about?</h1>
+      <p class="onboard-sub">Pick up to 3. Stays look for creators in matching niches.</p>
+      <div class="chip-grid">
+        <button class="chip selected" onclick="toggleChip(this)">Travel</button>
+        <button class="chip selected" onclick="toggleChip(this)">Wellness</button>
+        <button class="chip" onclick="toggleChip(this)">Lifestyle</button>
+        <button class="chip" onclick="toggleChip(this)">Food &amp; drink</button>
+        <button class="chip selected" onclick="toggleChip(this)">Hotels &amp; hospitality</button>
+        <button class="chip" onclick="toggleChip(this)">Fashion</button>
+        <button class="chip" onclick="toggleChip(this)">Family</button>
+        <button class="chip" onclick="toggleChip(this)">Adventure</button>
+        <button class="chip" onclick="toggleChip(this)">Design</button>
+        <button class="chip" onclick="toggleChip(this)">Photography</button>
+      </div>
+      <div class="field">
+        <label>Total audience across platforms</label>
+        <select>
+          <option>0 – 10K</option>
+          <option>10K – 50K</option>
+          <option>50K – 100K</option>
+          <option selected>100K – 500K</option>
+          <option>500K – 1M</option>
+          <option>1M+</option>
+        </select>
+        <p class="field-help">We verify this when you connect your accounts. Approximations are fine for now.</p>
+      </div>
+      <div class="onboard-footer">
+        <button class="btn-primary btn-full" onclick="goStep('creator-socials')">Continue →</button>
+        <button class="onboard-back" onclick="goStep('role')">← Back</button>
+      </div>
+    </div>
+
+    <!-- ── CREATOR STEP 2: SOCIALS ── -->
+    <div class="onboard-step" id="step-creator-socials">
+      <div class="onboard-progress">
+        <div class="onboard-progress-dot done"></div>
+        <div class="onboard-progress-dot done"></div>
+        <div class="onboard-progress-dot active"></div>
+      </div>
+      <div class="onboard-eyebrow">Step 3 of 3</div>
+      <h1 class="onboard-title">Where do you post?</h1>
+      <p class="onboard-sub">We pull your latest numbers so stays see verified reach — not self-reported stats.</p>
+      <div class="field">
+        <label>Instagram</label>
+        <div class="handle-input">
+          <span class="handle-input-prefix">@</span>
+          <input type="text" placeholder="yourhandle" />
+          <span class="handle-input-stat">—</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>TikTok</label>
+        <div class="handle-input">
+          <span class="handle-input-prefix">@</span>
+          <input type="text" placeholder="yourhandle" />
+          <span class="handle-input-stat">—</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>YouTube <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(optional)</span></label>
+        <div class="handle-input">
+          <span class="handle-input-prefix">@</span>
+          <input type="text" placeholder="yourhandle" />
+          <span class="handle-input-stat">—</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Average engagement rate</label>
+        <div class="handle-input">
+          <input type="text" placeholder="3.5" style="padding-left:16px;" />
+          <span class="handle-input-stat">%</span>
+        </div>
+        <p class="field-help">Shown to stays on every application. We'll verify after you connect.</p>
+      </div>
+      <div class="onboard-footer">
+        <button class="btn-primary btn-full" onclick="finishCreator()">Finish &amp; open Via →</button>
+        <button class="onboard-back" onclick="goStep('creator-niche')">← Back</button>
+      </div>
+    </div>
+
+    <!-- ── OWNER STEP 1: PROPERTY INFO ── -->
+    <div class="onboard-step" id="step-owner-property">
+      <div class="onboard-progress">
+        <div class="onboard-progress-dot active"></div>
+        <div class="onboard-progress-dot"></div>
+        <div class="onboard-progress-dot" style="opacity:0"></div>
+      </div>
+      <div class="onboard-eyebrow">Step 1 of 2</div>
+      <h1 class="onboard-title">Tell us about your stay</h1>
+      <p class="onboard-sub">We'll build your profile and start matching you with creators whose audiences fit your property.</p>
+      <div class="field">
+        <label>Property name</label>
+        <input type="text" placeholder="Hôtel Le Pigonnet" />
+      </div>
+      <div class="field">
+        <label>Property type</label>
+        <div class="chip-grid">
+          <button class="chip selected" onclick="toggleChip(this)">Boutique hotel</button>
+          <button class="chip" onclick="toggleChip(this)">Villa</button>
+          <button class="chip" onclick="toggleChip(this)">Retreat</button>
+          <button class="chip" onclick="toggleChip(this)">Eco-lodge</button>
+          <button class="chip" onclick="toggleChip(this)">B&amp;B</button>
+          <button class="chip" onclick="toggleChip(this)">Cabin</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Location</label>
+          <input type="text" placeholder="City, Country" />
+        </div>
+        <div class="field">
+          <label>Rooms</label>
+          <input type="number" placeholder="6" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Website or Instagram</label>
+        <input type="text" placeholder="@yourproperty" />
+      </div>
+      <div class="onboard-footer">
+        <button class="btn-primary btn-full" onclick="goStep('owner-creators')">Continue →</button>
+        <button class="onboard-back" onclick="goStep('role')">← Back</button>
+      </div>
+    </div>
+
+    <!-- ── OWNER STEP 2: CREATOR FIT ── -->
+    <div class="onboard-step" id="step-owner-creators">
+      <div class="onboard-progress">
+        <div class="onboard-progress-dot done"></div>
+        <div class="onboard-progress-dot active"></div>
+        <div class="onboard-progress-dot" style="opacity:0"></div>
+      </div>
+      <div class="onboard-eyebrow">Step 2 of 2</div>
+      <h1 class="onboard-title">Who's your ideal creator?</h1>
+      <p class="onboard-sub">Pick the niches and audience size that fit your brand. We'll prioritize matching applications.</p>
+      <div class="field">
+        <label>Niches (up to 3)</label>
+        <div class="chip-grid">
+          <button class="chip selected" onclick="toggleChip(this)">Travel</button>
+          <button class="chip selected" onclick="toggleChip(this)">Wellness</button>
+          <button class="chip" onclick="toggleChip(this)">Lifestyle</button>
+          <button class="chip" onclick="toggleChip(this)">Food &amp; drink</button>
+          <button class="chip selected" onclick="toggleChip(this)">Hotels &amp; hospitality</button>
+          <button class="chip" onclick="toggleChip(this)">Fashion</button>
+          <button class="chip" onclick="toggleChip(this)">Design</button>
+          <button class="chip" onclick="toggleChip(this)">Photography</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Minimum audience</label>
+        <select>
+          <option>5K+</option>
+          <option selected>20K+</option>
+          <option>50K+</option>
+          <option>100K+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Typical trade terms</label>
+        <textarea placeholder="e.g. 2 nights complimentary · 3 IG posts + 1 reel. Rights: 6 months cross-post." rows="3"></textarea>
+      </div>
+      <div class="onboard-footer">
+        <button class="btn-primary btn-full" onclick="finishOwner()">Launch my property →</button>
+        <button class="onboard-back" onclick="goStep('owner-property')">← Back</button>
+      </div>
+    </div>
+
+  </div><!-- /.onboard-wrap -->
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+let selectedRole = params.get('role') || 'creator';
+
+// Route directly if role passed in URL
+if (selectedRole === 'owner') {
+  goStep('owner-property');
+} else if (selectedRole === 'traveler') {
+  window.location.href = 'auth.html?auto=traveler&next=' + encodeURIComponent('traveler.html');
+}
+
+function goStep(name) {
+  document.querySelectorAll('.onboard-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('step-' + name);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function selectRole(card) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedRole = card.dataset.role;
+}
+
+function continueFromRole() {
+  if (selectedRole === 'creator') goStep('creator-niche');
+  else if (selectedRole === 'owner') goStep('owner-property');
+  else window.location.href = 'auth.html?auto=traveler&next=' + encodeURIComponent('traveler.html');
+}
+
+function toggleChip(chip) {
+  chip.classList.toggle('selected');
+}
+
+function finishCreator() {
+  if (VIA_STATE && VIA_STATE.user) {
+    window.location.href = 'dashboard.html';
+  } else {
+    window.location.href = 'auth.html?auto=creator&next=dashboard.html';
+  }
+}
+
+function finishOwner() {
+  if (VIA_STATE && VIA_STATE.user) {
+    window.location.href = 'owner.html';
+  } else {
+    window.location.href = 'auth.html?auto=owner&next=owner.html';
+  }
+}
+</script>
+</body>
+</html>

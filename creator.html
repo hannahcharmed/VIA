@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Creator — Via</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:ital,wght@0,200;0,300;0,400;1,200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
 <style>
 .creator-page { padding-top: var(--nav-h); }
@@ -21,13 +21,14 @@
 .back-bar:hover { color: var(--ink); }
 .back-bar svg { width: 16px; height: 16px; }
 
-/* Cover */
+/* Cover — sits at the back */
 .creator-cover {
   height: 220px;
   background-size: cover;
   background-position: center;
   background-color: var(--cream);
   position: relative;
+  z-index: 0;
 }
 
 /* Header */
@@ -35,24 +36,32 @@
   padding: 0 20px 20px;
   background: var(--warm-white);
   border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 2;
 }
 .creator-header-top {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-top: -36px;
+  margin-top: -56px;
   margin-bottom: 16px;
+  position: relative;
+  z-index: 3;
 }
+/* Avatar — brought to the front */
 .creator-profile-avatar {
-  width: 72px; height: 72px;
+  width: 96px; height: 96px;
   border-radius: 50%;
-  border: 4px solid var(--warm-white);
+  border: 5px solid var(--warm-white);
   background-size: cover;
   background-position: center;
   background-color: var(--accent-light);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 4;
 }
 .creator-header-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(28px, 5vw, 40px);
   font-weight: 300;
   margin-bottom: 4px;
@@ -65,13 +74,13 @@
   flex-wrap: wrap;
 }
 .creator-handle-text {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.1em;
 }
 .followers-count {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   font-size: 11px;
   color: var(--muted);
 }
@@ -108,13 +117,13 @@
   text-align: center;
 }
 .creator-stat .num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 24px;
   font-weight: 300;
   color: var(--ink);
 }
 .creator-stat .lbl {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -135,7 +144,7 @@
   flex: 1;
   padding: 14px 8px;
   text-align: center;
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -158,7 +167,7 @@
 /* About */
 .about-section { margin-bottom: 28px; }
 .about-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 22px;
   font-weight: 400;
   margin-bottom: 12px;
@@ -187,11 +196,11 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="index.html" class="nav-logo">Via</a>
+  <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
   <div class="nav-links">
-    <a href="explore.html">Explore</a>
-    <a href="index.html#creators">Creators</a>
-    <a href="auth.html" class="nav-signin">Sign in</a>
+    <a href="../marketing/explore.html">Explore</a>
+    <a href="../marketing/index.html#creators">Creators</a>
+    <a href="../marketing/auth.html" class="nav-signin">Sign in</a>
     <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
   </div>
   <div class="nav-right">
@@ -201,9 +210,9 @@
   </div>
 </nav>
 <div class="nav-drawer" id="nav-drawer">
-  <a href="explore.html">Explore</a>
-  <a href="index.html#creators">Creators</a>
-  <a href="auth.html">Sign in</a>
+  <a href="../marketing/explore.html">Explore</a>
+  <a href="../marketing/index.html#creators">Creators</a>
+  <a href="../marketing/auth.html">Sign in</a>
 </div>
 
 <div class="creator-page page-top" id="creator-page">
@@ -222,7 +231,7 @@ let following = false;
 
 function renderCreatorPage() {
   if (!creator) {
-    document.getElementById('creator-page').innerHTML = `<div class="empty-state"><h2>Creator not found</h2><p><a href="explore.html">← Back to explore</a></p></div>`;
+    document.getElementById('creator-page').innerHTML = `<div class="empty-state"><h2>Creator not found</h2><p><a href="../marketing/explore.html">← Back to explore</a></p></div>`;
     return;
   }
   document.title = `${creator.name} — Via`;
@@ -258,7 +267,7 @@ function renderCreatorPage() {
       </div>
       <div class="creator-action-row">
         <button class="btn-primary" id="follow-btn" onclick="toggleFollow()" style="padding:11px 24px">${following ? '✓ Following' : 'Follow'}</button>
-        <a href="explore.html?creator=${creator.id}" class="btn-outline" style="padding:11px 24px">View all stays</a>
+        <a href="../marketing/explore.html?creator=${creator.id}" class="btn-outline" style="padding:11px 24px">View all stays</a>
       </div>
     </div>
 

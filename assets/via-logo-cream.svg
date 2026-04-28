@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120" aria-label="VIA" fill="none">
+  <path stroke="#FAF6EC" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"></path>
+  <path stroke="#FAF6EC" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"></path>
+  <path stroke="#FAF6EC" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"></path>
+  <circle fill="#E8A574" cx="328" cy="102" r="7.5"></circle>
+</svg>
