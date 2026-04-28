@@ -490,10 +490,14 @@ function renderWishlist() {
 }
 
 function switchPanel(panel, clickedBtn) {
+  const panelEl = document.getElementById(`panel-${panel}`);
+  if (!panelEl) return;
   document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`panel-${panel}`).classList.add('active');
+  panelEl.classList.add('active');
   document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
   if (clickedBtn) clickedBtn.classList.add('active');
+  document.querySelectorAll(`.sidebar-nav-item[onclick*="'${panel}'"]`).forEach(b => b.classList.add('active'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (panel === 'overview') renderOverview();
   if (panel === 'trips') renderTrips('all');
   if (panel === 'wishlist') renderWishlist();

@@ -577,6 +577,18 @@
             <button class="btn-outline" style="font-size:10px;padding:6px 14px">Change photo</button>
           </div>
         </div>
+        <!-- Profile link share card -->
+        <div id="profile-link-card" style="background:var(--ink);border-radius:var(--radius-md);padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,246,236,.5);margin-bottom:4px">Your profile link</div>
+            <div id="profile-link-display" style="font-family:var(--sans);font-size:14px;color:var(--yellow-bright);letter-spacing:.02em">via.travel/@camille</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0">
+            <button onclick="copyProfileLink()" style="background:var(--yellow-bright);color:var(--ink);border:none;border-radius:var(--radius-sm);padding:9px 16px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.04em" id="profile-copy-btn">Copy link</button>
+            <button onclick="shareProfileLink()" style="background:rgba(255,255,255,.1);color:white;border:none;border-radius:var(--radius-sm);padding:9px 14px;font-family:var(--sans);font-size:12px;cursor:pointer">↗</button>
+          </div>
+        </div>
+
         <form onsubmit="saveProfile(event)">
           <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
             <div class="form-group">
@@ -995,10 +1007,14 @@ function renderMyStays() {
 }
 
 function switchPanel(panel, clickedBtn) {
+  const panelEl = document.getElementById(`panel-${panel}`);
+  if (!panelEl) return;
   document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`panel-${panel}`).classList.add('active');
+  panelEl.classList.add('active');
   document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
   if (clickedBtn) clickedBtn.classList.add('active');
+  document.querySelectorAll(`.sidebar-nav-item[onclick*="'${panel}'"]`).forEach(b => b.classList.add('active'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (panel === 'overview') {
     document.getElementById('recent-bookings-list').innerHTML = renderRecentBookings();
     renderChart();
@@ -1277,6 +1293,47 @@ function shareLink(platform) {
   if (msgs[platform]) setTimeout(() => showToast(msgs[platform]), 1500);
 }
 
+function getProfileHandle() {
+  const handleInput = document.getElementById('pf-handle');
+  return handleInput ? handleInput.value.replace('@', '').trim() : 'camille';
+}
+
+function copyProfileLink() {
+  const handle = getProfileHandle();
+  const url = `${location.origin}/creator.html?id=${handle}`;
+  const display = `via.travel/@${handle}`;
+  const btn = document.getElementById('profile-copy-btn');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
+      showToast('✓ Profile link copied');
+    });
+  } else {
+    const el = document.createElement('textarea');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
+    showToast(`✓ ${display}`);
+  }
+}
+
+function shareProfileLink() {
+  const handle = getProfileHandle();
+  const url = `${location.origin}/creator.html?id=${handle}`;
+  const title = `${handle} on VIA`;
+  const text = `Follow my travel picks on VIA — via.travel/@${handle}`;
+  if (navigator.share) {
+    navigator.share({ title, text, url }).catch(() => copyProfileLink());
+  } else {
+    copyProfileLink();
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────
 const user = VIA_STATE.user;
 if (user) {
@@ -1285,6 +1342,16 @@ if (user) {
   if (document.getElementById('profile-name-display')) {
     document.getElementById('profile-name-display').textContent = name;
   }
+}
+
+// Sync profile link display when handle changes
+const handleInput = document.getElementById('pf-handle');
+if (handleInput) {
+  handleInput.addEventListener('input', () => {
+    const h = handleInput.value.replace('@','').trim() || 'camille';
+    const el = document.getElementById('profile-link-display');
+    if (el) el.textContent = `via.travel/@${h}`;
+  });
 }
 
 document.getElementById('recent-bookings-list').innerHTML = renderRecentBookings();
