@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
 <style>
-body { background: var(--cream); }
+body { background: white; }
 .messages-layout {
   padding-top: var(--nav-h);
   height: 100svh;
@@ -200,9 +200,9 @@ body { background: var(--cream); }
 <body>
 
 <nav class="nav">
-  <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+  <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
   <div class="nav-links">
-    <a href="../marketing/explore.html">Explore</a>
+    <a href="explore.html">Explore</a>
     <a href="dashboard.html">Dashboard</a>
   </div>
   <div class="nav-right">
@@ -212,7 +212,7 @@ body { background: var(--cream); }
   </div>
 </nav>
 <div class="nav-drawer" id="nav-drawer">
-  <a href="../marketing/explore.html">Explore</a>
+  <a href="explore.html">Explore</a>
   <a href="dashboard.html">Dashboard</a>
 </div>
 
@@ -237,9 +237,28 @@ body { background: var(--cream); }
     </div>
   </div>
 
-  <div class="msg-context-bar">
-    <span>✦</span>
-    <span><strong>Trade confirmed</strong> · 3 nights, May 8–11 · <a href="../marketing/stay.html?id=1">Rua Dos Anjos, Lisbon</a></span>
+  <div class="msg-context-bar" style="padding:10px 20px 12px">
+    <div class="trade-timeline">
+      <div class="tl-step done">
+        <div class="tl-dot"></div>
+        <span>Applied</span>
+      </div>
+      <div class="tl-connector done"></div>
+      <div class="tl-step done">
+        <div class="tl-dot"></div>
+        <span>Approved</span>
+      </div>
+      <div class="tl-connector active"></div>
+      <div class="tl-step active">
+        <div class="tl-dot"></div>
+        <span>Staying</span>
+      </div>
+      <div class="tl-connector"></div>
+      <div class="tl-step">
+        <div class="tl-dot"></div>
+        <span>Content posted</span>
+      </div>
+    </div>
   </div>
 
   <div class="msg-body" id="msg-body">

@@ -58,7 +58,7 @@
 .dash-greeting {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(22px, 4vw, 32px);
-  font-weight: 300;
+  font-weight: 400;
 }
 .dash-greeting em { font-style: italic; color: var(--accent); }
 
@@ -70,15 +70,17 @@
   margin-bottom: 24px;
 }
 .dash-stat-card {
-  background: var(--cream);
-  border-radius: 3px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   padding: 16px;
+  box-shadow: var(--shadow-sm);
 }
 .dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
 .dash-stat-card .big-num {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(28px, 5vw, 40px);
-  font-weight: 300;
+  font-weight: 400;
   color: var(--ink);
   line-height: 1;
   margin-bottom: 6px;
@@ -98,7 +100,7 @@
 /* Revenue banner */
 .payout-banner {
   background: var(--ink);
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -118,7 +120,7 @@
 .payout-amount {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 28px;
-  font-weight: 300;
+  font-weight: 400;
   color: white;
 }
 .payout-meta {
@@ -130,10 +132,12 @@
 
 /* Chart */
 .chart-card {
-  background: var(--cream);
-  border-radius: 3px;
-  padding: 16px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
 }
 .chart-header {
   display: flex;
@@ -155,7 +159,7 @@
 .chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .chart-bar {
   width: 100%;
-  border-radius: 2px 2px 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   min-height: 4px;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -190,11 +194,11 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.booking-item:hover { background: var(--cream); border-radius: 2px; padding-left: 8px; }
+.booking-item:hover { background: var(--cream); border-radius: var(--radius-sm); padding-left: 8px; }
 .booking-item:last-child { border-bottom: none; }
 .booking-thumb {
   width: 44px; height: 44px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
@@ -208,13 +212,14 @@
   font-size: 8px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 1px;
+  padding: 4px 10px;
+  border-radius: 100px;
   flex-shrink: 0;
+  font-weight: 600;
 }
 .booking-status.confirmed { background: #E6F4EE; color: var(--success); }
 .booking-status.pending { background: #FEF3E8; color: #C47B0A; }
-.booking-status.completed { background: var(--cream); color: var(--muted); }
+.booking-status.completed { background: var(--sand-soft); color: var(--muted); }
 
 /* Property row */
 .property-row {
@@ -223,13 +228,13 @@
   align-items: center;
   padding: 14px;
   background: var(--cream);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   margin-bottom: 10px;
 }
 .property-thumb {
   width: 64px; height: 52px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
@@ -321,7 +326,7 @@
 
 /* Creator expandable panel */
 .creator-row { cursor: pointer; }
-.creator-row:hover { background: var(--cream); border-radius: 2px; padding-left: 4px; transition: padding .15s; }
+.creator-row:hover { background: var(--cream); border-radius: var(--radius-sm); padding-left: 4px; transition: padding .15s; }
 .creator-posts-panel {
   display: none;
   padding: 12px 0 16px;
@@ -333,7 +338,7 @@
 }
 .creator-post-strip::-webkit-scrollbar { display: none; }
 .creator-post-thumb {
-  width: 100px; height: 120px; border-radius: 2px; flex-shrink: 0;
+  width: 100px; height: 120px; border-radius: var(--radius-sm); flex-shrink: 0;
   background-size: cover; background-position: center; cursor: pointer;
   position: relative; overflow: hidden;
 }
@@ -366,21 +371,6 @@
 .trade-step-panel { display: none; }
 .trade-step-panel.active { display: block; }
 
-/* Chip shared style for applications / new-trade panels */
-#panel-applications .chip,
-#panel-new-trade .chip {
-  padding: 8px 14px;
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--ink-2);
-}
-#panel-applications .chip.selected,
-#panel-new-trade .chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
 
 @media (min-width: 1024px) {
   .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
@@ -408,10 +398,10 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+  <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
   <div class="nav-links">
-    <a href="../marketing/explore.html">Explore</a>
-    <a href="../marketing/auth.html" class="nav-signin">Sign in</a>
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
     <div class="nav-avatar" id="nav-av" title="Owner Portal"></div>
   </div>
   <div class="nav-right">
@@ -421,8 +411,8 @@
   </div>
 </nav>
 <div class="nav-drawer" id="nav-drawer">
-  <a href="../marketing/explore.html">Explore</a>
-  <a href="../marketing/auth.html">Sign in</a>
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
   <a href="owner.html" style="color:var(--ink)">Owner Portal</a>
 </div>
 
@@ -430,7 +420,7 @@
   <!-- Desktop sidebar -->
   <div class="dash-sidebar">
     <div class="sidebar-logo">
-      <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+      <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
     </div>
     <button class="sidebar-nav-item active" onclick="switchPanel('overview',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -485,7 +475,7 @@
     <div class="dash-panel active" id="panel-overview">
       <div class="dash-header">
         <div class="dash-greeting">Good morning, <em id="dash-first-name">Henri</em>.</div>
-        <select class="dash-period" id="period-select" style="background:var(--cream);border:1px solid var(--border);border-radius:2px;font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.08em;padding:8px 12px;color:var(--muted);cursor:pointer;" onchange="updatePeriod()">
+        <select class="dash-period" id="period-select" style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--sans);font-size:10px;letter-spacing:.08em;padding:8px 12px;color:var(--muted);cursor:pointer;" onchange="updatePeriod()">
           <option value="30">Last 30 days</option>
           <option value="90">Last 90 days</option>
           <option value="365">This year</option>
@@ -613,11 +603,11 @@
         <div class="dash-greeting">Settings</div>
       </div>
       <div style="max-width:560px">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:3px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:var(--radius-md)">
           <div id="settings-avatar" style="width:64px;height:64px;border-radius:50%;background-size:cover;background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80');flex-shrink:0"></div>
           <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400" id="settings-name-display">Henri Blanc</div>
-            <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);margin-bottom:8px" id="settings-property-display">Hôtel Le Pigonnet</div>
+            <div style="font-family:var(--serif);font-size:20px;font-weight:400" id="settings-name-display">Henri Blanc</div>
+            <div style="font-family:var(--sans);font-size:10px;color:var(--muted);margin-bottom:8px" id="settings-property-display">Hôtel Le Pigonnet</div>
             <button class="btn-outline" style="font-size:10px;padding:6px 14px" onclick="showToast('Photo upload — coming soon')">Change photo</button>
           </div>
         </div>
@@ -647,7 +637,7 @@
           <button type="submit" class="btn-primary" style="padding:13px 28px">Save changes</button>
         </form>
         <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border)">
-          <div style="font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Danger zone</div>
+          <div style="font-family:var(--sans);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Danger zone</div>
           <button class="btn-outline" style="color:var(--error);border-color:var(--error)" onclick="showToast('Contact support to remove your property')">Remove property</button>
         </div>
       </div>
@@ -972,7 +962,7 @@ function renderProperties() {
         </div>
       </div>
     </div>
-    <div style="background:var(--cream);border:1px dashed var(--border);border-radius:2px;padding:20px;text-align:center;cursor:pointer" onclick="showToast('Add a new property — coming soon')">
+    <div style="background:var(--cream);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer" onclick="showToast('Add a new property — coming soon')">
       <div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">+ List another property</div>
     </div>`;
 }
@@ -1018,9 +1008,9 @@ function renderCreators() {
       </div>
       <div class="creator-posts-panel" id="posts-${cp.id}">
         ${postCount ? `
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Tagged posts</div>
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Tagged posts</div>
           <div class="creator-post-strip">${postThumbs}</div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.06em">${posts.reduce((s,p)=>s+p.stats.views,0).toLocaleString()} total views · ${posts.reduce((s,p)=>s+p.stats.saves,0).toLocaleString()} saves across these posts</div>
+          <div style="font-family:var(--sans);font-size:9px;color:var(--muted);letter-spacing:.06em">${posts.reduce((s,p)=>s+p.stats.views,0).toLocaleString()} total views · ${posts.reduce((s,p)=>s+p.stats.saves,0).toLocaleString()} saves across these posts</div>
         ` : `<div style="font-size:13px;color:var(--muted);padding:4px 0">No posts tagged to your property yet.</div>`}
       </div>
     </div>`;
@@ -1063,11 +1053,11 @@ function renderPayoutHistory() {
     <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
       <div>
         <div>${p.date}</div>
-        <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref} · commission ${p.commission}</div>
+        <div style="font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref} · commission ${p.commission}</div>
       </div>
       <div style="display:flex;align-items:center;gap:14px">
         <span style="font-size:16px;font-weight:400">${p.net}</span>
-        <span style="background:#E6F4EE;color:var(--success);font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:1px">PAID</span>
+        <span style="background:#E6F4EE;color:var(--success);font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.08em;padding:4px 10px;border-radius:100px">PAID</span>
       </div>
     </div>`).join('');
 }
@@ -1187,10 +1177,11 @@ function openReview(id) {
 
 function closeReview() {
   document.getElementById('creator-review-panel').style.display = 'none';
-  const list = document.getElementById('applications-list');
-  list.style.display = '';
+  document.getElementById('applications-list').style.display = '';
   const tabBar = document.querySelector('#panel-applications .tab-bar');
   if (tabBar) tabBar.style.display = '';
+  const headerSelect = document.querySelector('#panel-applications .dash-header select');
+  if (headerSelect) headerSelect.style.display = '';
 }
 
 function approveCreator() {

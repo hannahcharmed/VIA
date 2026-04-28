@@ -42,7 +42,7 @@
 }
 .dash-greeting {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(22px, 4vw, 32px); font-weight: 300;
+  font-size: clamp(22px, 4vw, 32px); font-weight: 400;
 }
 .dash-greeting em { font-style: italic; color: var(--accent); }
 
@@ -50,11 +50,11 @@
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 10px; margin-bottom: 24px;
 }
-.dash-stat-card { background: var(--cream); border-radius: 3px; padding: 16px; }
+.dash-stat-card { background: var(--cream); border-radius: var(--radius-md); padding: 16px; }
 .dash-stat-card .eyebrow { margin-bottom: 8px; font-size: 9px; }
 .dash-stat-card .big-num {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(28px, 5vw, 40px); font-weight: 300; color: var(--ink); line-height: 1; margin-bottom: 6px;
+  font-size: clamp(28px, 5vw, 40px); font-weight: 400; color: var(--ink); line-height: 1; margin-bottom: 6px;
 }
 .dash-stat-card .change {
   font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.08em; color: var(--muted);
@@ -68,7 +68,7 @@
 
 /* Upcoming trip card */
 .trip-card {
-  border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
+  border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden;
   margin-bottom: 12px; cursor: pointer; transition: box-shadow 0.2s;
 }
 .trip-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
@@ -80,7 +80,7 @@
 .trip-card-status {
   position: absolute; top: 12px; left: 12px;
   font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 1px;
+  padding: 4px 10px; border-radius: 100px;
 }
 .trip-card-status.confirmed { background: #E6F4EE; color: var(--success); }
 .trip-card-status.pending { background: #FEF3E8; color: #C47B0A; }
@@ -99,7 +99,7 @@
 /* Wishlist grid */
 .wishlist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
 .wishlist-item {
-  border-radius: 3px; overflow: hidden; cursor: pointer;
+  border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
   border: 1px solid var(--border); transition: box-shadow 0.2s;
 }
 .wishlist-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
@@ -154,10 +154,10 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+  <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
   <div class="nav-links">
-    <a href="../marketing/explore.html">Explore</a>
-    <a href="../marketing/auth.html" class="nav-signin">Sign in</a>
+    <a href="explore.html">Explore</a>
+    <a href="auth.html" class="nav-signin">Sign in</a>
     <div class="nav-avatar" id="nav-av" title="My Trips"></div>
   </div>
   <div class="nav-right">
@@ -167,8 +167,8 @@
   </div>
 </nav>
 <div class="nav-drawer" id="nav-drawer">
-  <a href="../marketing/explore.html">Explore</a>
-  <a href="../marketing/auth.html">Sign in</a>
+  <a href="explore.html">Explore</a>
+  <a href="auth.html">Sign in</a>
   <a href="traveler.html" style="color:var(--ink)">My Trips</a>
 </div>
 
@@ -176,9 +176,9 @@
   <!-- Desktop sidebar -->
   <div class="dash-sidebar">
     <div class="sidebar-logo">
-      <a href="../marketing/index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
+      <a href="index.html" class="nav-logo"><svg width="52" height="20" viewBox="0 0 360 120" aria-label="Via" fill="none"><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 48 18 L 92 102 L 136 18"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 180 18 L 180 102"/><path stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" d="M 224 102 L 268 18 L 312 102"/><circle fill="#E8A574" cx="328" cy="102" r="7.5"/></svg></a>
     </div>
-    <a href="../marketing/explore.html" class="sidebar-nav-item" style="text-decoration:none">
+    <a href="explore.html" class="sidebar-nav-item" style="text-decoration:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       Explore
     </a>
@@ -217,7 +217,7 @@
     <div class="dash-panel active" id="panel-overview">
       <div class="dash-header">
         <div class="dash-greeting">Welcome back, <em id="dash-first-name">Alex</em>.</div>
-        <a href="../marketing/explore.html" class="btn-accent" style="padding:10px 20px;font-size:11px;text-decoration:none">Explore stays →</a>
+        <a href="explore.html" class="btn-accent" style="padding:10px 20px;font-size:11px;text-decoration:none">Explore stays →</a>
       </div>
 
       <div class="dash-stats-grid">
@@ -261,7 +261,7 @@
       <div class="wishlist-grid" id="overview-wishlist"></div>
       <div id="overview-wishlist-empty" style="display:none;color:var(--muted);font-size:14px;padding:16px 0">
         No saved stays yet.
-        <a href="../marketing/explore.html" style="color:var(--accent)">Explore →</a>
+        <a href="explore.html" style="color:var(--accent)">Explore →</a>
       </div>
     </div>
 
@@ -269,7 +269,7 @@
     <div class="dash-panel" id="panel-trips">
       <div class="dash-header">
         <div class="dash-greeting">My Trips</div>
-        <a href="../marketing/explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Browse stays →</a>
+        <a href="explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Browse stays →</a>
       </div>
       <div class="tabs" style="margin-bottom:20px;max-width:400px">
         <button class="tab-btn active" onclick="filterTrips('all',this)">All</button>
@@ -283,14 +283,14 @@
     <div class="dash-panel" id="panel-wishlist">
       <div class="dash-header">
         <div class="dash-greeting">Wishlist</div>
-        <a href="../marketing/explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Discover more →</a>
+        <a href="explore.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Discover more →</a>
       </div>
       <div class="wishlist-grid" id="full-wishlist"></div>
       <div id="wishlist-empty" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:40px;margin-bottom:16px;opacity:.3">♡</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:8px">Nothing saved yet</div>
+        <div style="font-family:var(--serif);font-size:24px;font-weight:400;margin-bottom:8px">Nothing saved yet</div>
         <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Tap ♡ on any stay in Explore to save it here.</p>
-        <a href="../marketing/explore.html" class="btn-primary" style="padding:12px 28px;text-decoration:none;display:inline-block">Explore stays</a>
+        <a href="explore.html" class="btn-primary" style="padding:12px 28px;text-decoration:none;display:inline-block">Explore stays</a>
       </div>
     </div>
 
@@ -300,11 +300,11 @@
         <div class="dash-greeting">Account</div>
       </div>
       <div style="max-width:520px">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:3px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:var(--cream);border-radius:var(--radius-md)">
           <div id="account-avatar" style="width:64px;height:64px;border-radius:50%;background-size:cover;background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80');flex-shrink:0"></div>
           <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400" id="account-name-display">Alex Chen</div>
-            <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);margin-bottom:8px">Traveler</div>
+            <div style="font-family:var(--serif);font-size:20px;font-weight:400" id="account-name-display">Alex Chen</div>
+            <div style="font-family:var(--sans);font-size:10px;color:var(--muted);margin-bottom:8px">Traveler</div>
             <button class="btn-outline" style="font-size:10px;padding:6px 14px" onclick="showToast('Photo upload — coming soon')">Change photo</button>
           </div>
         </div>
@@ -340,7 +340,7 @@
 
 <!-- Mobile bottom nav -->
 <div class="dash-bottom-nav">
-  <a href="../marketing/explore.html" class="dash-nav-item" style="text-decoration:none">
+  <a href="explore.html" class="dash-nav-item" style="text-decoration:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     Explore
   </a>
@@ -433,20 +433,20 @@ function renderOverview() {
   if (next) {
     const daysUntil = Math.ceil((new Date(next.checkIn) - Date.now()) / 86400000);
     banner.innerHTML = `
-      <div style="background:var(--ink);border-radius:3px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="background:var(--ink);border-radius:var(--radius-md);padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div style="font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px">Next trip</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:white">${next.stay.name}</div>
-          <div style="font-family:'Raleway',sans-serif;font-size:10px;color:rgba(255,255,255,.5);margin-top:3px">${next.stay.location} · in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}</div>
+          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px">Next trip</div>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:400;color:white">${next.stay.name}</div>
+          <div style="font-family:var(--sans);font-size:10px;color:rgba(255,255,255,.5);margin-top:3px">${next.stay.location} · in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}</div>
         </div>
-        <a href="../marketing/stay.html?id=${next.stayId}" style="background:rgba(255,255,255,.12);color:white;padding:10px 18px;border-radius:2px;text-decoration:none;font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View details →</a>
+        <a href="stay.html?id=${next.stayId}" style="background:rgba(255,255,255,.12);color:white;padding:10px 18px;border-radius:var(--radius-sm);text-decoration:none;font-family:var(--sans);font-size:10px;letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View details →</a>
       </div>`;
   } else {
     banner.innerHTML = '';
   }
 
   document.getElementById('overview-trips').innerHTML = upcoming.slice(0,2).map(tripCardHtml).join('') ||
-    `<p style="color:var(--muted);font-size:14px;padding:12px 0">No upcoming trips. <a href="../marketing/explore.html" style="color:var(--accent)">Start exploring →</a></p>`;
+    `<p style="color:var(--muted);font-size:14px;padding:12px 0">No upcoming trips. <a href="explore.html" style="color:var(--accent)">Start exploring →</a></p>`;
 
   renderWishlistPreview();
 }

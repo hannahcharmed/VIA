@@ -61,7 +61,7 @@
 .stay-name {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(32px, 6vw, 52px);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.1;
   margin-bottom: 8px;
 }
@@ -184,7 +184,7 @@
 .booking-card {
   background: var(--warm-white);
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   padding: 24px;
 }
 .booking-card-price {
@@ -208,7 +208,7 @@
   width: 100%;
   padding: 11px 14px;
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: var(--cream);
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 13px;
@@ -255,7 +255,7 @@
 
 .booking-card-total {
   background: var(--cream);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   padding: 14px;
   margin-bottom: 14px;
 }
@@ -295,6 +295,7 @@
     <a href="explore.html">Explore</a>
     <a href="index.html#creators">Creators</a>
     <a href="auth.html" class="nav-signin">Sign in</a>
+    <a href="dashboard.html" class="nav-dashboard" style="display:none">Dashboard</a>
     <div class="nav-avatar" onclick="window.location='dashboard.html'" title="Dashboard"></div>
   </div>
   <div class="nav-right">
@@ -330,7 +331,7 @@
   <div class="modal" style="max-width:400px">
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeModal('date-modal')">×</button>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:20px">Select dates</h3>
+    <h3 style="font-family:var(--serif);font-size:24px;font-weight:400;margin-bottom:20px">Select dates</h3>
     <div id="date-calendar"></div>
     <div style="margin-top:16px;display:flex;gap:10px">
       <button class="btn-outline" style="flex:1" onclick="closeModal('date-modal')">Cancel</button>
@@ -444,9 +445,9 @@ function renderStayPage() {
 
         <!-- Creator quote -->
         ${creator ? `
-        <div style="margin-bottom:24px;padding:16px 20px;background:var(--cream);border-radius:2px;border-left:2px solid var(--accent)">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.6;color:var(--ink);margin-bottom:8px">${stay.creatorNote}</div>
-          <div style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);letter-spacing:0.1em">— ${creator.name} · ${stay.stayDate}</div>
+        <div style="margin-bottom:24px;padding:16px 20px;background:var(--cream);border-radius:var(--radius-sm);border-left:2px solid var(--accent)">
+          <div style="font-family:var(--serif);font-size:18px;font-style:italic;line-height:1.6;color:var(--ink);margin-bottom:8px">${stay.creatorNote}</div>
+          <div style="font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:0.1em">— ${creator.name} · ${stay.stayDate}</div>
         </div>` : ''}
 
         <!-- Description -->
@@ -617,8 +618,8 @@ function confirmDates() {
 function openBookingModal() {
   openModal('booking-modal');
   document.getElementById('modal-inner').innerHTML = `
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;margin-bottom:4px">${stay.name}</h2>
-    <p style="font-family:'Raleway',sans-serif;font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:20px">${stay.location}</p>
+    <h2 style="font-family:var(--serif);font-size:28px;font-weight:400;margin-bottom:4px">${stay.name}</h2>
+    <p style="font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:20px">${stay.location}</p>
     <div class="nights-selector" style="padding:0;margin-bottom:16px">
       <span class="nights-label">Nights</span>
       <div class="nights-count">

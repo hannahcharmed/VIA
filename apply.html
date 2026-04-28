@@ -11,7 +11,7 @@
 .apply-layout {
   padding-top: var(--nav-h);
   min-height: 100svh;
-  background: var(--cream);
+  background: white;
 }
 .apply-main {
   max-width: 640px;
@@ -46,8 +46,9 @@
   background: white;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 16px;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
 }
 .listing-card-thumb {
   width: 76px; height: 64px;
@@ -86,40 +87,7 @@
   border: 1px solid var(--yellow);
 }
 
-.field { margin-bottom: 20px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.field input, .field select, .field textarea {
-  border-radius: var(--radius-sm);
-}
-.field .field-help {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.55;
-}
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
 .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.chip {
-  padding: 8px 14px;
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--ink-2);
-}
-.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
 
 .apply-footer {
   position: fixed;
@@ -141,7 +109,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: var(--cream);
+  background: linear-gradient(160deg, var(--yellow-soft) 0%, var(--cream) 60%);
   z-index: 500;
   flex-direction: column;
   align-items: center;
@@ -151,16 +119,23 @@
 }
 .success-overlay.show { display: flex; }
 .success-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--yellow-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-lg);
 }
 .success-title {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 28px;
+  font-size: clamp(26px, 5vw, 36px);
   font-weight: 500;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  color: var(--ink);
 }
-.success-sub { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 32px; max-width: 380px; }
+.success-sub { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 36px; max-width: 360px; }
 </style>
 </head>
 <body>
@@ -222,7 +197,10 @@
     <div class="field">
       <label>Your pitch</label>
       <textarea id="pitch" rows="6" placeholder="Tell the owner why you're the right match — mention your audience, past similar stays, and why this property resonates..."></textarea>
-      <p class="field-help">300 characters minimum. The owner sees this alongside your creator showcase.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <p class="field-help" style="margin-top:0">300 characters minimum. The owner sees this alongside your creator showcase.</p>
+        <span id="pitch-counter" style="font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;margin-left:8px">0 / 300</span>
+      </div>
     </div>
 
     <div class="field">
@@ -265,7 +243,7 @@
   <div class="success-icon">✦</div>
   <h2 class="success-title">Application sent!</h2>
   <p class="success-sub">The owner will review your showcase and respond within 48 hours. You'll get an email when they reply — check your inbox tab to track it.</p>
-  <a href="../app/dashboard.html" class="btn-primary">Back to dashboard →</a>
+  <a href="dashboard.html" class="btn-primary">Back to dashboard →</a>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -274,6 +252,15 @@
 <script src="js/app.js"></script>
 <script>
 requireAuth();
+
+// ── Pitch character counter ───────────────────────────────────
+const pitchEl   = document.getElementById('pitch');
+const counterEl = document.getElementById('pitch-counter');
+pitchEl.addEventListener('input', () => {
+  const n = pitchEl.value.length;
+  counterEl.textContent = `${n} / 300`;
+  counterEl.style.color = n >= 300 ? 'var(--success)' : 'var(--muted)';
+});
 
 const stayId = parseInt(getParam('stayId') || '1');
 const stay = VIA_DATA.stays.find(s => s.id === stayId) || VIA_DATA.stays[0];
@@ -284,11 +271,9 @@ if (stay) {
   document.getElementById('listing-img').src = stay.images[0];
 }
 
-function toggleChip(chip) { chip.classList.toggle('selected'); }
-
 function submitApplication() {
   const pitch = document.getElementById('pitch').value;
-  if (pitch.length < 80) {
+  if (pitch.length < 300) {
     showToast('Add a bit more to your pitch — owners need context.');
     return;
   }

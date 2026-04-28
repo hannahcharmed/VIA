@@ -23,7 +23,7 @@
   --muted: #958B7E;
   --success: #3D7A5C;
   --error: #A83D3D;
-  /* Backward-compat aliases — page surfaces flipped to white per Cierra; cream now reserved for accents/sections */
+  /* Backward-compat aliases */
   --warm-white: #FFFFFF;
   --accent: var(--orange);
   --accent-light: var(--orange-soft);
@@ -112,7 +112,7 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 200;
-  background: rgba(255,255,255,0.92);
+  background: rgba(250,246,236,0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -224,7 +224,10 @@ body {
   font-weight: 700;
   text-align: center;
 }
+.btn-primary { cursor: pointer; }
 .btn-primary:hover { background: var(--orange); color: var(--ink); }
+.btn-accent { cursor: pointer; }
+.btn-outline { cursor: pointer; }
 
 .btn-accent {
   display: inline-block;
@@ -317,9 +320,63 @@ input, select, textarea {
   appearance: none;
   width: 100%;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,165,116,0.14);
+}
 input::placeholder, textarea::placeholder { color: var(--muted); }
 textarea { resize: vertical; min-height: 100px; }
+
+/* === FIELD WRAPPER === */
+.field { margin-bottom: 20px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.field input, .field select, .field textarea { border-radius: var(--radius-sm); }
+.field-help { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* === CHIP === */
+.chip {
+  padding: 8px 14px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--ink-2);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+.chip:hover { border-color: var(--orange); background: var(--yellow-soft); color: var(--ink); }
+.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* === TAB BAR (pill variant — use inside panels) === */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+}
+.tab-bar .tab-btn {
+  flex: none;
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  padding: 8px 16px;
+  background: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.tab-bar .tab-btn:hover { border-color: var(--orange); color: var(--ink); }
+.tab-bar .tab-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
 
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-left: 40px; }
@@ -957,9 +1014,11 @@ textarea { resize: vertical; min-height: 100px; }
 
 /* === DASHBOARD CARD === */
 .dash-stat-card {
-  background: var(--cream);
+  background: white;
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 20px;
+  box-shadow: var(--shadow-sm);
 }
 .dash-stat-card .eyebrow { margin-bottom: 8px; }
 .dash-stat-card .big-num {
@@ -1018,9 +1077,10 @@ textarea { resize: vertical; min-height: 100px; }
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 1px;
+  padding: 4px 10px;
+  border-radius: 100px;
   flex-shrink: 0;
+  font-weight: 600;
 }
 .booking-status.confirmed { background: #E6F4EE; color: var(--success); }
 .booking-status.pending   { background: #FDF2EB; color: var(--accent); }
@@ -1450,3 +1510,164 @@ textarea { resize: vertical; min-height: 100px; }
   .dest-card { width: 220px; }
   .testimonial-track { padding: 0 80px 4px; }
 }
+
+/* ================================================================
+   NOTIFICATION BELL + DROPDOWN
+   ================================================================ */
+.nav-bell {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-2);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  margin-right: 4px;
+}
+.nav-bell:hover { background: var(--cream); color: var(--ink); }
+.nav-bell.active { background: var(--cream); color: var(--ink); }
+.nav-bell-badge {
+  position: absolute;
+  top: 4px; right: 4px;
+  min-width: 16px; height: 16px;
+  background: var(--orange);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  padding: 0 3px;
+  line-height: 1;
+}
+
+.notif-dropdown {
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  width: 320px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 999;
+  display: none;
+  overflow: hidden;
+}
+.notif-dropdown.open { display: block; }
+.notif-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 600;
+}
+.notif-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s;
+  text-decoration: none;
+  color: var(--ink);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--cream); }
+.notif-item.read { opacity: 0.5; }
+.notif-item-icon {
+  width: 34px; height: 34px;
+  background: var(--yellow-soft);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.notif-item-text { font-size: 13px; line-height: 1.5; }
+.notif-item-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* ================================================================
+   TRADE STATUS TIMELINE
+   ================================================================ */
+.trade-timeline {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 4px 0;
+}
+.tl-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.tl-step span {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tl-step.done span { color: var(--ink-2); }
+.tl-step.active span { color: var(--ink); }
+.tl-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+  border: 2px solid var(--line);
+  flex-shrink: 0;
+}
+.tl-step.done .tl-dot { background: var(--success); border-color: var(--success); }
+.tl-step.active .tl-dot {
+  background: var(--orange);
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,165,116,0.25);
+}
+.tl-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+  margin-top: 4px;
+  flex-shrink: 1;
+}
+.tl-connector.done { background: var(--success); }
+.tl-connector.active {
+  background: linear-gradient(90deg, var(--success) 0%, var(--orange) 100%);
+}
+
+/* ================================================================
+   DELIVERABLE TRACKER
+   ================================================================ */
+.deliverable-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.deliverable-row:last-child { border-bottom: none; }
+.deliverable-label { flex: 1; font-size: 13px; font-weight: 500; }
+.deliverable-status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.deliverable-status.pending { background: var(--sand-soft); color: var(--muted); }
+.deliverable-status.submitted { background: var(--yellow-soft); color: var(--orange-deep); }
+.deliverable-status.approved { background: #E6F4EE; color: var(--success); }
