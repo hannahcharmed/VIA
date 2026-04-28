@@ -378,6 +378,11 @@
       Bookings
       <span style="margin-left:auto;background:var(--accent);color:white;font-size:9px;padding:2px 6px;border-radius:20px">3</span>
     </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('trades',this)" style="position:relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/><line x1="8" y1="17" x2="11" y2="17"/></svg>
+      Trades
+      <span style="margin-left:auto;background:var(--orange);color:white;font-size:9px;padding:2px 6px;border-radius:20px">1</span>
+    </button>
     <button class="sidebar-nav-item" onclick="switchPanel('stays',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       My Stays
@@ -648,6 +653,60 @@
       </div>
     </div>
 
+    <!-- TRADES PANEL -->
+    <div class="dash-panel" id="panel-trades">
+      <div class="dash-header">
+        <div class="dash-greeting">Active Trades</div>
+        <a href="apply.html" class="btn-outline" style="padding:9px 18px;text-decoration:none">Apply for a trade →</a>
+      </div>
+
+      <!-- Active trade card -->
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:20px;margin-bottom:24px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+          <div style="width:64px;height:56px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=120&q=80') center/cover;flex-shrink:0"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:15px">Rua Dos Anjos, Lisbon</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">May 8–11 · 3 nights · Trade confirmed ✦</div>
+            <!-- Progress bar -->
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+              <div style="flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden">
+                <div id="trade-progress-bar" style="height:100%;background:var(--success);transition:width .4s"></div>
+              </div>
+              <span id="trade-progress-label" style="font-size:11px;font-weight:600;color:var(--success);flex-shrink:0"></span>
+            </div>
+          </div>
+          <a href="messages.html" style="background:var(--yellow-bright);color:var(--ink);font-size:10px;font-weight:700;padding:7px 14px;border-radius:100px;text-decoration:none;white-space:nowrap;letter-spacing:.08em;flex-shrink:0">Message</a>
+        </div>
+
+        <!-- Deliverables checklist -->
+        <div style="border-top:1px solid var(--line);padding-top:14px">
+          <div class="eyebrow" style="margin-bottom:12px">Deliverables</div>
+          <div id="deliverables-list"></div>
+        </div>
+      </div>
+
+      <!-- Past trades -->
+      <div class="section-h">Past trades</div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)">
+          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=120&q=80') center/cover;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-weight:500;font-size:13px">Hôtel Le Pigonnet, Aix-en-Provence</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Feb 14–17 · All 5 deliverables approved ✓</div>
+          </div>
+          <span class="deliverable-status approved">Complete</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px">
+          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1535827841776-24afc1e255ac?w=120&q=80') center/cover;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-weight:500;font-size:13px">Maison Papillon, Nice</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Jan 8–11 · All 4 deliverables approved ✓</div>
+          </div>
+          <span class="deliverable-status approved">Complete</span>
+        </div>
+      </div>
+    </div>
+
     <!-- POSTS PANEL -->
     <div class="dash-panel" id="panel-posts">
       <div class="dash-header">
@@ -724,6 +783,26 @@
   </div>
 </div>
 
+<!-- SUBMIT DELIVERABLE MODAL -->
+<div class="modal-overlay" id="modal-submit-deliverable">
+  <div class="modal" style="max-width:460px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400" id="submit-modal-title">Submit deliverable</div>
+      <button class="modal-close" onclick="closeModal('modal-submit-deliverable')" style="position:static">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px">Paste the live link to your post. The owner reviews it and marks it approved — you'll be notified.</p>
+    <div class="field">
+      <label>Post URL</label>
+      <input type="url" id="deliverable-url" placeholder="https://www.instagram.com/p/…">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn-outline" style="flex:1;padding:12px" onclick="closeModal('modal-submit-deliverable')">Cancel</button>
+      <button class="btn-primary" style="flex:2;padding:12px" onclick="submitDeliverable()">Submit for review →</button>
+    </div>
+  </div>
+</div>
+
 <!-- NEW POST MODAL -->
 <div class="modal-overlay" id="modal-new-post">
   <div class="modal" style="max-width:500px;width:90%;padding:28px 24px">
@@ -779,6 +858,11 @@
     <div class="notif-dot"></div>
     Bookings
   </button>
+  <button class="dash-nav-item" style="position:relative" onclick="switchPanel('trades',null);setMobileActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/><line x1="8" y1="17" x2="11" y2="17"/></svg>
+    <div class="notif-dot"></div>
+    Trades
+  </button>
   <button class="dash-nav-item" onclick="switchPanel('stays',null);setMobileActive(this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     Stays
@@ -806,6 +890,66 @@
 <script>
 // Mock creator data for dashboard
 const dashCreator = getCreator('camille');
+
+// ── Active trade data ────────────────────────────────────────
+const ACTIVE_TRADE = {
+  stay: 'Rua Dos Anjos, Lisbon',
+  image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=120&q=80',
+  dates: 'May 8–11 · 3 nights',
+  deliverables: [
+    { id: 'reel',    label: '1 IG Reel',         status: 'submitted', url: 'https://instagram.com/p/example1' },
+    { id: 'stories', label: '3 IG Story frames',  status: 'approved',  url: 'https://instagram.com/p/example2' },
+    { id: 'tiktok',  label: '1 TikTok',           status: 'pending',   url: null },
+    { id: 'feed',    label: '1 IG Feed post',     status: 'pending',   url: null },
+    { id: 'ugc',     label: 'UGC photo pack',     status: 'pending',   url: null },
+  ]
+};
+let activeDeliverableId = null;
+
+function renderTradesPanel() {
+  const done  = ACTIVE_TRADE.deliverables.filter(d => d.status === 'approved').length;
+  const total = ACTIVE_TRADE.deliverables.length;
+  const pct   = Math.round(done / total * 100);
+
+  const bar   = document.getElementById('trade-progress-bar');
+  const label = document.getElementById('trade-progress-label');
+  if (bar)   bar.style.width = pct + '%';
+  if (label) label.textContent = done + ' / ' + total + ' done';
+
+  const list = document.getElementById('deliverables-list');
+  if (!list) return;
+  list.innerHTML = ACTIVE_TRADE.deliverables.map(d => {
+    const canSubmit = d.status === 'pending';
+    const submitBtn = canSubmit
+      ? `<button onclick="openSubmitModal('${d.id}')" style="font-size:10px;font-weight:600;letter-spacing:.08em;padding:6px 12px;background:none;border:1.5px solid var(--line);border-radius:100px;cursor:pointer;color:var(--ink-2);transition:all .15s;flex-shrink:0" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--ink-2)'">Submit link</button>`
+      : '';
+    return `<div class="deliverable-row">
+      <div class="deliverable-label">${d.label}</div>
+      <span class="deliverable-status ${d.status}">${d.status}</span>
+      ${submitBtn}
+    </div>`;
+  }).join('');
+}
+
+function openSubmitModal(deliverableId) {
+  activeDeliverableId = deliverableId;
+  const d = ACTIVE_TRADE.deliverables.find(d => d.id === deliverableId);
+  const title = document.getElementById('submit-modal-title');
+  if (title && d) title.textContent = `Submit — ${d.label}`;
+  const urlInput = document.getElementById('deliverable-url');
+  if (urlInput) urlInput.value = '';
+  openModal('modal-submit-deliverable');
+}
+
+function submitDeliverable() {
+  const url = document.getElementById('deliverable-url').value.trim();
+  if (!url) { showToast('Paste a link to your post first.'); return; }
+  const d = ACTIVE_TRADE.deliverables.find(d => d.id === activeDeliverableId);
+  if (d) { d.status = 'submitted'; d.url = url; }
+  closeModal('modal-submit-deliverable');
+  renderTradesPanel();
+  showToast('✓ Submitted for review — the owner will be notified');
+}
 
 // Simulated booking data for demo
 const DEMO_BOOKINGS = [
@@ -898,9 +1042,10 @@ function switchPanel(panel, clickedBtn) {
     renderChart();
   }
   if (panel === 'bookings') document.getElementById('all-bookings-list').innerHTML = renderRecentBookings();
-  if (panel === 'stays') renderMyStays();
+  if (panel === 'trades')  renderTradesPanel();
+  if (panel === 'stays')   renderMyStays();
   if (panel === 'earnings') renderCreatorPayoutHistory();
-  if (panel === 'posts') renderPostsPanel();
+  if (panel === 'posts')   renderPostsPanel();
   if (panel === 'wishlist') renderCreatorWishlist();
 }
 

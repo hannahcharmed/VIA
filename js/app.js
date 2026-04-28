@@ -19,7 +19,7 @@ function initNav() {
       hamburger.classList.remove('open');
     }
   });
-  // Update avatar
+  // Update avatar + role-aware dashboard link
   const user = VIA_STATE.user;
   if (user) {
     document.querySelectorAll('.nav-avatar').forEach(el => {
@@ -27,8 +27,65 @@ function initNav() {
       el.style.display = 'block';
     });
     document.querySelectorAll('.nav-signin').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.nav-dashboard').forEach(el => el.style.display = '');
+    const dashUrl = user.role === 'owner' ? 'owner.html' : user.role === 'traveler' ? 'traveler.html' : 'dashboard.html';
+    document.querySelectorAll('.nav-dashboard').forEach(el => {
+      el.href = dashUrl;
+      el.style.display = '';
+    });
   }
+  initNotifications();
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────
+const MOCK_NOTIFS = [
+  { icon: '✦', text: 'Your trade with <strong>Rua Dos Anjos</strong> was confirmed', time: '2h ago', url: 'messages.html' },
+  { icon: '€', text: '<strong>Sarah M.</strong> booked Hôtel Le Pigonnet — you earned €119', time: '1d ago', url: 'dashboard.html' },
+  { icon: '✓', text: 'Your IG Reel was <strong>approved</strong> by Marta Rocha', time: '2d ago', url: 'dashboard.html' },
+  { icon: '★', text: 'New trade available: <strong>Casa Mira, Barcelona</strong>', time: '3d ago', url: 'explore.html' },
+];
+
+function initNotifications() {
+  if (!VIA_STATE.user) return;
+  const navRight = document.querySelector('.nav-right');
+  if (!navRight || navRight.querySelector('.nav-bell')) return;
+
+  const bell = document.createElement('button');
+  bell.className = 'nav-bell';
+  bell.setAttribute('aria-label', 'Notifications');
+  bell.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="nav-bell-badge">4</span>`;
+  navRight.insertBefore(bell, navRight.firstChild);
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'notif-dropdown';
+  dropdown.innerHTML = `<div class="notif-dropdown-header"><span>Notifications</span><button onclick="clearAllNotifs()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit">Mark all read</button></div>` +
+    MOCK_NOTIFS.map(n => `<a class="notif-item" href="${n.url}"><div class="notif-item-icon">${n.icon}</div><div><div class="notif-item-text">${n.text}</div><div class="notif-item-time">${n.time}</div></div></a>`).join('');
+  document.body.appendChild(dropdown);
+
+  bell.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = dropdown.classList.toggle('open');
+    bell.classList.toggle('active', open);
+    if (open) {
+      const rect = bell.getBoundingClientRect();
+      dropdown.style.top   = (rect.bottom + 8) + 'px';
+      dropdown.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+      dropdown.style.left  = 'auto';
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+      bell.classList.remove('active');
+    }
+  });
+}
+
+function clearAllNotifs() {
+  const badge = document.querySelector('.nav-bell-badge');
+  if (badge) badge.style.display = 'none';
+  document.querySelectorAll('.notif-item').forEach(el => el.classList.add('read'));
+  showToast('All notifications marked as read');
 }
 
 // ── SCROLL REVEAL ─────────────────────────────────────────────

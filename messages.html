@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
 <style>
-body { background: var(--cream); }
+body { background: white; }
 .messages-layout {
   padding-top: var(--nav-h);
   height: 100svh;
@@ -237,9 +237,28 @@ body { background: var(--cream); }
     </div>
   </div>
 
-  <div class="msg-context-bar">
-    <span>✦</span>
-    <span><strong>Trade confirmed</strong> · 3 nights, May 8–11 · <a href="stay.html?id=1">Rua Dos Anjos, Lisbon</a></span>
+  <div class="msg-context-bar" style="padding:10px 20px 12px">
+    <div class="trade-timeline">
+      <div class="tl-step done">
+        <div class="tl-dot"></div>
+        <span>Applied</span>
+      </div>
+      <div class="tl-connector done"></div>
+      <div class="tl-step done">
+        <div class="tl-dot"></div>
+        <span>Approved</span>
+      </div>
+      <div class="tl-connector active"></div>
+      <div class="tl-step active">
+        <div class="tl-dot"></div>
+        <span>Staying</span>
+      </div>
+      <div class="tl-connector"></div>
+      <div class="tl-step">
+        <div class="tl-dot"></div>
+        <span>Content posted</span>
+      </div>
+    </div>
   </div>
 
   <div class="msg-body" id="msg-body">
