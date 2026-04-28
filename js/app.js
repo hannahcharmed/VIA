@@ -41,6 +41,9 @@ function initScrollReveal() {
   els.forEach(el => obs.observe(el));
 }
 
+// ── CHIP TOGGLE ──────────────────────────────────────────────
+function toggleChip(chip) { chip.classList.toggle('selected'); }
+
 // ── TOAST ─────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg, duration = 3000) {

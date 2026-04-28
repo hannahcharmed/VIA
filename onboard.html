@@ -33,7 +33,7 @@
 .onboard-progress-dot {
   height: 3px;
   flex: 1;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: var(--line);
   transition: background 0.3s;
 }
@@ -92,38 +92,6 @@
 .role-text p { font-size: 13px; line-height: 1.55; color: var(--muted); }
 
 .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-.chip {
-  padding: 8px 14px;
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--ink-2);
-}
-.chip.selected { background: var(--ink); color: white; border-color: var(--ink); }
-
-.field { margin-bottom: 18px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 7px;
-}
-.field input, .field select, .field textarea {
-  border-radius: var(--radius-sm);
-}
-.field .field-help {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.5;
-}
 .handle-input {
   display: flex;
   align-items: center;
@@ -444,9 +412,6 @@ function continueFromRole() {
   else window.location.href = 'auth.html?auto=traveler&next=' + encodeURIComponent('traveler.html');
 }
 
-function toggleChip(chip) {
-  chip.classList.toggle('selected');
-}
 
 function finishCreator() {
   if (VIA_STATE && VIA_STATE.user) {
