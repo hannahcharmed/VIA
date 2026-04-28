@@ -11,7 +11,7 @@
 .apply-layout {
   padding-top: var(--nav-h);
   min-height: 100svh;
-  background: var(--cream);
+  background: white;
 }
 .apply-main {
   max-width: 640px;
@@ -197,7 +197,10 @@
     <div class="field">
       <label>Your pitch</label>
       <textarea id="pitch" rows="6" placeholder="Tell the owner why you're the right match — mention your audience, past similar stays, and why this property resonates..."></textarea>
-      <p class="field-help">300 characters minimum. The owner sees this alongside your creator showcase.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <p class="field-help" style="margin-top:0">300 characters minimum. The owner sees this alongside your creator showcase.</p>
+        <span id="pitch-counter" style="font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;margin-left:8px">0 / 300</span>
+      </div>
     </div>
 
     <div class="field">
@@ -249,6 +252,15 @@
 <script src="js/app.js"></script>
 <script>
 requireAuth();
+
+// ── Pitch character counter ───────────────────────────────────
+const pitchEl   = document.getElementById('pitch');
+const counterEl = document.getElementById('pitch-counter');
+pitchEl.addEventListener('input', () => {
+  const n = pitchEl.value.length;
+  counterEl.textContent = `${n} / 300`;
+  counterEl.style.color = n >= 300 ? 'var(--success)' : 'var(--muted)';
+});
 
 const stayId = parseInt(getParam('stayId') || '1');
 const stay = VIA_DATA.stays.find(s => s.id === stayId) || VIA_DATA.stays[0];
