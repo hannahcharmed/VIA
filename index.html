@@ -701,10 +701,51 @@
     document.getElementById('wl-owner-field').style.display  = type === 'owner'   ? '' : 'none';
   }
 
+  const WL_COPY = {
+    creator: {
+      headline: 'You\'re on the list.',
+      sub: 'We hand-select creators each week. You\'re <strong>#47</strong> in line — we\'ll reach out with a personal invite.',
+      detail: 'Boutique creators get priority. Follow us for early access drops.',
+      cta: 'Follow @via on Instagram',
+      ctaHref: '#',
+    },
+    owner: {
+      headline: 'We\'ll be in touch.',
+      sub: 'Our team personally reviews every property. Expect a call from us within <strong>48 hours</strong>.',
+      detail: 'We only onboard stays that match our curation standards.',
+      cta: 'Learn about VIA for owners',
+      ctaHref: '#',
+    },
+    traveler: {
+      headline: 'You\'re all set.',
+      sub: 'You\'ll be notified the moment a creator you love posts a new stay — or a trade opens up for your region.',
+      detail: 'Travelers don\'t wait long. The list is short.',
+      cta: 'Explore stays now',
+      ctaHref: 'explore.html',
+    },
+  };
+
   function handleWaitlistSubmit(e) {
     e.preventDefault();
     if (!validateForm(e.target)) return;
-    showToast('✓ You\'re on the list — we\'ll be in touch.');
+    const activeTab = document.querySelector('#wl-tabs .tab-btn.active');
+    const role = activeTab ? activeTab.dataset.tab : 'creator';
+    const copy = WL_COPY[role] || WL_COPY.creator;
+
+    // Build confirmation overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:var(--ink);z-index:3000;display:flex;align-items:center;justify-content:center;padding:32px;opacity:0;transition:opacity .3s ease';
+    overlay.innerHTML = `
+      <div style="max-width:400px;width:100%;text-align:center;color:var(--cream)">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--yellow-bright);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:28px">✓</div>
+        <div style="font-family:var(--serif);font-size:32px;font-weight:400;margin-bottom:16px">${copy.headline}</div>
+        <div style="font-size:15px;line-height:1.7;color:rgba(250,246,236,.7);margin-bottom:12px">${copy.sub}</div>
+        <div style="font-size:12px;letter-spacing:.08em;color:rgba(250,246,236,.45);text-transform:uppercase;margin-bottom:36px">${copy.detail}</div>
+        <a href="${copy.ctaHref}" style="display:inline-block;background:var(--yellow-bright);color:var(--ink);font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.06em;padding:14px 28px;border-radius:var(--radius-sm);text-decoration:none;margin-bottom:16px">${copy.cta}</a>
+        <div><button onclick="this.closest('[style]').remove()" style="background:none;border:none;color:rgba(250,246,236,.4);font-size:13px;cursor:pointer;margin-top:8px">← Back to VIA</button></div>
+      </div>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
     e.target.reset();
   }
 </script>

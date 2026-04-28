@@ -1077,6 +1077,18 @@ document.getElementById('map-bottom-sheet').addEventListener('click', e => {
 /* ================================================================
    Grid view
    ================================================================ */
+function skeletonCard() {
+  return `<div style="border-radius:var(--radius-md);overflow:hidden;background:white;border:1px solid var(--line)">
+    <div class="skeleton" style="height:220px;border-radius:0"></div>
+    <div style="padding:14px 16px 16px">
+      <div class="skeleton skeleton-text" style="width:65%;height:14px;margin-bottom:8px;border-radius:6px"></div>
+      <div class="skeleton skeleton-text" style="width:40%;height:11px;margin-bottom:14px;border-radius:6px"></div>
+      <div class="skeleton skeleton-text" style="width:30%;height:11px;border-radius:6px"></div>
+    </div>
+  </div>`;
+}
+
+let _renderGridTimer = null;
 function renderGrid() {
   const searchVal = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
   const sortVal   = document.getElementById('sort-select')?.value || 'default';
@@ -1100,14 +1112,22 @@ function renderGrid() {
   document.getElementById('results-count').textContent = `${results.length} stay${results.length !== 1 ? 's' : ''}`;
 
   const grid = document.getElementById('view-grid');
+  const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+
   if (!results.length) {
     grid.innerHTML = `<div class="no-results"><div style="font-size:48px;margin-bottom:16px;opacity:.3">🔍</div><h3>No stays found</h3><p>Try adjusting your search or filters</p></div>`;
     return;
   }
-  const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
-  grid.innerHTML = results.map(s => renderStayCard(s, getCreator(s.creatorId))).join('');
-  initWishlistButtons();
+
+  // Show skeletons briefly so the grid feels responsive
+  grid.innerHTML = Array(Math.min(results.length, cols * 2)).fill(skeletonCard()).join('');
+  clearTimeout(_renderGridTimer);
+  _renderGridTimer = setTimeout(() => {
+    grid.innerHTML = results.map(s => renderStayCard(s, getCreator(s.creatorId))).join('');
+    initWishlistButtons();
+    initParallax();
+  }, 140);
 }
 
 /* ================================================================
@@ -1213,6 +1233,24 @@ if (creatorParam) {
 }
 
 window.addEventListener('resize', () => { if (currentMode === 'grid') renderGrid(); });
+
+function initParallax() {
+  const imgs = document.querySelectorAll('#view-grid .stay-card-img');
+  if (!imgs.length) return;
+  const update = () => {
+    imgs.forEach(img => {
+      const rect = img.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+      const cy = rect.top + rect.height / 2;
+      const progress = (cy / window.innerHeight - 0.5);
+      img.style.backgroundPositionY = `calc(50% + ${progress * 24}px)`;
+    });
+  };
+  window.removeEventListener('scroll', initParallax._handler);
+  initParallax._handler = update;
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
 </script>
 
 <!-- CREATOR: Post this stay modal -->
