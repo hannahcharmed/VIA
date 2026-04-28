@@ -253,7 +253,7 @@
 
 /* Panels */
 .dash-panel { display: none; }
-.dash-panel.active { display: block; }
+.dash-panel.active { display: block; animation: panelFadeUp 0.22s ease both; }
 
 /* Notification dot */
 .notif-dot {
@@ -1159,6 +1159,22 @@ function closeReview() {
 }
 
 function approveCreator() {
+  if (!currentReviewApp) return;
+  const a = currentReviewApp;
+  // Populate confirmation sheet
+  document.getElementById('ct-creator-name').textContent = a.name;
+  document.getElementById('ct-stay-name').textContent = VIA_DATA.stays[0]?.name || 'Your property';
+  document.getElementById('ct-dates').textContent = `${a.checkin} – ${a.checkout}`;
+  document.getElementById('ct-deliverables').innerHTML = a.deliverables.map(d =>
+    `<span style="display:inline-flex;align-items:center;gap:5px;background:var(--cream);border:1px solid var(--border);font-size:11px;padding:4px 10px;border-radius:100px;margin:3px 3px 0 0">
+      <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/></svg>${d}
+    </span>`
+  ).join('');
+  openModal('modal-trade-terms');
+}
+
+function confirmApprove() {
+  closeModal('modal-trade-terms');
   if (currentReviewApp) currentReviewApp.status = 'approved';
   closeReview();
   showToast('✓ Trade approved — creator notified');
@@ -1260,5 +1276,48 @@ renderApplications = function(filter) {
 };
 setTimeout(initApplicationSwipe, 100);
 </script>
+
+<!-- Trade terms confirmation sheet -->
+<div class="modal-overlay" id="modal-trade-terms">
+  <div class="modal" style="max-width:480px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:4px">Confirm trade terms</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Review before sending the approval to the creator.</div>
+
+    <div style="background:var(--cream);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;border:1px solid var(--border)">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Creator</span>
+          <span id="ct-creator-name" style="font-family:var(--serif);font-size:16px"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Property</span>
+          <span id="ct-stay-name" style="font-size:14px;font-weight:500"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Dates</span>
+          <span id="ct-dates" style="font-size:14px"></span>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px">
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Deliverables</div>
+          <div id="ct-deliverables" style="display:flex;flex-wrap:wrap"></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Deadline to post</span>
+          <span style="font-size:13px;color:var(--ink-2)">14 days after checkout</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(61,122,92,.08);border:1px solid rgba(61,122,92,.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--success);line-height:1.6;margin-bottom:20px">
+      By approving, you confirm the above terms. The creator will be notified and asked to confirm dates.
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1;padding:13px" onclick="closeModal('modal-trade-terms')">Cancel</button>
+      <button class="btn-primary" style="flex:2;padding:13px" onclick="confirmApprove()">Confirm &amp; approve ✦</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

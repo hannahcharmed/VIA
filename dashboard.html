@@ -256,7 +256,7 @@
 
 /* Tabs panel */
 .dash-panel { display: none; }
-.dash-panel.active { display: block; }
+.dash-panel.active { display: block; animation: panelFadeUp 0.22s ease both; }
 
 @media (min-width: 1024px) {
   .dash-layout { display: grid; grid-template-columns: 220px 1fr; }
@@ -1087,6 +1087,30 @@ function renderCreatorWishlist() {
 }
 
 // ── Posts panel ──────────────────────────────────────────
+function makeSparkline(vals, color) {
+  const w = 64, h = 28, pad = 2;
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = max - min || 1;
+  const xs = vals.map((_, i) => pad + (i / (vals.length - 1)) * (w - pad * 2));
+  const ys = vals.map(v => h - pad - ((v - min) / range) * (h - pad * 2));
+  const pts = xs.map((x, i) => `${x},${ys[i]}`).join(' ');
+  const area = `M${xs[0]},${ys[0]} ` + xs.slice(1).map((x, i) => `L${x},${ys[i+1]}`).join(' ') + ` L${xs[xs.length-1]},${h} L${xs[0]},${h} Z`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;flex-shrink:0">
+    <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".25"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#sg)"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${xs[xs.length-1]}" cy="${ys[ys.length-1]}" r="2.5" fill="${color}"/>
+  </svg>`;
+}
+
+function postSparkData(seed) {
+  // Deterministic weekly view trend seeded per post
+  return Array.from({length: 7}, (_, i) => {
+    const s = (seed * 7 + i * 13) % 97;
+    return 20 + s + (i > 4 ? s * 0.5 : 0);
+  });
+}
+
 function renderPostsPanel() {
   // Aggregate stats
   const posts = getPostsByCreator('camille');
@@ -1101,9 +1125,12 @@ function renderPostsPanel() {
 
   const list = document.getElementById('posts-list');
   if (!list) return;
-  list.innerHTML = posts.map(post => {
+  list.innerHTML = posts.map((post, idx) => {
     const stay = getStay(post.stayId);
     const convRate = stay ? ((post.stats.bookings / (post.stats.saves || 1)) * 100).toFixed(1) : '—';
+    const spark = makeSparkline(postSparkData(idx + 1), 'var(--orange)');
+    const trend = postSparkData(idx + 1);
+    const trendUp = trend[trend.length - 1] >= trend[trend.length - 2];
     return `
     <div style="display:flex;gap:14px;padding:14px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:10px">
       <div style="width:72px;height:72px;border-radius:var(--radius-sm);background-image:url('${post.image}');background-size:cover;background-position:center;flex-shrink:0;cursor:pointer" onclick="window.location='stay.html?id=${post.stayId}'"></div>
@@ -1116,7 +1143,11 @@ function renderPostsPanel() {
           <a href="stay.html?id=${post.stayId}" style="font-family:var(--sans);font-size:9px;color:var(--accent);letter-spacing:.08em;white-space:nowrap;flex-shrink:0">View →</a>
         </div>
         <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${post.caption}</div>
-        <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            ${spark}
+            <div style="font-family:var(--sans);font-size:9px;color:${trendUp ? 'var(--success)' : 'var(--error)'};letter-spacing:.06em">${trendUp ? '↑' : '↓'} 7-day</div>
+          </div>
           <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${fmtNum(post.stats.views)}</span> views
           </div>
@@ -1125,9 +1156,6 @@ function renderPostsPanel() {
           </div>
           <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--success);font-size:13px">${post.stats.bookings}</span> bookings
-          </div>
-          <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
-            <span style="color:var(--ink);font-size:13px">${post.stats.revenue}</span> driven
           </div>
           <div style="font-family:var(--sans);font-size:9px;letter-spacing:.06em;color:var(--muted)">
             <span style="color:var(--ink);font-size:13px">${convRate}%</span> conv.
