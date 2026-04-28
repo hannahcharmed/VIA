@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#15110D">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>My Trips — Via</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
@@ -16,25 +19,6 @@
 .dash-sidebar { display: none; }
 .dash-main { padding: 24px 20px 80px; }
 
-.dash-bottom-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--warm-white);
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 200;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.dash-nav-item {
-  flex: 1; padding: 12px 4px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  background: none; border: none; cursor: pointer;
-  color: var(--muted);
-  font-family: 'Inter', -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-  transition: color 0.2s;
-}
-.dash-nav-item svg { width: 20px; height: 20px; }
-.dash-nav-item.active { color: var(--ink); }
 
 .dash-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -338,29 +322,29 @@
   </div><!-- end dash-main -->
 </div>
 
-<!-- Mobile bottom nav -->
-<div class="dash-bottom-nav">
-  <a href="explore.html" class="dash-nav-item" style="text-decoration:none">
+<!-- Mobile bottom tab bar -->
+<nav class="bottom-tab-bar" id="mobile-bottom-nav" aria-label="Main navigation">
+  <button class="bottom-tab-item" data-panel="_explore">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     Explore
-  </a>
-  <button class="dash-nav-item active" onclick="switchPanel('overview',null);setMobileActive(this)">
+  </button>
+  <button class="bottom-tab-item active" data-panel="overview">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     Home
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('trips',null);setMobileActive(this)">
+  <button class="bottom-tab-item" data-panel="trips">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     Trips
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('wishlist',null);setMobileActive(this)">
+  <button class="bottom-tab-item" data-panel="wishlist">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     Saved
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('account',null);setMobileActive(this)">
+  <button class="bottom-tab-item" data-panel="account">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     Account
   </button>
-</div>
+</nav>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
@@ -550,6 +534,11 @@ if (user) {
 }
 
 renderOverview();
+initBottomTabBar('mobile-bottom-nav', switchPanel);
+function setMobileActive(btn) {
+  document.querySelectorAll('#mobile-bottom-nav .bottom-tab-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
 </script>
 </body>
 </html>

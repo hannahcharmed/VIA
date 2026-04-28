@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#15110D">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Owner Portal — Via</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/via.css">
@@ -16,35 +19,6 @@
 .dash-sidebar { display: none; }
 .dash-main { padding: 24px 20px 80px; }
 
-/* Mobile bottom nav */
-.dash-bottom-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--warm-white);
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 200;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.dash-nav-item {
-  flex: 1;
-  padding: 12px 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-.dash-nav-item svg { width: 20px; height: 20px; }
-.dash-nav-item.active { color: var(--ink); }
 
 /* Header */
 .dash-header {
@@ -385,7 +359,7 @@
     overflow-y: auto;
   }
   .dash-main { padding: 32px 48px 60px; }
-  .dash-bottom-nav { display: none; }
+
   .dash-stats-grid { grid-template-columns: repeat(4, 1fr); }
 }
 @media (min-width: 768px) {
@@ -851,30 +825,30 @@
   </div><!-- end dash-main -->
 </div>
 
-<!-- Mobile bottom nav -->
-<div class="dash-bottom-nav">
-  <button class="dash-nav-item active" onclick="switchPanel('overview',null);setMobileActive(this)">
+<!-- Mobile bottom tab bar -->
+<nav class="bottom-tab-bar" id="mobile-bottom-nav" aria-label="Main navigation">
+  <button class="bottom-tab-item active" data-panel="overview">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     Home
   </button>
-  <button class="dash-nav-item" style="position:relative" onclick="switchPanel('applications',null);setMobileActive(this)">
+  <button class="bottom-tab-item" data-panel="applications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    <div class="notif-dot"></div>
+    <span class="bottom-tab-badge">7</span>
     Applicants
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('properties',null);setMobileActive(this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-    Properties
+  <button class="bottom-tab-item" data-panel="bookings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+    Bookings
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('creators',null);setMobileActive(this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    Creators
+  <button class="bottom-tab-item" data-panel="revenue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Revenue
   </button>
-  <button class="dash-nav-item" onclick="switchPanel('settings',null);setMobileActive(this)">
+  <button class="bottom-tab-item" data-panel="settings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     Account
   </button>
-</div>
+</nav>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
@@ -1129,7 +1103,7 @@ function renderApplications(filter) {
   const el = document.getElementById('applications-list');
   if (!list.length) { el.innerHTML = '<p style="color:var(--muted);font-size:14px;padding:20px 0">No applications in this category.</p>'; return; }
   el.innerHTML = list.map(a => `
-    <div class="creator-row" onclick="openReview('${a.id}')" style="cursor:pointer;margin-bottom:10px;padding:16px;background:white;border:1px solid var(--line);border-radius:var(--radius-md)">
+    <div class="creator-row application-card" data-id="${a.id}" onclick="openReview('${a.id}')" style="cursor:pointer;margin-bottom:10px;padding:16px;background:white;border:1px solid var(--line);border-radius:var(--radius-md)">
       <div class="creator-av" style="background-image:url('${a.avatar}')"></div>
       <div class="creator-info" style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
@@ -1244,10 +1218,47 @@ if (user) {
   }
 }
 
+if (getParam('onboarded') === '1') {
+  setTimeout(() => showToast('✓ Property live — welcome to Via!', 4000), 600);
+}
 // Initial render
 document.getElementById('recent-bookings-list').innerHTML = renderBookings('confirmed');
 renderChart();
 renderTopCreators();
+
+// Wire bottom tab bar
+initBottomTabBar('mobile-bottom-nav', switchPanel);
+
+function setMobileActive(btn) {
+  document.querySelectorAll('#mobile-bottom-nav .bottom-tab-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+// Swipe-to-act on application cards
+function initApplicationSwipe() {
+  document.querySelectorAll('.application-card[data-id]').forEach(card => {
+    const id = parseInt(card.dataset.id);
+    initSwipeCard(card, {
+      onApprove: () => {
+        const app = APPLICATIONS.find(a => a.id === id);
+        if (app) { app.status = 'approved'; renderApplications('new'); }
+        showToast('✓ Creator approved — they\'ll be notified');
+      },
+      onDecline: () => {
+        const app = APPLICATIONS.find(a => a.id === id);
+        if (app) { app.status = 'declined'; renderApplications('new'); }
+        showToast('Application declined');
+      }
+    });
+  });
+}
+// Re-init swipe after each render
+const _origRenderApps = renderApplications;
+renderApplications = function(filter) {
+  _origRenderApps(filter);
+  setTimeout(initApplicationSwipe, 50);
+};
+setTimeout(initApplicationSwipe, 100);
 </script>
 </body>
 </html>

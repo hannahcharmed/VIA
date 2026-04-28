@@ -1671,3 +1671,265 @@ textarea { resize: vertical; min-height: 100px; }
 .deliverable-status.pending { background: var(--sand-soft); color: var(--muted); }
 .deliverable-status.submitted { background: var(--yellow-soft); color: var(--orange-deep); }
 .deliverable-status.approved { background: #E6F4EE; color: var(--success); }
+
+/* ================================================================
+   BOTTOM TAB BAR — shared across creator / owner / traveler
+   ================================================================ */
+.bottom-tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-tab-item {
+  flex: 1;
+  padding: 10px 4px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  text-decoration: none;
+  position: relative;
+}
+.bottom-tab-item svg { width: 20px; height: 20px; transition: transform 0.2s; }
+.bottom-tab-item:active svg { transform: scale(0.88); }
+.bottom-tab-item.active { color: var(--ink); }
+.bottom-tab-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 0 0 2px 2px;
+}
+.bottom-tab-badge {
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 18px);
+  background: var(--orange);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .bottom-tab-bar { display: none; }
+}
+
+/* ================================================================
+   SWIPE-TO-ACT CARDS
+   ================================================================ */
+.swipe-card-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+}
+.swipe-card-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px;
+  gap: 12px;
+  pointer-events: none;
+}
+.swipe-reveal-approve {
+  background: linear-gradient(to left, #E6F4EE, transparent);
+}
+.swipe-reveal-decline {
+  background: linear-gradient(to right, #FDECEA, transparent);
+  justify-content: flex-start;
+}
+.swipe-reveal-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.swipe-reveal-label.approve { color: var(--success); }
+.swipe-reveal-label.decline { color: var(--error); }
+.swipe-card-inner {
+  background: var(--warm-white);
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  cursor: grab;
+}
+.swipe-card-inner.dragging { transition: none; cursor: grabbing; }
+
+/* ================================================================
+   ONBOARDING SUCCESS OVERLAY
+   ================================================================ */
+.onboard-success {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.onboard-success.show {
+  opacity: 1;
+  pointer-events: all;
+}
+.onboard-success-check {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--yellow-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  transform: scale(0.5);
+  transition: transform 0.5s cubic-bezier(.34,1.56,.64,1) 0.2s;
+}
+.onboard-success.show .onboard-success-check { transform: scale(1); }
+.onboard-success-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 400;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.onboard-success-title em { font-style: italic; color: var(--orange); }
+.onboard-success-sub {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+}
+.onboard-success-via {
+  position: absolute;
+  font-family: var(--serif);
+  font-size: clamp(120px, 30vw, 240px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.025);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ================================================================
+   NAV BELL + NOTIFICATION DROPDOWN
+   ================================================================ */
+.nav-bell {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-bell:hover, .nav-bell.active { background: var(--cream); color: var(--ink); }
+.nav-bell-badge {
+  position: absolute;
+  top: 4px; right: 4px;
+  background: var(--orange);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notif-dropdown {
+  position: fixed;
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  width: min(360px, calc(100vw - 16px));
+  z-index: 600;
+  display: none;
+  overflow: hidden;
+}
+.notif-dropdown.open { display: block; animation: fadeUp 0.2s forwards; }
+.notif-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--cream); }
+.notif-item.read { opacity: 0.5; }
+.notif-item-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--yellow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.notif-item-text { font-size: 13px; line-height: 1.5; color: var(--ink); }
+.notif-item-time {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  font-family: var(--sans);
+}
+.notif-dot {
+  position: absolute;
+  top: 8px; right: calc(50% - 16px);
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+  pointer-events: none;
+}

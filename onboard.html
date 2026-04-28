@@ -414,19 +414,13 @@ function continueFromRole() {
 
 
 function finishCreator() {
-  if (VIA_STATE && VIA_STATE.user) {
-    window.location.href = 'dashboard.html';
-  } else {
-    window.location.href = 'auth.html?auto=creator&next=dashboard.html';
-  }
+  const name = document.getElementById('creator-name')?.value || 'Creator';
+  showOnboardSuccess(name, 'creator profile', 'auth.html?auto=creator&next=dashboard.html?onboarded=1');
 }
 
 function finishOwner() {
-  if (VIA_STATE && VIA_STATE.user) {
-    window.location.href = 'owner.html';
-  } else {
-    window.location.href = 'auth.html?auto=owner&next=owner.html';
-  }
+  const name = document.getElementById('owner-name')?.value || 'Owner';
+  showOnboardSuccess(name, 'property listing', 'auth.html?auto=owner&next=owner.html?onboarded=1');
 }
 </script>
 </body>
