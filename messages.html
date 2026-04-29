@@ -324,11 +324,25 @@ if (role === 'owner') {
   document.getElementById('other-name').textContent = 'Camille Laurent · @camille';
 }
 
+const OWNER_REPLIES = [
+  'Thanks for the message! Looking forward to hosting you.',
+  'Perfect — I'll make sure everything is ready for your arrival.',
+  'Noted! Feel free to reach out if you have any questions before your stay.',
+  'Great to hear from you. Your content idea sounds wonderful for the property.',
+  'Confirmed. I'll send over the check-in details a few days before.',
+];
+let _replyIdx = 0;
+
 function sendMsg() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
   if (!text) return;
   const body = document.getElementById('msg-body');
+
+  // Dismiss intro template if it's still showing
+  const tpl = document.getElementById('intro-template-banner');
+  if (tpl) tpl.remove();
+
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble me';
   bubble.textContent = text;
@@ -336,14 +350,14 @@ function sendMsg() {
   input.value = '';
   body.scrollTop = body.scrollHeight;
 
-  // Simulate reply after short delay
   setTimeout(() => {
     const reply = document.createElement('div');
     reply.className = 'msg-bubble them';
-    reply.textContent = 'Thanks for the message! I'll get back to you shortly.';
+    reply.textContent = OWNER_REPLIES[_replyIdx % OWNER_REPLIES.length];
+    _replyIdx++;
     body.appendChild(reply);
     body.scrollTop = body.scrollHeight;
-  }, 1800);
+  }, 1600 + Math.random() * 800);
 }
 
 function sendQuickReply(chip) {
@@ -354,6 +368,23 @@ function sendQuickReply(chip) {
 document.getElementById('msg-input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
 });
+
+// Pre-populate intro template when opened right after trade approval
+const isNewConversation = new URLSearchParams(location.search).get('new') === '1';
+if (isNewConversation) {
+  const userName = VIA_STATE.user ? VIA_STATE.user.name.split(' ')[0] : 'Camille';
+  const input = document.getElementById('msg-input');
+  input.value = `Hi! I'm ${userName} — just got the approval for our trade at Rua Dos Anjos. So excited to be working together. I was thinking May 8–11 works well — would love to chat about the content angles and anything you'd like me to highlight. Thanks again!`;
+  // Show a dismissible banner above input
+  const bar = document.getElementById('msg-input').closest('.msg-input-bar');
+  const banner = document.createElement('div');
+  banner.id = 'intro-template-banner';
+  banner.style.cssText = 'padding:8px 16px;background:rgba(240,221,140,.25);border-top:1px solid rgba(240,221,140,.6);font-size:11px;color:var(--ink-2);display:flex;align-items:center;justify-content:space-between;gap:8px';
+  banner.innerHTML = `<span>✦ Intro template — edit before sending</span><button onclick="document.getElementById('intro-template-banner').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1">×</button>`;
+  bar.parentNode.insertBefore(banner, bar);
+  input.focus();
+  input.setSelectionRange(0, 0);
+}
 
 // Scroll to bottom on load
 document.getElementById('msg-body').scrollTop = 9999;

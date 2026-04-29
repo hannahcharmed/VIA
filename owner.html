@@ -1037,10 +1037,16 @@ function renderPayoutHistory() {
 }
 
 function switchPanel(panel, clickedBtn) {
+  const panelEl = document.getElementById(`panel-${panel}`);
+  if (!panelEl) return;
   document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`panel-${panel}`).classList.add('active');
+  panelEl.classList.add('active');
   document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
   if (clickedBtn) clickedBtn.classList.add('active');
+  // Sync sidebar active state when called from bottom tab
+  document.querySelectorAll(`.sidebar-nav-item[onclick*="'${panel}'"]`).forEach(b => b.classList.add('active'));
+  // Scroll to top of content area on mobile
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (panel === 'overview') {
     document.getElementById('recent-bookings-list').innerHTML = renderBookings('confirmed');
@@ -1177,8 +1183,9 @@ function confirmApprove() {
   closeModal('modal-trade-terms');
   if (currentReviewApp) currentReviewApp.status = 'approved';
   closeReview();
-  showToast('✓ Trade approved — creator notified');
+  showToast('✓ Trade approved — opening message thread');
   renderApplications('new');
+  setTimeout(() => { window.location.href = 'messages.html?new=1'; }, 900);
 }
 
 function declineCreator() {
@@ -1252,8 +1259,8 @@ function setMobileActive(btn) {
 
 // Swipe-to-act on application cards
 function initApplicationSwipe() {
-  document.querySelectorAll('.application-card[data-id]').forEach(card => {
-    const id = parseInt(card.dataset.id);
+  document.querySelectorAll('.application-card[data-id]:not(.swipe-card-inner)').forEach(card => {
+    const id = card.dataset.id; // string ID e.g. 'a1'
     initSwipeCard(card, {
       onApprove: () => {
         const app = APPLICATIONS.find(a => a.id === id);
