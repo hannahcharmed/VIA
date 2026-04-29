@@ -410,6 +410,11 @@
       Applications
       <span style="margin-left:auto;background:var(--orange);color:white;font-size:9px;padding:2px 6px;border-radius:20px">7</span>
     </button>
+    <button class="sidebar-nav-item" onclick="switchPanel('tracker',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Tracker
+      <span style="margin-left:auto;background:var(--orange);color:white;font-size:9px;padding:2px 6px;border-radius:20px">1</span>
+    </button>
     <button class="sidebar-nav-item" onclick="switchPanel('properties',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Properties
@@ -695,6 +700,40 @@
       </div>
     </div>
 
+    <!-- Deliverable Tracker panel -->
+    <div class="dash-panel" id="panel-tracker">
+      <div class="dash-header">
+        <div class="dash-greeting">Deliverable Tracker</div>
+        <a href="messages.html" class="btn-outline" style="padding:9px 18px;text-decoration:none;font-size:12px">Message creator →</a>
+      </div>
+
+      <!-- Active trade card -->
+      <div id="tracker-active-trade" style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:20px;margin-bottom:24px;box-shadow:var(--shadow-sm)">
+        <!-- populated by renderTracker() -->
+      </div>
+
+      <!-- Past completed trades -->
+      <div class="section-h" style="margin-bottom:12px">Completed</div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)">
+          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=80&q=80') center/cover;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500">Camille Laurent · Hôtel Le Pigonnet, Aix</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Feb 14–17 · All 5 deliverables approved ✓</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--success);background:rgba(61,122,92,.1);padding:4px 10px;border-radius:100px">Complete</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px">
+          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1535827841776-24afc1e255ac?w=80&q=80') center/cover;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500">Marcos Rivera · Maison Papillon, Nice</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Jan 8–11 · All 4 deliverables approved ✓</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--success);background:rgba(61,122,92,.1);padding:4px 10px;border-radius:100px">Complete</span>
+        </div>
+      </div>
+    </div>
+
     <!-- New trade panel -->
     <div class="dash-panel" id="panel-new-trade">
       <div class="dash-header">
@@ -836,9 +875,10 @@
     <span class="bottom-tab-badge">7</span>
     Applicants
   </button>
-  <button class="bottom-tab-item" data-panel="bookings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
-    Bookings
+  <button class="bottom-tab-item" data-panel="tracker">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span class="bottom-tab-badge">1</span>
+    Tracker
   </button>
   <button class="bottom-tab-item" data-panel="revenue">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -1036,6 +1076,75 @@ function renderPayoutHistory() {
     </div>`).join('');
 }
 
+// ── Deliverable Tracker data ──────────────────────────────────
+const ACTIVE_TRACKER = {
+  creator: { name: 'Camille Laurent', handle: '@camille', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80' },
+  stay: 'Hôtel Le Pigonnet',
+  dates: 'May 8–11 · 3 nights',
+  deliverables: [
+    { id: 't1', label: '1 IG Reel',        status: 'approved',  url: 'https://instagram.com/p/ex1', submittedAt: 'May 9', likes: '14.2K' },
+    { id: 't2', label: '3 IG Story frames', status: 'submitted', url: 'https://instagram.com/p/ex2', submittedAt: 'May 10', likes: null },
+    { id: 't3', label: '1 TikTok',          status: 'pending',   url: null,                           due: 'May 22' },
+    { id: 't4', label: '1 IG Feed post',    status: 'pending',   url: null,                           due: 'May 22' },
+    { id: 't5', label: 'UGC photo pack',    status: 'pending',   url: null,                           due: 'May 25' },
+  ]
+};
+
+const TRACKER_STATUS_ICON = { approved: '✓', submitted: '◐', pending: '○' };
+const TRACKER_STATUS_COLOR = { approved: 'var(--success)', submitted: 'var(--orange)', pending: 'var(--muted)' };
+
+function renderTracker() {
+  const t = ACTIVE_TRACKER;
+  const approved = t.deliverables.filter(d => d.status === 'approved').length;
+  const submitted = t.deliverables.filter(d => d.status === 'submitted').length;
+  const total = t.deliverables.length;
+  const pct = Math.round((approved + submitted * 0.5) / total * 100);
+
+  const el = document.getElementById('tracker-active-trade');
+  if (!el) return;
+  el.innerHTML = `
+    <!-- Creator header -->
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+      <div style="width:48px;height:48px;border-radius:50%;background:url('${t.creator.avatar}') center/cover;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:15px">${t.creator.name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px">${t.creator.handle} · ${t.stay} · ${t.dates}</div>
+      </div>
+      <a href="messages.html" style="font-size:10px;font-weight:700;padding:7px 14px;background:var(--yellow-bright);color:var(--ink);border-radius:100px;text-decoration:none;white-space:nowrap;flex-shrink:0;letter-spacing:.08em">Message</a>
+    </div>
+    <!-- Progress -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="flex:1;height:5px;background:var(--line);border-radius:5px;overflow:hidden">
+        <div style="height:100%;background:linear-gradient(90deg,var(--success),var(--orange));width:${pct}%;transition:width .4s"></div>
+      </div>
+      <span style="font-size:11px;color:var(--ink-2);font-weight:600;white-space:nowrap;flex-shrink:0">${approved} approved · ${submitted} in review · ${total - approved - submitted} pending</span>
+    </div>
+    <!-- Deliverable rows -->
+    <div style="border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+      ${t.deliverables.map(d => `
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:24px;height:24px;border-radius:50%;background:${d.status === 'approved' ? 'rgba(61,122,92,.12)' : d.status === 'submitted' ? 'rgba(232,165,116,.15)' : 'var(--cream)'};display:flex;align-items:center;justify-content:center;font-size:12px;color:${TRACKER_STATUS_COLOR[d.status]};flex-shrink:0;font-weight:700">${TRACKER_STATUS_ICON[d.status]}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">${d.label}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px">${d.status === 'approved' ? `Approved · ${d.submittedAt}${d.likes ? ` · ${d.likes} likes` : ''}` : d.status === 'submitted' ? `Submitted ${d.submittedAt} — awaiting your review` : `Due ${d.due}`}</div>
+          </div>
+          ${d.status === 'submitted' ? `
+            <div style="display:flex;gap:6px;flex-shrink:0">
+              <a href="${d.url}" target="_blank" style="font-size:10px;font-weight:700;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;text-decoration:none;color:var(--ink-2);white-space:nowrap">View ↗</a>
+              <button onclick="ownerApproveDeliverable('${d.id}')" style="font-size:10px;font-weight:700;padding:6px 12px;background:var(--ink);color:white;border:none;border-radius:100px;cursor:pointer;white-space:nowrap">Approve</button>
+            </div>` : d.status === 'approved' ? `
+            <a href="${d.url}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;white-space:nowrap;flex-shrink:0">View ↗</a>` : ''}
+        </div>`).join('')}
+    </div>`;
+}
+
+function ownerApproveDeliverable(id) {
+  const d = ACTIVE_TRACKER.deliverables.find(d => d.id === id);
+  if (d) d.status = 'approved';
+  renderTracker();
+  showToast('✓ Deliverable approved — creator notified');
+}
+
 function switchPanel(panel, clickedBtn) {
   const panelEl = document.getElementById(`panel-${panel}`);
   if (!panelEl) return;
@@ -1059,6 +1168,7 @@ function switchPanel(panel, clickedBtn) {
   if (panel === 'revenue') renderPayoutHistory();
   if (panel === 'applications') renderApplications('new');
   if (panel === 'new-trade') renderTradePropertySelect();
+  if (panel === 'tracker') renderTracker();
 }
 
 function filterBookings(filter, btn) {
