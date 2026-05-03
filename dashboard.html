@@ -674,23 +674,8 @@
 
       <!-- Past trades -->
       <div class="section-h">Past trades</div>
-      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)">
-          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=120&q=80') center/cover;flex-shrink:0"></div>
-          <div style="flex:1">
-            <div style="font-weight:500;font-size:13px">Hôtel Le Pigonnet, Aix-en-Provence</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Feb 14–17 · All 5 deliverables approved ✓</div>
-          </div>
-          <span class="deliverable-status approved">Complete</span>
-        </div>
-        <div style="display:flex;gap:12px;align-items:center;padding:14px 16px">
-          <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('https://images.unsplash.com/photo-1535827841776-24afc1e255ac?w=120&q=80') center/cover;flex-shrink:0"></div>
-          <div style="flex:1">
-            <div style="font-weight:500;font-size:13px">Maison Papillon, Nice</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Jan 8–11 · All 4 deliverables approved ✓</div>
-          </div>
-          <span class="deliverable-status approved">Complete</span>
-        </div>
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)" id="past-trades-list">
+        <!-- rendered by renderPastTrades() -->
       </div>
     </div>
 
@@ -729,6 +714,36 @@
 
   </div><!-- end dash-main -->
 </div><!-- end dash-layout -->
+
+<!-- RATE STAY MODAL -->
+<div class="modal-overlay" id="modal-rate-stay">
+  <div class="modal" style="max-width:440px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div id="rate-stay-img" style="width:72px;height:56px;border-radius:var(--radius-sm);background-size:cover;background-position:center;margin:0 auto 12px"></div>
+      <div style="font-family:var(--serif);font-size:20px;font-weight:400" id="rate-stay-name">Hôtel Le Pigonnet</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px" id="rate-stay-dates">Feb 14–17</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;text-align:center;margin-bottom:4px">How was your experience?</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px">Your rating appears on the stay's public page.</div>
+    <div class="star-rating" id="rate-stay-stars">
+      <button class="star-rating-btn" data-val="1">★</button>
+      <button class="star-rating-btn" data-val="2">★</button>
+      <button class="star-rating-btn" data-val="3">★</button>
+      <button class="star-rating-btn" data-val="4">★</button>
+      <button class="star-rating-btn" data-val="5">★</button>
+    </div>
+    <div style="font-family:var(--sans);font-size:11px;text-align:center;color:var(--muted);height:16px;margin-bottom:14px" id="rate-stay-label"></div>
+    <div class="form-group" style="margin-bottom:20px">
+      <label>Leave a note <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <textarea id="rate-stay-comment" style="min-height:72px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);width:100%;outline:none;resize:none" placeholder="Stunning property — the breakfast alone is worth the trip…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1;padding:13px" onclick="closeModal('modal-rate-stay')">Cancel</button>
+      <button class="btn-primary" style="flex:2;padding:13px" id="rate-stay-submit" onclick="submitStayRating()" disabled>Submit rating</button>
+    </div>
+  </div>
+</div>
 
 <!-- DEAL LINK MODAL -->
 <div class="modal-overlay" id="modal-deal-link">
@@ -925,13 +940,83 @@ function submitDeliverable() {
   showToast('✓ Submitted for review — the owner will be notified');
 }
 
+// ── Past trades + rating ─────────────────────────────────────
+const PAST_TRADES = [
+  { id: 'pt1', stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=120&q=80', dates: 'Feb 14–17', deliverables: 5, rating: null },
+  { id: 'pt2', stayName: 'Maison Papillon', stayLocation: 'Nice', image: 'https://images.unsplash.com/photo-1535827841776-24afc1e255ac?w=120&q=80', dates: 'Jan 8–11', deliverables: 4, rating: 5 },
+];
+let activeRateTrade = null;
+
+const STAR_LABELS = ['', 'Disappointing', 'Below expectations', 'Good stay', 'Really great', 'Absolutely loved it'];
+
+function renderPastTrades() {
+  const el = document.getElementById('past-trades-list');
+  if (!el) return;
+  el.innerHTML = PAST_TRADES.map((t, i) => `
+    <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;${i < PAST_TRADES.length - 1 ? 'border-bottom:1px solid var(--line)' : ''}">
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:url('${t.image}') center/cover;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-weight:500;font-size:13px">${t.stayName}, ${t.stayLocation}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${t.dates} · All ${t.deliverables} deliverables approved ✓</div>
+        ${t.rating ? `<div style="font-size:12px;color:var(--orange);margin-top:3px">${'★'.repeat(t.rating)}<span style="color:var(--muted);font-size:10px;margin-left:4px">You rated this stay</span></div>` : ''}
+      </div>
+      ${t.rating
+        ? `<span style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--success);background:rgba(61,122,92,.1);padding:4px 10px;border-radius:100px;flex-shrink:0">Rated ✓</span>`
+        : `<button onclick="openRateStay('${t.id}')" style="font-size:10px;font-weight:700;padding:7px 14px;background:var(--yellow-bright);color:var(--ink);border:none;border-radius:100px;cursor:pointer;white-space:nowrap;letter-spacing:.06em;flex-shrink:0">Rate stay ★</button>`
+      }
+    </div>`).join('');
+}
+
+function openRateStay(tradeId) {
+  activeRateTrade = PAST_TRADES.find(t => t.id === tradeId);
+  if (!activeRateTrade) return;
+  document.getElementById('rate-stay-name').textContent = activeRateTrade.stayName + ', ' + activeRateTrade.stayLocation;
+  document.getElementById('rate-stay-dates').textContent = activeRateTrade.dates;
+  document.getElementById('rate-stay-img').style.backgroundImage = `url('${activeRateTrade.image}')`;
+  document.getElementById('rate-stay-comment').value = '';
+  document.getElementById('rate-stay-label').textContent = '';
+  document.getElementById('rate-stay-submit').disabled = true;
+  // Reset stars
+  document.querySelectorAll('#rate-stay-stars .star-rating-btn').forEach(b => b.classList.remove('lit'));
+  openModal('modal-rate-stay');
+}
+
+// Wire star hover/click
+document.querySelectorAll('#rate-stay-stars .star-rating-btn').forEach((btn, idx, all) => {
+  btn.addEventListener('click', () => {
+    const val = parseInt(btn.dataset.val);
+    all.forEach((b, i) => b.classList.toggle('lit', i < val));
+    document.getElementById('rate-stay-label').textContent = STAR_LABELS[val];
+    document.getElementById('rate-stay-submit').disabled = false;
+  });
+  btn.addEventListener('mouseenter', () => {
+    const val = parseInt(btn.dataset.val);
+    all.forEach((b, i) => b.style.color = i < val ? 'var(--yellow-bright)' : 'var(--line)');
+    document.getElementById('rate-stay-label').textContent = STAR_LABELS[val];
+  });
+  btn.addEventListener('mouseleave', () => {
+    const lit = document.querySelectorAll('#rate-stay-stars .star-rating-btn.lit').length;
+    all.forEach((b, i) => b.style.color = '');
+    document.getElementById('rate-stay-label').textContent = lit ? STAR_LABELS[lit] : '';
+  });
+});
+
+function submitStayRating() {
+  const stars = document.querySelectorAll('#rate-stay-stars .star-rating-btn.lit').length;
+  if (!stars || !activeRateTrade) return;
+  activeRateTrade.rating = stars;
+  closeModal('modal-rate-stay');
+  renderPastTrades();
+  showToast(`✓ ${stars}-star review submitted — thank you!`);
+}
+
 // Simulated booking data for demo
 const DEMO_BOOKINGS = [
-  { id: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Sarah M.', nights: 3, total: 1194, currency: '€', commission: 119, checkIn: '2026-03-20', status: 'confirmed' },
-  { id: 2, stayName: 'Hôtel Richer', stayLocation: 'Paris, France', stayImage: VIA_DATA.stays[1].images[0], guestName: 'Tom K.', nights: 2, total: 864, currency: '€', commission: 86, checkIn: '2026-03-28', status: 'confirmed' },
-  { id: 3, stayName: 'Maison Papillon', stayLocation: 'Nice, France', stayImage: VIA_DATA.stays[5].images[0], guestName: 'Isabelle F.', nights: 4, total: 1192, currency: '€', commission: 119, checkIn: '2026-04-05', status: 'pending' },
-  { id: 4, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence', stayImage: VIA_DATA.stays[0].images[0], guestName: 'James C.', nights: 3, total: 1194, currency: '€', commission: 119, checkIn: '2026-02-10', status: 'completed' },
-  { id: 5, stayName: 'The Hoxton Shoreditch', stayLocation: 'London, UK', stayImage: VIA_DATA.stays[6].images[0], guestName: 'Mei L.', nights: 2, total: 369, currency: '£', commission: 37, checkIn: '2026-01-22', status: 'completed' },
+  { id: 1, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence', stayImage: VIA_DATA.stays[0].images[0], guestName: 'Sarah M.', nights: 3, total: 1194, currency: '€', commission: 119, checkIn: '2026-03-20', status: 'confirmed',  payoutStatus: 'processing' },
+  { id: 2, stayName: 'Hôtel Richer', stayLocation: 'Paris, France', stayImage: VIA_DATA.stays[1].images[0], guestName: 'Tom K.', nights: 2, total: 864, currency: '€', commission: 86, checkIn: '2026-03-28', status: 'confirmed',  payoutStatus: 'in_review' },
+  { id: 3, stayName: 'Maison Papillon', stayLocation: 'Nice, France', stayImage: VIA_DATA.stays[5].images[0], guestName: 'Isabelle F.', nights: 4, total: 1192, currency: '€', commission: 119, checkIn: '2026-04-05', status: 'pending',    payoutStatus: 'in_review' },
+  { id: 4, stayName: 'Hôtel Le Pigonnet', stayLocation: 'Aix-en-Provence', stayImage: VIA_DATA.stays[0].images[0], guestName: 'James C.', nights: 3, total: 1194, currency: '€', commission: 119, checkIn: '2026-02-10', status: 'completed', payoutStatus: 'paid' },
+  { id: 5, stayName: 'The Hoxton Shoreditch', stayLocation: 'London, UK', stayImage: VIA_DATA.stays[6].images[0], guestName: 'Mei L.', nights: 2, total: 369, currency: '£', commission: 37, checkIn: '2026-01-22', status: 'completed',  payoutStatus: 'paid' },
 ];
 
 const CHART_DATA = [
@@ -1020,7 +1105,7 @@ function switchPanel(panel, clickedBtn) {
     renderChart();
   }
   if (panel === 'bookings') document.getElementById('all-bookings-list').innerHTML = renderRecentBookings();
-  if (panel === 'trades')  renderTradesPanel();
+  if (panel === 'trades')  { renderTradesPanel(); renderPastTrades(); }
   if (panel === 'stays')   renderMyStays();
   if (panel === 'earnings') renderCreatorPayoutHistory();
   if (panel === 'posts')   renderPostsPanel();
@@ -1054,27 +1139,63 @@ function updatePeriod() {
 }
 
 // ── Payout history ───────────────────────────────────────
-const CREATOR_PAYOUTS = [
-  { date: 'Mar 1, 2026', amount: '€1,280', ref: 'PO-002841' },
-  { date: 'Feb 1, 2026', amount: '€960',   ref: 'PO-002714' },
-  { date: 'Jan 1, 2026', amount: '€840',   ref: 'PO-002601' },
-  { date: 'Dec 1, 2025', amount: '€1,440', ref: 'PO-002488' },
+const PAYOUT_STEPS = [
+  { key: 'in_review',  label: 'In review' },
+  { key: 'processing', label: 'Processing' },
+  { key: 'paid',       label: 'Paid' },
 ];
+
+function payoutStepIndex(status) {
+  return PAYOUT_STEPS.findIndex(s => s.key === status);
+}
+
+function renderPayoutStatusBar(status) {
+  const active = payoutStepIndex(status);
+  return `<div style="display:flex;align-items:center;gap:0;margin-top:8px">
+    ${PAYOUT_STEPS.map((s, i) => {
+      const done    = i < active;
+      const current = i === active;
+      const dotBg   = done ? 'var(--success)' : current ? 'var(--orange)' : 'var(--line)';
+      const labelColor = done ? 'var(--success)' : current ? 'var(--orange)' : 'var(--muted)';
+      const lineBg  = i < PAYOUT_STEPS.length - 1 ? (done ? 'var(--success)' : 'var(--line)') : null;
+      return `<div style="display:flex;flex-direction:column;align-items:center;flex:${i < PAYOUT_STEPS.length - 1 ? '1' : '0'}">
+        <div style="display:flex;align-items:center;width:100%">
+          <div style="width:10px;height:10px;border-radius:50%;background:${dotBg};flex-shrink:0;transition:background .2s"></div>
+          ${i < PAYOUT_STEPS.length - 1 ? `<div style="flex:1;height:2px;background:${lineBg};transition:background .2s"></div>` : ''}
+        </div>
+        <div style="font-size:9px;font-weight:${current?'700':'400'};color:${labelColor};margin-top:3px;white-space:nowrap">${s.label}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderCreatorPayoutHistory() {
   const el = document.getElementById('creator-payout-history');
   if (!el) return;
-  el.innerHTML = CREATOR_PAYOUTS.map(p =>
-    `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px">
-      <div>
-        <div>${p.date}</div>
-        <div style="font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:2px">${p.ref}</div>
+  const bookings = [...DEMO_BOOKINGS, ...VIA_STATE.bookings.map(b => ({
+    ...b, commission: Math.round(b.total * 0.1), payoutStatus: 'in_review'
+  }))];
+  el.innerHTML = bookings.map(b => {
+    const dateStr = new Date(b.checkIn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const status  = b.payoutStatus || 'in_review';
+    const statusLabel = { in_review: 'In review', processing: 'Processing', paid: 'Paid' }[status];
+    const statusColor = { in_review: 'var(--orange)', processing: 'var(--orange-deep)', paid: 'var(--success)' }[status];
+    return `
+    <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:36px;border-radius:var(--radius-sm);background:url('${b.stayImage}') center/cover;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.stayName}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">${b.guestName} · ${dateStr}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:16px;font-weight:500;font-family:var(--serif)">${b.currency}${b.commission}</div>
+          <div style="font-size:10px;font-weight:700;color:${statusColor};margin-top:2px">${statusLabel.toUpperCase()}</div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:14px">
-        <span style="font-size:16px;font-weight:400">${p.amount}</span>
-        <span style="background:#E6F4EE;color:var(--success);font-family:var(--sans);font-size:9px;letter-spacing:.1em;padding:4px 10px;border-radius:100px">PAID</span>
-      </div>
-    </div>`
-  ).join('');
+      <div style="padding-left:52px">${renderPayoutStatusBar(status)}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── Creator wishlist ──────────────────────────────────────

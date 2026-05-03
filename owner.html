@@ -541,8 +541,21 @@
       <div class="dash-header">
         <div class="dash-greeting">Creator partnerships</div>
       </div>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;max-width:520px;line-height:1.7">Creators drive bookings at zero upfront cost. You only pay the 10% Via commission on confirmed stays.</p>
-      <div id="creators-list"></div>
+      <div class="tab-bar" style="margin-bottom:20px">
+        <button class="tab-btn active" id="creators-tab-partners" onclick="switchCreatorsTab('partners', this)">Partners</button>
+        <button class="tab-btn" id="creators-tab-discover" onclick="switchCreatorsTab('discover', this)">Discover</button>
+      </div>
+      <!-- Partners sub-panel -->
+      <div id="creators-sub-partners">
+        <p style="color:var(--muted);font-size:13px;margin-bottom:20px;max-width:520px;line-height:1.7">Creators drive bookings at zero upfront cost. You only pay the 10% Via commission on confirmed stays.</p>
+        <div id="creators-list"></div>
+      </div>
+      <!-- Discover sub-panel -->
+      <div id="creators-sub-discover" style="display:none">
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;max-width:520px;line-height:1.7">Browse creators on Via and invite them to trade with your property.</p>
+        <div id="discover-niche-filters" class="chip-grid" style="margin-bottom:20px"></div>
+        <div id="discover-creators-grid"></div>
+      </div>
     </div>
 
     <!-- REVENUE PANEL -->
@@ -953,6 +966,67 @@ function renderBookings(filter) {
     </div>`).join('');
 }
 
+// ── Availability calendar ─────────────────────────────────
+const BLOCKED_DATES = new Set(['2026-05-10', '2026-05-11', '2026-05-18', '2026-05-19', '2026-05-20', '2026-06-01', '2026-06-02', '2026-06-03']);
+const BOOKED_DATES  = new Set(['2026-05-08', '2026-05-09', '2026-05-15', '2026-05-16', '2026-05-17']);
+const AVAIL_CAL = { year: 2026, month: 4 }; // 0-indexed month (4 = May)
+
+function renderAvailCalendar() {
+  const el = document.getElementById('avail-calendar-widget');
+  if (!el) return;
+  const { year, month } = AVAIL_CAL;
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW    = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <button onclick="calNavMonth(-1)" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:white;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)">‹</button>
+      <div style="font-size:14px;font-weight:600">${MONTHS[month]} ${year}</div>
+      <button onclick="calNavMonth(1)" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:white;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
+      ${DOW.map(d => `<div style="font-size:10px;font-weight:700;color:var(--muted);padding:4px 0;letter-spacing:.06em">${d}</div>`).join('')}
+      ${Array(firstDay).fill('<div></div>').join('')}
+      ${Array.from({length: daysInMonth}, (_, i) => {
+        const day = i + 1;
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const isBlocked = BLOCKED_DATES.has(dateStr);
+        const isBooked  = BOOKED_DATES.has(dateStr);
+        const isToday   = dateStr === todayStr;
+        let bg = 'white', color = 'var(--ink)', border = '1px solid var(--line)', cursor = 'pointer', fw = '400';
+        if (isBooked)       { bg = 'rgba(61,122,92,.12)'; border = '1.5px solid rgba(61,122,92,.25)'; color = 'var(--success)'; cursor = 'default'; fw = '600'; }
+        else if (isBlocked) { bg = 'var(--ink)'; border = 'none'; color = 'white'; fw = '600'; }
+        if (isToday)        { fw = '700'; }
+        const todayDot = isToday ? `<div style="width:4px;height:4px;border-radius:50%;background:${isBlocked?'white':'var(--orange)'};margin:1px auto 0"></div>` : '';
+        return `<div onclick="${isBooked ? '' : `toggleBlockDate('${dateStr}')`}" style="border-radius:8px;padding:6px 2px;background:${bg};border:${border};color:${color};font-size:12px;font-weight:${fw};cursor:${cursor};user-select:none;min-height:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .12s">${day}${todayDot}</div>`;
+      }).join('')}
+    </div>`;
+  el.innerHTML = html;
+}
+
+function toggleBlockDate(dateStr) {
+  if (BOOKED_DATES.has(dateStr)) return;
+  if (BLOCKED_DATES.has(dateStr)) {
+    BLOCKED_DATES.delete(dateStr);
+    showToast(`${dateStr} unblocked — now available`);
+  } else {
+    BLOCKED_DATES.add(dateStr);
+    showToast(`${dateStr} blocked`);
+  }
+  renderAvailCalendar();
+}
+
+function calNavMonth(dir) {
+  AVAIL_CAL.month += dir;
+  if (AVAIL_CAL.month > 11) { AVAIL_CAL.month = 0; AVAIL_CAL.year++; }
+  if (AVAIL_CAL.month < 0)  { AVAIL_CAL.month = 11; AVAIL_CAL.year--; }
+  renderAvailCalendar();
+}
+
 function renderProperties() {
   const el = document.getElementById('properties-list');
   if (!el) return;
@@ -976,9 +1050,24 @@ function renderProperties() {
         </div>
       </div>
     </div>
-    <div style="background:var(--cream);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer" onclick="showToast('Add a new property — coming soon')">
-      <div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">+ List another property</div>
+
+    <!-- Availability calendar -->
+    <div style="margin-top:24px;background:white;border:1px solid var(--line);border-radius:var(--radius-md);padding:20px;box-shadow:var(--shadow-sm)">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Availability</div>
+      <div style="font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:16px">Click a date to block or unblock it. Blocked dates won't appear to creators applying for a trade.</div>
+      <div id="avail-calendar-widget"></div>
+      <div style="display:flex;gap:16px;margin-top:14px;font-size:11px;color:var(--muted)">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:white;border:1.5px solid var(--line);display:inline-block"></span> Available</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:var(--ink);display:inline-block"></span> Blocked</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(61,122,92,.15);border:1.5px solid rgba(61,122,92,.3);display:inline-block"></span> Booked</span>
+      </div>
+    </div>
+
+    <div style="background:var(--cream);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;margin-top:16px" onclick="showToast('Add a new property — coming soon')">
+      <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">+ List another property</div>
     </div>`;
+
+  renderAvailCalendar();
 }
 
 function renderCreators() {
@@ -1040,6 +1129,62 @@ function toggleCreatorPosts(panelId, row) {
   if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 
+let discoverNicheFilter = 'all';
+let discoverInviteTarget = null;
+
+function switchCreatorsTab(tab, btn) {
+  document.querySelectorAll('#panel-creators .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('creators-sub-partners').style.display = tab === 'partners' ? '' : 'none';
+  document.getElementById('creators-sub-discover').style.display = tab === 'discover' ? '' : 'none';
+  if (tab === 'discover') renderCreatorDiscovery();
+}
+
+function renderCreatorDiscovery(niche) {
+  if (niche) discoverNicheFilter = niche;
+  const niches = ['all', 'Luxury travel', 'Adventure', 'Lifestyle', 'Food & travel', 'Wellness'];
+  const filterEl = document.getElementById('discover-niche-filters');
+  if (filterEl) filterEl.innerHTML = niches.map(n =>
+    `<button class="chip${discoverNicheFilter === n ? ' selected' : ''}" onclick="renderCreatorDiscovery('${n}')">${n === 'all' ? 'All niches' : n}</button>`
+  ).join('');
+
+  const creators = VIA_DATA.creators.filter(c =>
+    discoverNicheFilter === 'all' || (c.niche || '').toLowerCase().includes(discoverNicheFilter.toLowerCase())
+  );
+  const grid = document.getElementById('discover-creators-grid');
+  if (!grid) return;
+  grid.innerHTML = creators.length ? creators.map(c => `
+    <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;background:white;border:1px solid var(--line);border-radius:var(--radius-md);margin-bottom:10px;box-shadow:var(--shadow-sm)">
+      <div style="width:48px;height:48px;border-radius:50%;background:url('${c.avatar}') center/cover;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600">${c.name}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">${c.handle} · ${c.followers} followers</div>
+        <div style="font-size:11px;color:var(--orange);margin-top:3px;font-weight:500">${c.niche || 'Travel creator'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0">
+        <div style="font-size:11px;color:var(--muted)">★ ${c.rating || '4.9'} creator</div>
+        <button onclick="inviteCreator('${c.id}')" style="font-size:10px;font-weight:700;padding:7px 14px;background:var(--yellow-bright);color:var(--ink);border:none;border-radius:100px;cursor:pointer;white-space:nowrap;letter-spacing:.06em">Invite to trade →</button>
+      </div>
+    </div>`).join('') : '<p style="color:var(--muted);font-size:14px;padding:16px 0">No creators match this niche yet.</p>';
+}
+
+function inviteCreator(creatorId) {
+  discoverInviteTarget = VIA_DATA.creators.find(c => c.id === creatorId);
+  if (!discoverInviteTarget) return;
+  const c = discoverInviteTarget;
+  document.getElementById('inv-creator-name').textContent = c.name;
+  document.getElementById('inv-creator-handle').textContent = c.handle;
+  document.getElementById('inv-creator-av').style.backgroundImage = `url('${c.avatar}')`;
+  document.getElementById('inv-property-name').textContent = VIA_DATA.stays[0]?.name || 'your property';
+  document.getElementById('inv-message').value = `Hi ${c.name.split(' ')[0]}, we love your content and think you'd be a perfect fit for a content trade at ${VIA_DATA.stays[0]?.name || 'our property'}. Would you be open to a collaboration?`;
+  openModal('modal-invite-creator');
+}
+
+function sendCreatorInvite() {
+  closeModal('modal-invite-creator');
+  showToast(`✓ Invite sent to ${discoverInviteTarget?.name || 'creator'} — they'll be notified on Via`);
+}
+
 function renderTopCreators() {
   const el = document.getElementById('top-creators-list');
   if (!el) return;
@@ -1081,6 +1226,7 @@ const ACTIVE_TRACKER = {
   creator: { name: 'Camille Laurent', handle: '@camille', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80' },
   stay: 'Hôtel Le Pigonnet',
   dates: 'May 8–11 · 3 nights',
+  ownerRating: null,
   deliverables: [
     { id: 't1', label: '1 IG Reel',        status: 'approved',  url: 'https://instagram.com/p/ex1', submittedAt: 'May 9', likes: '14.2K' },
     { id: 't2', label: '3 IG Story frames', status: 'submitted', url: 'https://instagram.com/p/ex2', submittedAt: 'May 10', likes: null },
@@ -1099,6 +1245,7 @@ function renderTracker() {
   const submitted = t.deliverables.filter(d => d.status === 'submitted').length;
   const total = t.deliverables.length;
   const pct = Math.round((approved + submitted * 0.5) / total * 100);
+  const allApproved = approved === total;
 
   const el = document.getElementById('tracker-active-trade');
   if (!el) return;
@@ -1135,7 +1282,18 @@ function renderTracker() {
             </div>` : d.status === 'approved' ? `
             <a href="${d.url}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;white-space:nowrap;flex-shrink:0">View ↗</a>` : ''}
         </div>`).join('')}
-    </div>`;
+    </div>
+    ${allApproved && !t.ownerRating ? `
+    <div style="margin-top:16px;padding:14px 16px;background:var(--yellow-soft);border:1px solid var(--yellow);border-radius:var(--radius-sm);display:flex;align-items:center;gap:12px">
+      <span style="font-size:18px">★</span>
+      <div style="flex:1;font-size:13px;line-height:1.5"><strong>All deliverables approved!</strong> Rate ${t.creator.name.split(' ')[0]} to complete the trade.</div>
+      <button onclick="openRateCreator()" style="font-size:11px;font-weight:700;padding:8px 16px;background:var(--ink);color:white;border:none;border-radius:100px;cursor:pointer;white-space:nowrap;flex-shrink:0">Rate creator →</button>
+    </div>` : t.ownerRating ? `
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(61,122,92,.07);border:1px solid rgba(61,122,92,.2);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px">
+      <span style="color:var(--success);font-size:16px">✓</span>
+      <div style="font-size:13px;color:var(--success)">Trade complete — you rated ${t.creator.name.split(' ')[0]} <strong>${'★'.repeat(t.ownerRating)}</strong></div>
+    </div>` : ''}
+    `;
 }
 
 function ownerApproveDeliverable(id) {
@@ -1143,6 +1301,29 @@ function ownerApproveDeliverable(id) {
   if (d) d.status = 'approved';
   renderTracker();
   showToast('✓ Deliverable approved — creator notified');
+}
+
+let ownerActiveRateStars = 0;
+const OWNER_STAR_LABELS = ['', 'Disappointing', 'Below expectations', 'Good collaboration', 'Really great', 'Exceptional creator'];
+
+function openRateCreator() {
+  const t = ACTIVE_TRACKER;
+  document.getElementById('rc-creator-name').textContent = t.creator.name;
+  document.getElementById('rc-stay-name').textContent = t.stay;
+  document.getElementById('rc-creator-av').style.backgroundImage = `url('${t.creator.avatar}')`;
+  ownerActiveRateStars = 0;
+  document.getElementById('rc-submit').disabled = true;
+  document.getElementById('rc-label').textContent = '';
+  document.querySelectorAll('#rc-stars .star-rating-btn').forEach(b => b.classList.remove('lit'));
+  openModal('modal-rate-creator');
+}
+
+function submitCreatorRating() {
+  if (!ownerActiveRateStars) return;
+  ACTIVE_TRACKER.ownerRating = ownerActiveRateStars;
+  closeModal('modal-rate-creator');
+  renderTracker();
+  showToast(`✓ ${ownerActiveRateStars}-star rating submitted — thank you!`);
 }
 
 function switchPanel(panel, clickedBtn) {
@@ -1362,6 +1543,23 @@ renderTopCreators();
 // Wire bottom tab bar
 initBottomTabBar('mobile-bottom-nav', switchPanel);
 
+// Star events for rate-creator modal
+document.querySelectorAll('#rc-stars .star-rating-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    ownerActiveRateStars = parseInt(btn.dataset.val);
+    document.querySelectorAll('#rc-stars .star-rating-btn').forEach((b, i) => b.classList.toggle('lit', i < ownerActiveRateStars));
+    document.getElementById('rc-label').textContent = OWNER_STAR_LABELS[ownerActiveRateStars] || '';
+    document.getElementById('rc-submit').disabled = false;
+  });
+  btn.addEventListener('mouseenter', () => {
+    const v = parseInt(btn.dataset.val);
+    document.querySelectorAll('#rc-stars .star-rating-btn').forEach((b, i) => b.classList.toggle('lit', i < v));
+  });
+  btn.addEventListener('mouseleave', () => {
+    document.querySelectorAll('#rc-stars .star-rating-btn').forEach((b, i) => b.classList.toggle('lit', i < ownerActiveRateStars));
+  });
+});
+
 function setMobileActive(btn) {
   document.querySelectorAll('#mobile-bottom-nav .bottom-tab-item').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -1393,6 +1591,63 @@ renderApplications = function(filter) {
 };
 setTimeout(initApplicationSwipe, 100);
 </script>
+
+<!-- Rate creator modal -->
+<div class="modal-overlay" id="modal-rate-creator">
+  <div class="modal" style="max-width:420px;width:90%;padding:28px 24px;text-align:center">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;text-align:left">
+      <div id="rc-creator-av" style="width:52px;height:52px;border-radius:50%;background:center/cover;flex-shrink:0"></div>
+      <div>
+        <div style="font-size:15px;font-weight:600" id="rc-creator-name"></div>
+        <div style="font-size:12px;color:var(--muted)" id="rc-stay-name"></div>
+      </div>
+    </div>
+    <div style="font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:4px">Rate this creator</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Your rating is shared with Via and helps surface great creators.</div>
+    <div class="star-rating" id="rc-stars">
+      <button class="star-rating-btn" data-val="1">★</button>
+      <button class="star-rating-btn" data-val="2">★</button>
+      <button class="star-rating-btn" data-val="3">★</button>
+      <button class="star-rating-btn" data-val="4">★</button>
+      <button class="star-rating-btn" data-val="5">★</button>
+    </div>
+    <div id="rc-label" style="font-size:13px;font-weight:600;color:var(--orange);min-height:20px;margin-bottom:16px"></div>
+    <div class="field" style="margin-bottom:16px;text-align:left">
+      <label>Note for Via (optional)</label>
+      <textarea id="rc-comment" rows="3" placeholder="Quality of content, professionalism, response time…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1;padding:13px" onclick="closeModal('modal-rate-creator')">Cancel</button>
+      <button id="rc-submit" class="btn-primary" style="flex:2;padding:13px" onclick="submitCreatorRating()" disabled>Submit rating ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite creator modal -->
+<div class="modal-overlay" id="modal-invite-creator">
+  <div class="modal" style="max-width:460px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div id="inv-creator-av" style="width:48px;height:48px;border-radius:50%;background:center/cover;flex-shrink:0"></div>
+      <div>
+        <div style="font-size:15px;font-weight:600" id="inv-creator-name"></div>
+        <div style="font-size:12px;color:var(--muted)" id="inv-creator-handle"></div>
+      </div>
+    </div>
+    <div style="font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:4px">Invite to trade</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Send a personalised invite to <span id="inv-property-name"></span>.</div>
+    <div class="field" style="margin-bottom:20px">
+      <label>Message</label>
+      <textarea id="inv-message" rows="5"></textarea>
+      <p class="field-help">The creator receives this via Via's messaging system and can respond directly.</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1;padding:13px" onclick="closeModal('modal-invite-creator')">Cancel</button>
+      <button class="btn-primary" style="flex:2;padding:13px" onclick="sendCreatorInvite()">Send invite ✦</button>
+    </div>
+  </div>
+</div>
 
 <!-- Trade terms confirmation sheet -->
 <div class="modal-overlay" id="modal-trade-terms">
