@@ -468,6 +468,9 @@
         <a href="messages.html" style="background:var(--yellow-bright);color:var(--ink);font-size:11px;font-weight:700;padding:7px 14px;border-radius:100px;text-decoration:none;white-space:nowrap;letter-spacing:.08em">Open chat</a>
       </div>
 
+      <!-- Onboarding checklist -->
+      <div id="onboarding-card"></div>
+
       <!-- Recent bookings -->
       <div class="section-h">
         Recent bookings
@@ -1042,6 +1045,60 @@ function renderChart() {
   }).join('');
 }
 
+// ── Onboarding checklist ─────────────────────────────────
+const ONBOARDING_STEPS = [
+  { id: 'ig',      icon: '📸', label: 'Connect Instagram',      detail: 'Link your IG so owners can see your real reach.',     action: () => switchPanel('profile', null) },
+  { id: 'photo',   icon: '🖼️', label: 'Add a bio photo',         detail: 'Profiles with a photo get 3× more replies.',          action: () => switchPanel('profile', null) },
+  { id: 'apply',   icon: '✦',  label: 'Apply for your first trade', detail: 'Browse available stays and pitch your first one.', action: () => window.location = 'explore.html' },
+  { id: 'post',    icon: '🎬', label: 'Post your first content', detail: 'Tag the stay and submit your deliverable link.',       action: () => switchPanel('trades', null) },
+  { id: 'invite',  icon: '👥', label: 'Invite a traveler friend', detail: 'You earn a bonus when they complete a booking.',     action: () => copyDealLink && copyDealLink() },
+];
+
+// Track in-memory for this session; seeded so demo looks partially done
+const ONBOARDING_DONE = new Set(['ig', 'photo']);
+
+function renderOnboardingCard() {
+  const el = document.getElementById('onboarding-card');
+  if (!el) return;
+  const done = ONBOARDING_DONE.size;
+  const total = ONBOARDING_STEPS.length;
+  if (done === total) { el.innerHTML = ''; return; } // dismiss when all done
+
+  const pct = Math.round(done / total * 100);
+  el.innerHTML = `
+    <div style="background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:20px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.04em">Complete your profile</div>
+        <button onclick="ONBOARDING_DONE.clear();ONBOARDING_STEPS.forEach(s=>ONBOARDING_DONE.add(s.id));renderOnboardingCard()" style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0">Dismiss</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${done} of ${total} steps complete</div>
+      <div style="height:5px;background:var(--line);border-radius:5px;overflow:hidden;margin-bottom:16px">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--success),var(--orange));transition:width .4s"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${ONBOARDING_STEPS.map(s => {
+          const isDone = ONBOARDING_DONE.has(s.id);
+          return `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:white;border-radius:var(--radius-sm);border:1px solid ${isDone ? 'rgba(61,122,92,.2)' : 'var(--line)'}">
+            <div style="width:28px;height:28px;border-radius:50%;background:${isDone ? 'rgba(61,122,92,.12)' : 'var(--sand-soft)'};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">${isDone ? '✓' : s.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:${isDone ? '400' : '500'};color:${isDone ? 'var(--muted)' : 'var(--ink)'};text-decoration:${isDone ? 'line-through' : 'none'}">${s.label}</div>
+              ${!isDone ? `<div style="font-size:11px;color:var(--muted);margin-top:1px">${s.detail}</div>` : ''}
+            </div>
+            ${!isDone ? `<button onclick="markOnboardingStep('${s.id}')" style="font-size:10px;font-weight:700;padding:6px 12px;background:var(--yellow-bright);color:var(--ink);border:none;border-radius:100px;cursor:pointer;white-space:nowrap;flex-shrink:0">Start →</button>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function markOnboardingStep(id) {
+  ONBOARDING_DONE.add(id);
+  renderOnboardingCard();
+  if (ONBOARDING_DONE.size === ONBOARDING_STEPS.length) {
+    showToast('✦ Profile complete — you're fully set up on Via!', 4000);
+  }
+}
+
 function renderRecentBookings(filter = 'all') {
   let bookings = [...DEMO_BOOKINGS, ...VIA_STATE.bookings.map(b => ({
     id: b.id, stayName: b.stayName, stayLocation: b.stayLocation,
@@ -1101,6 +1158,7 @@ function switchPanel(panel, clickedBtn) {
   document.querySelectorAll(`.sidebar-nav-item[onclick*="'${panel}'"]`).forEach(b => b.classList.add('active'));
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (panel === 'overview') {
+    renderOnboardingCard();
     document.getElementById('recent-bookings-list').innerHTML = renderRecentBookings();
     renderChart();
   }
@@ -1477,6 +1535,7 @@ if (handleInput) {
 
 document.getElementById('recent-bookings-list').innerHTML = renderRecentBookings();
 renderChart();
+renderOnboardingCard();
 if (getParam('onboarded') === '1') {
   setTimeout(() => showToast('✓ You\'re in — welcome to Via!', 4000), 600);
 }

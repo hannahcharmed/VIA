@@ -237,6 +237,9 @@
       </div>
       <div id="overview-trips"></div>
 
+      <!-- Become a creator CTA (shown after 2+ completed trips) -->
+      <div id="creator-cta-card"></div>
+
       <!-- Wishlist preview -->
       <div class="section-h" style="margin-top:28px">
         Saved stays
@@ -433,6 +436,25 @@ function renderOverview() {
     `<p style="color:var(--muted);font-size:14px;padding:12px 0">No upcoming trips. <a href="explore.html" style="color:var(--accent)">Start exploring →</a></p>`;
 
   renderWishlistPreview();
+  renderCreatorCta();
+}
+
+function renderCreatorCta() {
+  const el = document.getElementById('creator-cta-card');
+  if (!el) return;
+  const completedTrips = TRAVELER_BOOKINGS.filter(b => b.status === 'completed').length;
+  if (completedTrips < 2) return; // only show after 2+ past stays
+  el.innerHTML = `
+    <div style="background:var(--ink);border-radius:var(--radius-md);padding:24px;margin-top:28px;margin-bottom:4px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:-20px;width:130px;height:130px;border-radius:50%;background:var(--orange);opacity:.08;pointer-events:none"></div>
+      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:8px">You've explored ${completedTrips} Via stays</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400;color:white;margin-bottom:6px;line-height:1.3">Turn your love of travel<br>into free stays.</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.65;margin-bottom:20px;max-width:340px">Creators on Via earn an average of <strong style="color:var(--yellow-bright)">€237/booking</strong> in commission — and trade their content for complimentary nights. You already know the stays. Now share them.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="onboard.html?role=creator" class="btn-primary" style="padding:12px 22px;text-decoration:none;font-size:12px">Become a creator →</a>
+        <a href="creator.html?id=camille" style="padding:12px 18px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border-radius:var(--radius-sm);text-decoration:none;font-size:12px;border:1px solid rgba(255,255,255,.15)">See how it works</a>
+      </div>
+    </div>`;
 }
 
 function renderWishlistPreview() {

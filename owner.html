@@ -1090,7 +1090,7 @@ function renderCreators() {
       <div class="creator-row" onclick="toggleCreatorPosts('posts-${cp.id}', this)">
         <div class="creator-av" style="background-image:url('${c.avatar}')"></div>
         <div class="creator-info">
-          <div class="creator-name">${c.name}</div>
+          <div style="display:flex;align-items:center;gap:6px"><span class="creator-name">${c.name}</span>${c.verified ? '<span title="Via verified creator" style="background:var(--ink);color:var(--yellow-bright);font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px;letter-spacing:.1em">✦</span>' : ''}</div>
           <div class="creator-handle">${c.handle} · ${c.followers} followers · ${postCount} tagged post${postCount !== 1 ? 's' : ''}</div>
         </div>
         <div style="display:flex;gap:16px;flex-shrink:0;align-items:center">
@@ -1236,8 +1236,8 @@ const ACTIVE_TRACKER = {
   ]
 };
 
-const TRACKER_STATUS_ICON = { approved: '✓', submitted: '◐', pending: '○' };
-const TRACKER_STATUS_COLOR = { approved: 'var(--success)', submitted: 'var(--orange)', pending: 'var(--muted)' };
+const TRACKER_STATUS_ICON  = { approved: '✓', submitted: '◐', pending: '○', revision: '↩' };
+const TRACKER_STATUS_COLOR = { approved: 'var(--success)', submitted: 'var(--orange)', pending: 'var(--muted)', revision: 'var(--error)' };
 
 function renderTracker() {
   const t = ACTIVE_TRACKER;
@@ -1273,14 +1273,16 @@ function renderTracker() {
           <div style="width:24px;height:24px;border-radius:50%;background:${d.status === 'approved' ? 'rgba(61,122,92,.12)' : d.status === 'submitted' ? 'rgba(232,165,116,.15)' : 'var(--cream)'};display:flex;align-items:center;justify-content:center;font-size:12px;color:${TRACKER_STATUS_COLOR[d.status]};flex-shrink:0;font-weight:700">${TRACKER_STATUS_ICON[d.status]}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:500">${d.label}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:1px">${d.status === 'approved' ? `Approved · ${d.submittedAt}${d.likes ? ` · ${d.likes} likes` : ''}` : d.status === 'submitted' ? `Submitted ${d.submittedAt} — awaiting your review` : `Due ${d.due}`}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px">${d.status === 'approved' ? `Approved · ${d.submittedAt}${d.likes ? ` · ${d.likes} likes` : ''}` : d.status === 'submitted' ? `Submitted ${d.submittedAt} — awaiting your review` : d.status === 'revision' ? `<span style="color:var(--error)">Revision requested · awaiting resubmission</span>` : `Due ${d.due}`}</div>
           </div>
           ${d.status === 'submitted' ? `
             <div style="display:flex;gap:6px;flex-shrink:0">
               <a href="${d.url}" target="_blank" style="font-size:10px;font-weight:700;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;text-decoration:none;color:var(--ink-2);white-space:nowrap">View ↗</a>
+              <button onclick="requestRevision('${d.id}')" style="font-size:10px;font-weight:700;padding:6px 12px;background:white;color:var(--error);border:1.5px solid var(--error);border-radius:100px;cursor:pointer;white-space:nowrap">Revise</button>
               <button onclick="ownerApproveDeliverable('${d.id}')" style="font-size:10px;font-weight:700;padding:6px 12px;background:var(--ink);color:white;border:none;border-radius:100px;cursor:pointer;white-space:nowrap">Approve</button>
             </div>` : d.status === 'approved' ? `
-            <a href="${d.url}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;white-space:nowrap;flex-shrink:0">View ↗</a>` : ''}
+            <a href="${d.url}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;padding:6px 12px;border:1.5px solid var(--line);border-radius:100px;white-space:nowrap;flex-shrink:0">View ↗</a>` : d.status === 'revision' ? `
+            <span style="font-size:10px;font-weight:700;color:var(--error);white-space:nowrap;flex-shrink:0">Revision sent</span>` : ''}
         </div>`).join('')}
     </div>
     ${allApproved && !t.ownerRating ? `
@@ -1301,6 +1303,27 @@ function ownerApproveDeliverable(id) {
   if (d) d.status = 'approved';
   renderTracker();
   showToast('✓ Deliverable approved — creator notified');
+}
+
+let revisionTargetId = null;
+
+function requestRevision(deliverableId) {
+  revisionTargetId = deliverableId;
+  const d = ACTIVE_TRACKER.deliverables.find(d => d.id === deliverableId);
+  document.getElementById('rv-del-label').textContent = d ? d.label : 'deliverable';
+  document.getElementById('rv-note').value = '';
+  document.getElementById('rv-submit-revision').disabled = true;
+  openModal('modal-request-revision');
+}
+
+function submitRevisionRequest() {
+  const note = document.getElementById('rv-note').value.trim();
+  if (!note) return;
+  const d = ACTIVE_TRACKER.deliverables.find(d => d.id === revisionTargetId);
+  if (d) { d.status = 'revision'; d.revisionNote = note; }
+  closeModal('modal-request-revision');
+  renderTracker();
+  showToast('↩ Revision requested — creator notified with your note');
 }
 
 let ownerActiveRateStars = 0;
@@ -1378,18 +1401,18 @@ function updatePeriod() {
 }
 
 const APPLICATIONS = [
-  { id: 'a1', creatorId: 'camille', name: 'Camille Laurent', handle: '@camille', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80', match: 97, ig: '142K', tiktok: '89K', engagement: '6.2%', trades: 12, pitch: 'I've been obsessed with Le Pigonnet since I first read about your garden courtyard. I shoot lifestyle and travel for a luxury-leaning audience that responds intensely to authentic French heritage...', checkin: 'May 8', checkout: 'May 11', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Luxury travel', status: 'new' },
-  { id: 'a2', creatorId: 'marcos', name: 'Marcos Rivera', handle: '@marcosroams', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&q=80', match: 84, ig: '78K', tiktok: '210K', engagement: '5.8%', trades: 7, pitch: 'My audience skews 28–38, predominantly European. A Provence stay aligns perfectly with the editorial direction I'm building for Q2. I'd focus on the landscape and slow-living angle...', checkin: 'May 15', checkout: 'May 18', deliverables: ['1 IG Reel', '1 TikTok', 'UGC photo pack'], niche: 'Adventure / slow travel', status: 'new' },
-  { id: 'a3', creatorId: 'camille', name: 'Sofia Moreau', handle: '@sofiamoreaulife', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&q=80', match: 79, ig: '55K', tiktok: '31K', engagement: '4.4%', trades: 4, pitch: 'Interior and lifestyle creator based in Paris. My feed is curated around the idea of beautiful everyday life — Le Pigonnet would be a natural fit for my spring travel series...', checkin: 'Jun 2', checkout: 'Jun 5', deliverables: ['1 IG Reel', '3 IG Stories'], niche: 'Interiors / lifestyle', status: 'new' },
-  { id: 'a4', creatorId: 'camille', name: 'James Okafor', handle: '@jamesokafor', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80', match: 73, ig: '28K', tiktok: '14K', engagement: '7.1%', trades: 2, pitch: 'Food and travel photographer with a niche following in fine dining and boutique hotels. I'd love to document the breakfast experience and the courtyard at golden hour...', checkin: 'Jun 10', checkout: 'Jun 13', deliverables: ['1 IG Reel', '1 IG Feed post', 'UGC photo pack'], niche: 'Food & travel', status: 'new' },
-  { id: 'a5', creatorId: 'camille', name: 'Lea Hoffmann', handle: '@leahoffmann', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80', match: 88, ig: '95K', tiktok: '62K', engagement: '5.5%', trades: 9, pitch: 'Award-winning travel creator focusing on slow travel in Southern Europe. Provence is a recurring theme in my content — I have an audience that genuinely plans trips based on my recommendations...', checkin: 'May 22', checkout: 'May 25', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Slow travel / culture', status: 'new' },
-  { id: 'a6', creatorId: 'camille', name: 'Nina Park', handle: '@ninapark_wanders', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80', match: 81, ig: '67K', tiktok: '44K', engagement: '5.1%', trades: 6, pitch: 'Wellness and travel creator with a focus on restorative escapes. Le Pigonnet's spa and pool would be central to my narrative — I'd build a "how to reset in Provence" Reel series...', checkin: 'Jun 18', checkout: 'Jun 21', deliverables: ['1 IG Reel', '3 IG Stories', 'Blog feature'], niche: 'Wellness / travel', status: 'new' },
-  { id: 'a7', creatorId: 'marcos', name: 'Tom Briggs', handle: '@tombriggsfilm', avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=80&q=80', match: 69, ig: '39K', tiktok: '18K', engagement: '4.8%', trades: 3, pitch: 'Videographer and travel storyteller. Cinematic short-form content is my specialty. I'd create a dusk-to-dawn Reel capturing the full arrival experience at Le Pigonnet...', checkin: 'Jul 1', checkout: 'Jul 4', deliverables: ['1 IG Reel', '1 TikTok'], niche: 'Cinematic travel', status: 'new' },
-  { id: 'a8', creatorId: 'camille', name: 'Camille Laurent', handle: '@camille', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80', match: 97, ig: '142K', tiktok: '89K', engagement: '6.2%', trades: 12, pitch: '', checkin: 'Mar 20', checkout: 'Mar 23', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Luxury travel', status: 'approved' },
-  { id: 'a9', creatorId: 'camille', name: 'Lea Hoffmann', handle: '@leahoffmann', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80', match: 88, ig: '95K', tiktok: '62K', engagement: '5.5%', trades: 9, pitch: '', checkin: 'Feb 10', checkout: 'Feb 13', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Slow travel', status: 'approved' },
-  { id: 'a10', creatorId: 'marcos', name: 'Marcos Rivera', handle: '@marcosroams', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&q=80', match: 84, ig: '78K', tiktok: '210K', engagement: '5.8%', trades: 7, pitch: '', checkin: 'Jan 5', checkout: 'Jan 8', deliverables: ['1 IG Reel', '1 TikTok'], niche: 'Adventure', status: 'approved' },
-  { id: 'a11', creatorId: 'camille', name: 'Sofia Moreau', handle: '@sofiamoreaulife', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&q=80', match: 79, ig: '55K', tiktok: '31K', engagement: '4.4%', trades: 4, pitch: '', checkin: 'Mar 5', checkout: 'Mar 8', deliverables: ['1 IG Reel', '3 IG Stories'], niche: 'Lifestyle', status: 'declined' },
-  { id: 'a12', creatorId: 'marcos', name: 'James Okafor', handle: '@jamesokafor', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80', match: 73, ig: '28K', tiktok: '14K', engagement: '7.1%', trades: 2, pitch: '', checkin: 'Feb 20', checkout: 'Feb 23', deliverables: ['1 IG Reel', 'UGC photo pack'], niche: 'Food & travel', status: 'declined' },
+  { id: 'a1', verified: true,  creatorId: 'camille', name: 'Camille Laurent',    handle: '@camille',          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80', match: 97, ig: '142K', tiktok: '89K',  engagement: '6.2%', trades: 12, pitch: 'I've been obsessed with Le Pigonnet since I first read about your garden courtyard. I shoot lifestyle and travel for a luxury-leaning audience that responds intensely to authentic French heritage...', checkin: 'May 8',  checkout: 'May 11', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'],         niche: 'Luxury travel',         status: 'new' },
+  { id: 'a2', verified: true,  creatorId: 'marcos', name: 'Marcos Rivera',       handle: '@marcosroams',       avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&q=80', match: 84, ig: '78K',  tiktok: '210K', engagement: '5.8%', trades: 7,  pitch: 'My audience skews 28–38, predominantly European. A Provence stay aligns perfectly with the editorial direction I'm building for Q2. I'd focus on the landscape and slow-living angle...', checkin: 'May 15', checkout: 'May 18', deliverables: ['1 IG Reel', '1 TikTok', 'UGC photo pack'],      niche: 'Adventure / slow travel', status: 'new' },
+  { id: 'a3', verified: true,  creatorId: 'camille', name: 'Sofia Moreau',        handle: '@sofiamoreaulife',   avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&q=80', match: 79, ig: '55K',  tiktok: '31K',  engagement: '4.4%', trades: 4,  pitch: 'Interior and lifestyle creator based in Paris. My feed is curated around the idea of beautiful everyday life — Le Pigonnet would be a natural fit for my spring travel series...', checkin: 'Jun 2',  checkout: 'Jun 5',  deliverables: ['1 IG Reel', '3 IG Stories'],                        niche: 'Interiors / lifestyle',  status: 'new' },
+  { id: 'a4', verified: false, creatorId: 'camille', name: 'James Okafor',        handle: '@jamesokafor',       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80', match: 73, ig: '28K',  tiktok: '14K',  engagement: '7.1%', trades: 2,  pitch: 'Food and travel photographer with a niche following in fine dining and boutique hotels. I'd love to document the breakfast experience and the courtyard at golden hour...', checkin: 'Jun 10', checkout: 'Jun 13', deliverables: ['1 IG Reel', '1 IG Feed post', 'UGC photo pack'],   niche: 'Food & travel',          status: 'new' },
+  { id: 'a5', verified: true,  creatorId: 'camille', name: 'Lea Hoffmann',        handle: '@leahoffmann',       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80', match: 88, ig: '95K',  tiktok: '62K',  engagement: '5.5%', trades: 9,  pitch: 'Award-winning travel creator focusing on slow travel in Southern Europe. Provence is a recurring theme in my content — I have an audience that genuinely plans trips based on my recommendations...', checkin: 'May 22', checkout: 'May 25', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'],         niche: 'Slow travel / culture',  status: 'new' },
+  { id: 'a6', verified: true,  creatorId: 'camille', name: 'Nina Park',           handle: '@ninapark_wanders',  avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80', match: 81, ig: '67K',  tiktok: '44K',  engagement: '5.1%', trades: 6,  pitch: 'Wellness and travel creator with a focus on restorative escapes. Le Pigonnet's spa and pool would be central to my narrative — I'd build a "how to reset in Provence" Reel series...', checkin: 'Jun 18', checkout: 'Jun 21', deliverables: ['1 IG Reel', '3 IG Stories', 'Blog feature'],       niche: 'Wellness / travel',      status: 'new' },
+  { id: 'a7', verified: false, creatorId: 'marcos', name: 'Tom Briggs',           handle: '@tombriggsfilm',     avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=80&q=80', match: 69, ig: '39K',  tiktok: '18K',  engagement: '4.8%', trades: 3,  pitch: 'Videographer and travel storyteller. Cinematic short-form content is my specialty. I'd create a dusk-to-dawn Reel capturing the full arrival experience at Le Pigonnet...', checkin: 'Jul 1',  checkout: 'Jul 4',  deliverables: ['1 IG Reel', '1 TikTok'],                            niche: 'Cinematic travel',       status: 'new' },
+  { id: 'a8', verified: true,  creatorId: 'camille', name: 'Camille Laurent',    handle: '@camille',           avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80', match: 97, ig: '142K', tiktok: '89K',  engagement: '6.2%', trades: 12, pitch: '', checkin: 'Mar 20', checkout: 'Mar 23', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Luxury travel',  status: 'approved' },
+  { id: 'a9', verified: true,  creatorId: 'camille', name: 'Lea Hoffmann',       handle: '@leahoffmann',       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80', match: 88, ig: '95K',  tiktok: '62K',  engagement: '5.5%', trades: 9,  pitch: '', checkin: 'Feb 10', checkout: 'Feb 13', deliverables: ['1 IG Reel', '3 IG Stories', '1 TikTok'], niche: 'Slow travel',    status: 'approved' },
+  { id: 'a10', verified: true, creatorId: 'marcos', name: 'Marcos Rivera',       handle: '@marcosroams',       avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&q=80', match: 84, ig: '78K',  tiktok: '210K', engagement: '5.8%', trades: 7,  pitch: '', checkin: 'Jan 5',  checkout: 'Jan 8',  deliverables: ['1 IG Reel', '1 TikTok'],          niche: 'Adventure',      status: 'approved' },
+  { id: 'a11', verified: true, creatorId: 'camille', name: 'Sofia Moreau',       handle: '@sofiamoreaulife',   avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&q=80', match: 79, ig: '55K',  tiktok: '31K',  engagement: '4.4%', trades: 4,  pitch: '', checkin: 'Mar 5',  checkout: 'Mar 8',  deliverables: ['1 IG Reel', '3 IG Stories'],      niche: 'Lifestyle',      status: 'declined' },
+  { id: 'a12', verified: false, creatorId: 'marcos', name: 'James Okafor',       handle: '@jamesokafor',       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80', match: 73, ig: '28K',  tiktok: '14K',  engagement: '7.1%', trades: 2,  pitch: '', checkin: 'Feb 20', checkout: 'Feb 23', deliverables: ['1 IG Reel', 'UGC photo pack'],    niche: 'Food & travel',  status: 'declined' },
 ];
 
 let currentReviewApp = null;
@@ -1403,8 +1426,9 @@ function renderApplications(filter) {
     <div class="creator-row application-card" data-id="${a.id}" onclick="openReview('${a.id}')" style="cursor:pointer;margin-bottom:10px;padding:16px;background:white;border:1px solid var(--line);border-radius:var(--radius-md)">
       <div class="creator-av" style="background-image:url('${a.avatar}')"></div>
       <div class="creator-info" style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap">
           <span class="creator-name">${a.name}</span>
+          ${a.verified ? '<span title="Via verified creator" style="background:var(--ink);color:var(--yellow-bright);font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.1em">✦ Verified</span>' : ''}
           <span style="background:var(--yellow-soft);border:1px solid var(--yellow);color:var(--ink);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px">${a.match}% match</span>
         </div>
         <div class="creator-handle">${a.handle} · ${a.ig} IG · ${a.tiktok} TikTok · ${a.engagement} engagement</div>
@@ -1432,7 +1456,7 @@ function openReview(id) {
   panel.style.display = 'block';
   document.getElementById('rv-avatar').style.backgroundImage = `url('${a.avatar}')`;
   document.getElementById('rv-name').textContent = a.name;
-  document.getElementById('rv-handle').textContent = `${a.handle} · ${a.niche}`;
+  document.getElementById('rv-handle').innerHTML = `${a.handle} · ${a.niche}${a.verified ? ' <span style="background:var(--ink);color:var(--yellow-bright);font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.1em;vertical-align:middle">✦ Verified</span>' : ''}`;
   document.getElementById('rv-match-badge').textContent = `${a.match}% match`;
   document.getElementById('rv-niche-badge').textContent = a.niche;
   document.getElementById('rv-stats').innerHTML = [
@@ -1591,6 +1615,27 @@ renderApplications = function(filter) {
 };
 setTimeout(initApplicationSwipe, 100);
 </script>
+
+<!-- Request revision modal -->
+<div class="modal-overlay" id="modal-request-revision">
+  <div class="modal" style="max-width:440px;width:90%;padding:28px 24px">
+    <div class="modal-handle"></div>
+    <div style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:4px">Request revision</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px">For: <strong id="rv-del-label"></strong></div>
+    <div style="background:rgba(168,61,61,.06);border:1px solid rgba(168,61,61,.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--error);line-height:1.6;margin-bottom:20px">
+      The creator will be notified and the deliverable marked "Needs revision." They must resubmit before the deadline.
+    </div>
+    <div class="field" style="margin-bottom:20px">
+      <label>What needs to change? <span style="color:var(--error)">*</span></label>
+      <textarea id="rv-note" rows="4" placeholder="Be specific — e.g. 'The Reel caption doesn't mention the property name. Please add it and repost.'" oninput="document.getElementById('rv-submit-revision').disabled = !this.value.trim()"></textarea>
+      <p class="field-help">This note is sent directly to the creator. Be clear and constructive.</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="flex:1;padding:13px" onclick="closeModal('modal-request-revision')">Cancel</button>
+      <button id="rv-submit-revision" class="btn-primary" style="flex:2;padding:13px;background:var(--error);border-color:var(--error)" onclick="submitRevisionRequest()" disabled>Send revision request →</button>
+    </div>
+  </div>
+</div>
 
 <!-- Rate creator modal -->
 <div class="modal-overlay" id="modal-rate-creator">

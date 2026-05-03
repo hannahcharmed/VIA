@@ -251,7 +251,7 @@ function renderCreatorPage() {
       <div class="creator-handle-row">
         <span class="creator-handle-text">${creator.handle}</span>
         <span class="followers-count">${creator.followers} followers</span>
-        ${creator.verified ? '<span style="background:var(--accent);color:white;font-family:DM Mono,monospace;font-size:9px;padding:3px 8px;border-radius:100px;letter-spacing:.1em">VERIFIED</span>' : ''}
+        ${creator.verified ? '<span title="Via verified creator — identity and follower count confirmed" style="display:inline-flex;align-items:center;gap:4px;background:var(--ink);color:var(--yellow-bright);font-size:9px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.1em;cursor:default">✦ VERIFIED</span>' : ''}
       </div>
       <p class="creator-bio">${creator.bio}</p>
       <div class="creator-locations">
